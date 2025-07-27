@@ -1,0 +1,129 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Model Cleanup Prompt for Pydantic Models
+
+## Context
+You are tasked with cleaning up Pydantic models by removing redundant validation methods that duplicate functionality already provided by Pydantic's field constraints. The goal is to eliminate custom validators that are simple wrappers around Pydantic's built-in capabilities while keeping validators that provide unique business logic.
+
+## Guidelines for Analysis
+
+### **Examine the Model File**
+1. Look for `@field_validator` decorators
+2. Check what each validator does
+3. Compare against the field definitions to see if constraints already exist
+
+### **Remove Validators That Duplicate Field Constraints**
+
+**Remove if the validator only does:**
+- `v < 0` when field has `ge=0.0` constraint
+- `v > max` when field has `le=max` constraint
+- `v <= 0` when field has `ge=1` constraint
+- `v < min` when field has `ge=min` constraint
+- `v > max` when field has `le=max` constraint
+- Simple range checks that match existing field constraints
+
+**Examples of duplicates to remove:**
+```python
+# REMOVE - duplicates ge=0.0 constraint
+@field_validator("start_time")
+def validate_start_time(cls, v):
+    if v < 0:
+        raise ValueError("Time must be non-negative")
+    return v
+
+# REMOVE - duplicates le=1.0 constraint
+@field_validator("opacity")
+def validate_opacity(cls, v):
+    if v > 1.0:
+        raise ValueError("Opacity cannot exceed 1.0")
+    return v
+```
+
+### **Keep Validators That Provide Unique Value**
+
+**Keep if the validator:**
+- Does cross-field validation (e.g., end_time > start_time)
+- Validates against a specific list of values
+- Provides complex business logic
+- Transforms data (like converting empty strings to None)
+- Performs calculations or derived validations
+
+**Examples to keep:**
+```python
+# KEEP - cross-field validation
+@field_validator("end_time")
+def validate_end_time(cls, v, info):
+    start_time = info.data.get("start_time")
+    if v is not None and start_time is not None and v <= start_time:
+        raise ValueError("End time must be after start time")
+    return v
+
+# KEEP - validates against specific list
+@field_validator("easing")
+def validate_easing(cls, v):
+    valid_easings = ["linear", "ease_in", "ease_out"]
+    if v not in valid_easings:
+        raise ValueError(f"Unsupported easing: {v}")
+    return v
+```
+
+## Implementation Steps
+
+1. **Identify duplicated validators** by comparing against field constraints
+2. **Remove the duplicated validators** from the model
+3. **Update tests** to remove any that directly call the deleted validators
+4. **Keep tests** that verify the validation behavior works correctly
+5. **Run tests** to ensure nothing breaks
+
+## Field Constraint Reference
+
+Common Pydantic field constraints:
+- `ge=0.0` - greater than or equal to 0
+- `le=1.0` - less than or equal to 1
+- `ge=1` - greater than or equal to 1
+- `gt=0` - greater than 0
+- `lt=100` - less than 100
+
+## Expected Benefits
+
+- **Cleaner code** with fewer redundant methods
+- **Better performance** using Pydantic's optimized validation
+- **Consistent error messages** from Pydantic
+- **Higher test coverage** with less code to maintain
+- **Easier maintenance** with fewer custom validators
+
+## Success Criteria
+
+- All tests pass
+- Test coverage remains above 80%
+- No functionality is lost
+- Code is cleaner and more maintainable
+- Models rely on Pydantic's built-in capabilities where possible
+
+## Example Before/After
+
+**Before:**
+```python
+class MyModel(BaseModel):
+    value: float = Field(ge=0.0, le=1.0)
+
+    @field_validator("value")
+    def validate_value(cls, v):
+        if v < 0:
+            raise ValueError("Value cannot be negative")
+        if v > 1:
+            raise ValueError("Value cannot exceed 1")
+        return v
+```
+
+**After:**
+```python
+class MyModel(BaseModel):
+    value: float = Field(ge=0.0, le=1.0)
+    # Removed redundant validator - Pydantic handles validation
+```
+
+Apply this analysis to the provided model file and remove any duplicated validators while preserving unique business logic.

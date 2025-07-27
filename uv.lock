@@ -1813,6 +1813,13 @@ typecheck = [
     { name = "mypy" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "pytest-cov" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "black", marker = "extra == 'dev'", specifier = ">=24.3.0" },
@@ -1849,6 +1856,13 @@ requires-dist = [
     { name = "vulture", marker = "extra == 'dev'", specifier = ">=2.14" },
 ]
 provides-extras = ["dev", "docs", "test", "typecheck", "security"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pytest", specifier = ">=8.4.1" },
+    { name = "pytest-asyncio", specifier = ">=1.1.0" },
+    { name = "pytest-cov", specifier = ">=6.2.1" },
+]
 
 [[package]]
 name = "virtualenv"
