@@ -139,3 +139,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **Project Vine** represents a significant opportunity to bridge the gap between AI capabilities and video creation, providing a powerful, extensible framework that serves both human creativity and automated content generation.
+# Test commit to trigger CI
