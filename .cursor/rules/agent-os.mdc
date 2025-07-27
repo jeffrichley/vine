@@ -55,4 +55,4 @@ Project Vine is a modular, agent-compatible, dual-mode video composition framewo
 - Core architecture and basic functionality
 - Pydantic models and registry system
 - Basic TimelineBuilder API
-- Voice-image pair synchronization 
+- Voice-image pair synchronization

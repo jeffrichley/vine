@@ -62,4 +62,4 @@
 - **python_version:** 3.11+
 - **virtual_environment:** venv (built-in)
 - **dependency_management:** pip 23.0.0+
-- **development_tools:** VS Code / PyCharm 
+- **development_tools:** VS Code / PyCharm

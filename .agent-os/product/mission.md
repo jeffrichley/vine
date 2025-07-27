@@ -98,4 +98,4 @@ Unlike closed video processing libraries, we provide a plugin system for custom 
 - **MoviePy Integration:** High-performance video processing and rendering
 - **Audio Processing:** Voice/music mixing with ducking and synchronization
 - **Multiple Formats:** Support for various video resolutions and export formats
-- **Performance Optimization:** Memory management and caching for large projects 
+- **Performance Optimization:** Memory management and caching for large projects

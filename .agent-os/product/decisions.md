@@ -167,4 +167,4 @@ The registry system was chosen because:
 **Negative:**
 - Complexity in effect registration and management
 - Potential for low-quality or buggy custom effects
-- Need for effect validation and testing infrastructure 
+- Need for effect validation and testing infrastructure
