@@ -17,9 +17,11 @@ This specification defines the core architecture components for Phase 1 of Proje
 **Purpose:** Data validation and type safety for video specifications
 
 **Components:**
-- `VideoSpec` - Main video configuration model
-- `TimelineSpec` - Timeline structure and timing
-- `AudioSpec` - Audio configuration and voice-image pairs
+- `VideoSpec` - Main video configuration model with track-based architecture
+- `VideoTrack` - Video track with clips and z-order
+- `AudioTrack` - Audio track with clips and volume control
+- `TextTrack` - Text track with clips and positioning
+- `Transition` - Global transition specifications
 - `EffectSpec` - Animation and transition specifications
 - `ExportSpec` - Output configuration and quality settings
 
@@ -47,18 +49,20 @@ This specification defines the core architecture components for Phase 1 of Proje
 
 ### 3. TimelineBuilder (`vine/builder/`)
 
-**Purpose:** Fluent API for video timeline construction
+**Purpose:** Fluent API for video timeline construction with track-based architecture
 
 **Components:**
-- `TimelineBuilder` - Main builder class
-- `SceneBuilder` - Scene-based timeline construction
-- `BeatBuilder` - Beat-driven timeline construction
-- `TimelineNode` - Individual timeline elements
+- `TimelineBuilder` - Main builder class with track auto-detection
+- `VideoTrack` - Video track management
+- `AudioTrack` - Audio track management
+- `TextTrack` - Text track management
+- `Transition` - Global transition management
 
 **Key Features:**
 - Method chaining for intuitive API
-- Scene and beat mode support
-- Voice-image pair synchronization
+- Dual-mode timing (sequential and explicit)
+- Track auto-detection based on media type
+- Global transition support across tracks
 - Timeline validation and optimization
 
 ### 4. Defaults Management (`vine/defaults/`)

@@ -8,59 +8,83 @@
 
 ## Overview
 
-The TimelineBuilder provides a fluent, chainable API for constructing video timelines in Project Vine. It supports both scene-based and beat-driven editing modes, with seamless voice-image pair synchronization and comprehensive validation.
+The TimelineBuilder provides a fluent, chainable API for constructing video timelines in Project Vine. It implements a track-based system with dual-mode timing, supporting both sequential append and explicit timing modes. The system uses auto-detection of track types and provides global transition support across tracks.
 
 ## Core Architecture
 
 ### TimelineBuilder (Main Class)
 
-**Purpose:** Primary interface for timeline construction
+**Purpose:** Primary interface for timeline construction with track-based architecture
 
 ```python
 from typing import List, Dict, Any, Optional, Union
 from pathlib import Path
 from moviepy.editor import VideoClip, AudioFileClip, ImageClip
-from .models import TimelineSpec, SceneSpec, AudioSpec, VideoSpec
+from .models import VideoSpec, VideoTrack, AudioTrack, TextTrack, Transition
 
 class TimelineBuilder:
-    """Fluent API for video timeline construction."""
+    """Fluent API for video timeline construction with track-based architecture."""
 
-    def __init__(self):
-        self._timeline = TimelineSpec()
-        self._scenes: Dict[str, SceneSpec] = {}
-        self._current_scene: Optional[str] = None
-        self._registry_manager = RegistryManager()
-        self._validation_enabled = True
-
-    def set_mode(self, mode: Literal["scene", "beat", "hybrid"]) -> "TimelineBuilder":
-        """Set the timeline editing mode."""
-        self._timeline.mode = mode
-        return self
+    def __init__(self, width: int = 1920, height: int = 1080, fps: int = 30):
+        self.width = width
+        self.height = height
+        self.fps = fps
+        self.video_tracks: List[VideoTrack] = [VideoTrack("video_0")]
+        self.audio_tracks: List[AudioTrack] = [AudioTrack("audio_0")]
+        self.text_tracks: List[TextTrack] = [TextTrack("text_0")]
+        self.transitions: List[Transition] = []
+        self.current_time = 0.0
+        self.registry_manager = RegistryManager()
 
     def set_duration(self, duration: float) -> "TimelineBuilder":
         """Set the total timeline duration."""
         if duration <= 0:
             raise ValueError("Duration must be positive")
-        self._timeline.duration = duration
+        self.duration = duration
         return self
 
     def set_fps(self, fps: float) -> "TimelineBuilder":
         """Set the timeline frame rate."""
         if fps <= 0 or fps > 120:
             raise ValueError("FPS must be between 0 and 120")
-        self._timeline.fps = fps
+        self.fps = fps
         return self
 
-    def add_scene(self, scene_id: str, duration: float,
-                  name: Optional[str] = None) -> "TimelineBuilder":
-        """Add a new scene to the timeline."""
-        if scene_id in self._scenes:
-            raise ValueError(f"Scene '{scene_id}' already exists")
+    # Mode is inferred from method calls - no explicit mode setting needed
+    # Sequential methods: add_image(), add_text(), add_voice()
+    # Explicit methods: add_image_at(), add_text_at(), add_voice_at()
 
-        scene = SceneSpec(
-            id=scene_id,
-            name=name or scene_id,
-            duration=duration,
+    def _get_or_create_video_track(self) -> VideoTrack:
+        """Get or create a video track for auto-detection."""
+        # Auto-create new track if current one has overlapping clips
+        for track in self.video_tracks:
+            if not track.has_overlapping_clips():
+                return track
+        # Create new track
+        new_track = VideoTrack(f"video_{len(self.video_tracks)}")
+        self.video_tracks.append(new_track)
+        return new_track
+
+    def _get_or_create_audio_track(self) -> AudioTrack:
+        """Get or create an audio track for auto-detection."""
+        for track in self.audio_tracks:
+            if not track.has_overlapping_clips():
+                return track
+        new_track = AudioTrack(f"audio_{len(self.audio_tracks)}")
+        self.audio_tracks.append(new_track)
+        return new_track
+
+    def _get_or_create_text_track(self) -> TextTrack:
+        """Get or create a text track for auto-detection."""
+        for track in self.text_tracks:
+            if not track.has_overlapping_clips():
+                return track
+        new_track = TextTrack(f"text_{len(self.text_tracks)}")
+        self.text_tracks.append(new_track)
+        return new_track
+
+    # Legacy scene-based methods are deprecated in favor of track-based approach
+    # Use track-based methods instead: add_image(), add_text(), add_voice(), etc.
             start_time=self._calculate_scene_start_time()
         )
 
@@ -69,35 +93,148 @@ class TimelineBuilder:
         self._current_scene = scene_id
         return self
 
-    def add_voice_image_pair(self, scene_id: str, voice_file: Union[str, Path],
-                            image_file: Union[str, Path],
-                            sync_offset: float = 0.0) -> "TimelineBuilder":
-        """Add a voice-image pair to a scene."""
-        if scene_id not in self._scenes:
-            raise ValueError(f"Scene '{scene_id}' not found")
+## Track-Based API Methods
 
-        scene = self._scenes[scene_id]
+### Dual-Mode Timing System
 
-        # Create voice-image pair
-        pair = VoiceImagePairSpec(
-            id=f"{scene_id}_pair",
-            voice_file=Path(voice_file),
-            image_file=Path(image_file),
-            start_time=scene.start_time,
-            voice_duration=scene.duration,
-            image_duration=scene.duration,
-            sync_offset=sync_offset
-        )
+The TimelineBuilder supports two timing modes:
 
-        # Add to scene
-        scene.audio = AudioClipSpec(
-            file_path=pair.voice_file,
-            start_time=scene.start_time,
-            duration=scene.duration,
-            volume=1.0
-        )
+1. **Sequential Mode (Default)**: Elements are appended sequentially
+2. **Explicit Mode**: Elements are positioned at specific times with overlaps allowed
 
-        scene.images.append(ImageClipSpec(
+### Auto-Detection Methods
+
+All media types support auto-detection of track type and consistent timing options:
+
+```python
+# Sequential mode (default)
+builder.add_image("background.jpg", duration=10.0)      # Starts at current_time
+builder.add_text("Hello World", duration=6.0)           # Starts after image
+builder.add_voice("narration.mp3")                      # Starts after text
+
+# Explicit mode (inferred from method calls)
+builder.add_image_at("background.jpg", 0.0, 10.0)
+builder.add_text_at("Hello World", 0.0, 6.0)           # Overlaps with image
+builder.add_voice_at("narration.mp3", 0.0, 8.0)        # Overlaps with both
+```
+
+### Image Methods
+
+```python
+def add_image(self, path: Union[str, Path], duration: Optional[float] = None, **kwargs) -> "TimelineBuilder":
+    """Add image in sequential mode (auto-appended)."""
+    start_time = self.current_time
+    self.add_image_at(path, start_time, duration, **kwargs)
+    if duration:
+        self.current_time += duration
+    return self
+
+def add_image_at(self, path: Union[str, Path], start_time: float,
+                 duration: Optional[float] = None, end_time: Optional[float] = None, **kwargs) -> "TimelineBuilder":
+    """Add image at specific time (auto-detected to video track)."""
+    if end_time and duration:
+        raise ValueError("Cannot specify both duration and end_time")
+
+    if end_time:
+        duration = end_time - start_time
+
+    track = self._get_or_create_video_track()
+    clip = ImageClip(path, start_time, duration, **kwargs)
+    track.add_clip(clip)
+    return self
+```
+
+### Text Methods
+
+```python
+def add_text(self, content: str, duration: Optional[float] = None, **kwargs) -> "TimelineBuilder":
+    """Add text in sequential mode (auto-appended)."""
+    start_time = self.current_time
+    self.add_text_at(content, start_time, duration, **kwargs)
+    if duration:
+        self.current_time += duration
+    return self
+
+def add_text_at(self, content: str, start_time: float,
+                duration: Optional[float] = None, end_time: Optional[float] = None, **kwargs) -> "TimelineBuilder":
+    """Add text at specific time (auto-detected to text track)."""
+    if end_time and duration:
+        raise ValueError("Cannot specify both duration and end_time")
+
+    if end_time:
+        duration = end_time - start_time
+
+    track = self._get_or_create_text_track()
+    clip = TextClip(content, start_time, duration, **kwargs)
+    track.add_clip(clip)
+    return self
+```
+
+### Audio Methods
+
+```python
+def add_voice(self, path: Union[str, Path], duration: Optional[float] = None, **kwargs) -> "TimelineBuilder":
+    """Add voice in sequential mode (auto-appended)."""
+    start_time = self.current_time
+    self.add_voice_at(path, start_time, duration, **kwargs)
+    if duration:
+        self.current_time += duration
+    return self
+
+def add_voice_at(self, path: Union[str, Path], start_time: float,
+                 duration: Optional[float] = None, end_time: Optional[float] = None, **kwargs) -> "TimelineBuilder":
+    """Add voice at specific time (auto-detected to audio track)."""
+    if end_time and duration:
+        raise ValueError("Cannot specify both duration and end_time")
+
+    if end_time:
+        duration = end_time - start_time
+
+    track = self._get_or_create_audio_track()
+    clip = VoiceClip(path, start_time, duration, **kwargs)
+    track.add_clip(clip)
+    return self
+```
+
+### Transition Methods
+
+```python
+def add_transition(self, transition_type: str, duration: float = 1.0) -> "TimelineBuilder":
+    """Add transition in sequential mode (auto-inserted)."""
+    start_time = self.current_time - duration  # Overlap with previous
+    self.add_transition_at(transition_type, start_time, duration)
+    return self
+
+def add_transition_at(self, transition_type: str, start_time: float, duration: float) -> "TimelineBuilder":
+    """Add transition with explicit timing (global across tracks)."""
+    transition = Transition(
+        transition_type=transition_type,
+        start_time=start_time,
+        duration=duration
+    )
+    self.transitions.append(transition)
+    return self
+```
+
+### Build Method
+
+```python
+def build(self) -> VideoSpec:
+    """Build the final VideoSpec with track-based architecture."""
+    return VideoSpec(
+        video_tracks=self.video_tracks,
+        audio_tracks=self.audio_tracks,
+        text_tracks=self.text_tracks,
+        transitions=self.transitions,
+        width=self.width,
+        height=self.height,
+        fps=self.fps
+    )
+```
+
+## Legacy Scene-Based Methods (Deprecated)
+
+The following methods are maintained for backward compatibility but are deprecated in favor of the track-based approach:
             file_path=pair.image_file,
             start_time=scene.start_time,
             duration=scene.duration

@@ -1,6 +1,6 @@
 # 📽️ Project Vine - Media Composition Framework
 
-**Project Vine** is a modular, agent-compatible, dual-mode video composition framework built on top of MoviePy. It provides an expressive and extensible API for AI-driven and human-assisted short-form video generation, supporting both scene-based narrative pacing and beat-driven precision editing.
+**Project Vine** is a modular, agent-compatible, track-based video composition framework built on top of MoviePy. It provides an expressive and extensible API for AI-driven and human-assisted short-form video generation, supporting both sequential append and explicit timing modes.
 
 ## 🚀 Key Features
 
@@ -106,7 +106,7 @@ timeline.export("configured_video.mp4")
 - [ ] Complete rendering pipeline
 
 ### Phase 3: Advanced Modes (Week 5)
-- [ ] Scene-based and beat-driven editing
+- [ ] Track-based editing with dual-mode timing
 - [ ] Hybrid mode support
 - [ ] Advanced animation effects
 

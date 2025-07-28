@@ -25,10 +25,11 @@ class AudioConfig(BaseModel):
     @field_validator("end_time")
     @classmethod
     def validate_end_time(cls, v: Optional[float], info) -> Optional[float]:
-        """Validate end time is after start time."""
-        start_time = info.data.get("start_time")
-        if v is not None and start_time is not None and v <= start_time:
-            raise ValueError("End time must be after start time")
+        """Validate end_time is after start_time."""
+        if v is not None:
+            start_time = info.data.get("start_time")
+            if start_time is not None and v <= start_time:
+                raise ValueError("End time must be after start time")
         return v
 
 

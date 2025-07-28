@@ -15,7 +15,7 @@
 
 ### Decision
 
-Project Vine will be built as a modular, agent-compatible, dual-mode video composition framework using Python with MoviePy integration. The framework will support both scene-based narrative pacing and beat-driven precision editing, with a fluent API for human developers and JSON/YAML input for AI agents.
+Project Vine will be built as a modular, agent-compatible, track-based video composition framework using Python with MoviePy integration. The framework will support both sequential append and explicit timing modes, with a fluent API for human developers and JSON/YAML input for AI agents.
 
 ### Context
 
@@ -48,9 +48,9 @@ The Python + MoviePy approach was chosen because:
 - **Community**: Large developer community and extensive documentation
 - **Extensibility**: Easy to add custom effects and plugins
 
-The dual-mode editing system addresses the diverse needs of content creators:
-- **Scene-based**: For narrative content like documentaries and presentations
-- **Beat-driven**: For rhythmic content like music videos and social media
+The track-based editing system addresses the diverse needs of content creators:
+- **Sequential mode**: For simple workflows with automatic timing
+- **Explicit mode**: For complex scenarios with precise timing control
 
 ### Consequences
 
@@ -66,6 +66,89 @@ The dual-mode editing system addresses the diverse needs of content creators:
 - MoviePy performance constraints for very large projects
 - Learning curve for complex video processing concepts
 - Memory usage considerations for large video projects
+
+## 2025-07-27: TimelineBuilder Architecture Decision
+
+**ID:** DEC-003
+**Status:** Accepted
+**Category:** Technical Architecture
+**Stakeholders:** Tech Lead, Development Team
+
+### Decision
+
+Project Vine will implement a **track-based system with dual-mode timing** for the TimelineBuilder API. This approach uses auto-detection of track types, supports both sequential append and explicit timing modes, and provides global transition support across tracks.
+
+### Context
+
+The original TimelineBuilder design prevented overlapping visual elements, which limited common video editing scenarios. After analyzing 15 real-world use cases, we identified the need for a system that allows natural temporal overlaps while maintaining a clean, extensible API.
+
+### Alternatives Considered
+
+1. **Scene-Based Composition Objects**
+   - Pros: Natural semantic grouping, fluent API, handles complex scenarios
+   - Cons: Adds complexity, requires new Scene classes, overkill for simple cases
+
+2. **Timeline-Based Fluent Composition**
+   - Pros: Explicit timing control, fluent API, extensible
+   - Cons: More verbose for simple cases, state management complexity
+
+3. **Layer-Based System**
+   - Pros: Clean separation, no method explosion, extensible
+   - Cons: Less semantic grouping, harder to manage relationships
+
+4. **Configuration-Driven Approach**
+   - Pros: Very flexible, JSON/YAML friendly, no method explosion
+   - Cons: Less type safety, harder to validate, runtime errors
+
+5. **Event-Driven Timeline**
+   - Pros: Very flexible, precise control, event-driven architecture
+   - Cons: More complex, harder to reason about, potential for conflicting events
+
+### Rationale
+
+The track-based approach was selected because:
+
+1. **Professional Compatibility**: Matches video editing software (Premiere Pro, Final Cut, DaVinci Resolve)
+2. **Dual-Mode Flexibility**: Sequential mode for simple workflows, explicit mode for complex scenarios
+3. **Auto-Detection**: Clean API without track specification complexity
+4. **Future-Proof**: Foundation for professional format export/import
+5. **User-Friendly**: Intuitive for both simple and complex workflows
+6. **Implementation Efficiency**: Minimal changes to existing codebase
+
+### Technical Implementation
+
+**Track-Based Data Model:**
+```python
+class VideoSpec:
+    video_tracks: List[VideoTrack] = Field(default_factory=lambda: [VideoTrack("video_0")])
+    audio_tracks: List[AudioTrack] = Field(default_factory=lambda: [AudioTrack("audio_0")])
+    text_tracks: List[TextTrack] = Field(default_factory=lambda: [TextTrack("text_0")])
+    transitions: List[Transition] = Field(default_factory=list)
+```
+
+**Dual-Mode Timing:**
+- **Sequential Mode (Default)**: Elements appended sequentially
+- **Explicit Mode**: Elements positioned at specific times with overlaps allowed
+
+**Auto-Detection:**
+- `add_image_at()` → video track
+- `add_text_at()` → text track
+- `add_voice_at()` → audio track
+
+### Consequences
+
+**Positive:**
+- Solves overlap problem for all 15 identified scenarios
+- Maintains clean API without method explosion
+- Provides professional video editor compatibility
+- Supports both simple and complex workflows
+- Foundation for future professional format integration
+
+**Negative:**
+- Requires track-based data model implementation
+- Adds complexity to rendering pipeline
+- Need to manage track auto-creation logic
+- Potential for track management complexity in future
 
 ## 2025-07-27: Technical Architecture Decision
 

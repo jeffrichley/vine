@@ -3,12 +3,17 @@
 
 from vine.models import (
     AnimationConfig,
-    FadeConfig,
+    AudioClip,
+    AudioTrack,
+    ImageClip,
     KenBurnsConfig,
     MusicConfig,
-    TimelineBlock,
-    TransitionConfig,
+    TextClip,
+    TextTrack,
+    Transition,
+    VideoClip,
     VideoSpec,
+    VideoTrack,
     VoiceConfig,
 )
 
@@ -26,36 +31,63 @@ def main():
         effect=ken_burns, start_time=0.0, duration=5.0, easing="ease_in_out"
     )
 
-    # Create a video block
-    video_block = TimelineBlock(
-        block_type="video",
-        video_path="/path/to/intro.mp4",
+    # Create video clips
+    video_clip = VideoClip(
+        path="/path/to/intro.mp4",
         start_time=0.0,
         duration=5.0,
         width=1920,
         height=1080,
         opacity=1.0,
+        animations=[animation],
     )
-    video_block.add_animation(animation)
 
-    # Create an image block
-    image_block = TimelineBlock(
-        block_type="image",
-        image_path="/path/to/slide.jpg",
+    image_clip = ImageClip(
+        path="/path/to/slide.jpg",
         start_time=5.0,
         duration=3.0,
         width=1920,
         height=1080,
     )
 
-    # Create a fade transition
-    fade = FadeConfig(duration=1.0, fade_type="cross")
+    # Create text clip
+    text_clip = TextClip(
+        content="Welcome to Project Vine!",
+        start_time=2.0,
+        duration=2.0,
+        font_size=48,
+        font_color="#FFFFFF",
+        x_position=960,
+        y_position=540,
+    )
 
-    transition = TransitionConfig(
-        transition=fade,
+    # Create audio clip
+    audio_clip = AudioClip(
+        path="/path/to/narration.mp3",
+        start_time=0.0,
+        duration=8.0,
+        volume=0.9,
+        fade_in=0.5,
+    )
+
+    # Create tracks and add clips
+    video_track = VideoTrack(name="main_video", z_order=0)
+    video_track.add_clip(video_clip)
+    video_track.add_clip(image_clip)
+
+    text_track = TextTrack(name="main_text", z_order=1)
+    text_track.add_clip(text_clip)
+
+    audio_track = AudioTrack(name="main_audio")
+    audio_track.add_clip(audio_clip)
+
+    # Create a fade transition
+    transition = Transition(
+        transition_type="fade",
         start_time=4.5,
-        from_block_id=video_block.id,
-        to_block_id=image_block.id,
+        duration=1.0,
+        direction="in",
+        easing="ease_in_out",
     )
 
     # Create voice configuration
@@ -79,9 +111,10 @@ def main():
         music_config=music,
     )
 
-    # Add blocks and transitions
-    video_spec.add_block(video_block)
-    video_spec.add_block(image_block)
+    # Add tracks and transitions
+    video_spec.add_video_track(video_track)
+    video_spec.add_text_track(text_track)
+    video_spec.add_audio_track(audio_track)
     video_spec.add_transition(transition)
 
     # Display the specification
@@ -91,22 +124,37 @@ def main():
     print(f"📐 Resolution: {video_spec.width}x{video_spec.height}")
     print(f"🎬 FPS: {video_spec.fps}")
     print(f"⏱️  Duration: {video_spec.get_total_duration():.1f} seconds")
-    print(f"🎞️  Blocks: {len(video_spec.blocks)}")
+    print(f"📹 Video Tracks: {len(video_spec.video_tracks)}")
+    print(f"🎵 Audio Tracks: {len(video_spec.audio_tracks)}")
+    print(f"📝 Text Tracks: {len(video_spec.text_tracks)}")
     print(f"🔄 Transitions: {len(video_spec.transitions)}")
 
-    print("\n📋 Timeline Blocks:")
-    for i, block in enumerate(video_spec.blocks):
-        print(f"  {i+1}. {block.block_type} block (ID: {block.id[:8]}...)")
-        print(f"     Start: {block.start_time}s, Duration: {block.duration}s")
-        if block.animations:
-            print(f"     Animations: {len(block.animations)}")
+    print("\n📋 Timeline Clips:")
+    for i, track in enumerate(video_spec.video_tracks):
+        print(f"  📹 Video Track {i} ({track.name}):")
+        for j, clip in enumerate(track.clips):
+            print(
+                f"    - Clip {j}: {clip.path} ({clip.start_time}s - {clip.get_end_time()}s)"
+            )
+
+    for i, track in enumerate(video_spec.text_tracks):
+        print(f"  📝 Text Track {i} ({track.name}):")
+        for j, clip in enumerate(track.clips):
+            print(
+                f"    - Clip {j}: '{clip.content}' ({clip.start_time}s - {clip.get_end_time()}s)"
+            )
+
+    for i, track in enumerate(video_spec.audio_tracks):
+        print(f"  🎵 Audio Track {i} ({track.name}):")
+        for j, clip in enumerate(track.clips):
+            print(
+                f"    - Clip {j}: {clip.path} ({clip.start_time}s - {clip.get_end_time()}s)"
+            )
 
     print("\n🔄 Transitions:")
     for i, trans in enumerate(video_spec.transitions):
-        print(f"  {i+1}. {trans.transition.type} transition")
-        print(
-            f"     Start: {trans.start_time}s, Duration: {trans.transition.duration}s"
-        )
+        print(f"  {i+1}. {trans.transition_type} transition")
+        print(f"     Start: {trans.start_time}s, Duration: {trans.duration}s")
 
     # Convert to JSON
     json_data = video_spec.model_dump_json()

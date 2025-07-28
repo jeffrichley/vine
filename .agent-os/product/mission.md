@@ -5,7 +5,7 @@
 
 ## Pitch
 
-Project Vine is a modular, agent-compatible, dual-mode video composition framework that helps AI developers and content creators generate professional short-form videos by providing a fluent API for scene-based narrative pacing and beat-driven precision editing, with seamless integration for AI agents and human creators alike.
+Project Vine is a modular, agent-compatible, track-based video composition framework that helps AI developers and content creators generate professional short-form videos by providing a fluent API for sequential append and explicit timing modes, with seamless integration for AI agents and human creators alike.
 
 ## Users
 
@@ -67,9 +67,9 @@ Existing video frameworks don't provide easy ways to add custom effects and tran
 
 Unlike traditional video editing tools, we provide structured JSON/YAML input specifically designed for AI agent consumption. This results in seamless integration with LLM workflows and automated content generation.
 
-### Dual-Mode Editing System
+### Track-Based Editing System
 
-Unlike single-purpose video tools, we support both scene-based narrative pacing and beat-driven precision editing in a unified framework. This results in flexible content creation for diverse use cases.
+Unlike single-purpose video tools, we support both sequential append and explicit timing modes in a unified framework. This results in flexible content creation for diverse use cases.
 
 ### Extensible Registry Architecture
 
@@ -81,7 +81,7 @@ Unlike closed video processing libraries, we provide a plugin system for custom 
 
 - **Fluent TimelineBuilder API:** Intuitive method chaining for video composition with intelligent defaults
 - **Voice-Image Pair System:** Automatic synchronization of audio and visuals with duration inference
-- **Dual-Mode Editing:** Scene-based narrative pacing and beat-driven precision editing
+- **Track-Based Editing:** Sequential append and explicit timing modes with professional video editor compatibility
 - **Pydantic Validation:** Type-safe video specifications with comprehensive error handling
 - **Registry System:** Extensible animations and transitions with plugin architecture
 - **Smart Defaults:** Hierarchical configuration system for consistent output

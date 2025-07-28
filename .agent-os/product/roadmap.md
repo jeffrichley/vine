@@ -7,16 +7,18 @@
 ## Phase 1: Foundation (Weeks 1-2)
 
 **Goal:** Establish core architecture and basic functionality
-**Success Criteria:** Basic video generation with voice-image pairs working
+**Success Criteria:** Track-based TimelineBuilder with dual-mode timing working
 
 ### Must-Have Features
 
 - [ ] **Project Structure** - Initialize package structure and dependencies `XS`
-- [ ] **Pydantic Models** - Implement data validation models for video specs `S`
+- [ ] **Track-Based Data Model** - Implement VideoTrack, AudioTrack, TextTrack models `M`
+- [ ] **Pydantic Models** - Update data validation models for track-based architecture `S`
 - [ ] **Registry System** - Create extensible animation/transition registries `S`
 - [ ] **Defaults Management** - Build hierarchical defaults system `S`
-- [ ] **TimelineBuilder** - Core fluent API implementation `M`
-- [ ] **Voice-Image Pairs** - Basic voice-image synchronization `M`
+- [ ] **TimelineBuilder** - Core fluent API with track auto-detection `M`
+- [ ] **Dual-Mode Timing** - Sequential append and explicit timing modes `M`
+- [ ] **Global Transitions** - Transition system that works across tracks `S`
 - [ ] **Animation System** - Ken Burns, slide, static effects `S`
 - [ ] **Transition System** - Fade, crossfade, slide transitions `S`
 
@@ -67,9 +69,9 @@
 
 ### Must-Have Features
 
-- [ ] **Scene-Based Editing** - Narrative-driven timeline construction `M`
-- [ ] **Beat-Driven Editing** - Music-synchronized timing `M`
-- [ ] **Hybrid Mode** - Seamless mode switching `S`
+- [ ] **Track-Based Editing** - Professional video editor-style timeline construction `M`
+- [ ] **Dual-Mode Timing** - Sequential and explicit timing modes `M`
+- [ ] **Advanced Track Management** - Multiple tracks and layering `S`
 - [ ] **Advanced Effects** - Parallax, zoom blur, custom animations `M`
 - [ ] **Text Overlay** - Subtitle and text rendering `S`
 - [ ] **Music Integration** - Beat detection and synchronization `M`

@@ -1,10 +1,9 @@
 """Base model for Project Vine."""
 
 import uuid
-from typing import Any
 
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import ConfigDict, Field, field_validator
+from pydantic import ConfigDict, Field
 
 
 class BaseModel(PydanticBaseModel):
@@ -19,11 +18,3 @@ class BaseModel(PydanticBaseModel):
         validate_assignment=True,  # Validate on assignment
         use_enum_values=True,  # Use enum values instead of enum objects
     )
-
-    @field_validator("*", mode="before")
-    @classmethod
-    def _validate_fields(cls, v: Any) -> Any:
-        """Pre-validation hook for all fields."""
-        if v == "":
-            return None
-        return v

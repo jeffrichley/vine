@@ -4,8 +4,16 @@ from vine.models.animation_config import AnimationConfig
 from vine.models.audio_config import AudioConfig, MusicConfig, VoiceConfig
 from vine.models.base import BaseModel
 from vine.models.effects import EffectConfig, KenBurnsConfig, SlideConfig, StaticConfig
-from vine.models.timeline_block import TimelineBlock
-from vine.models.transition_config import TransitionConfig
+from vine.models.tracks import (
+    AudioClip,
+    AudioTrack,
+    ImageClip,
+    TextClip,
+    TextTrack,
+    VideoClip,
+    VideoTrack,
+)
+from vine.models.transition import Transition
 from vine.models.transitions import (
     CrossfadeConfig,
     FadeConfig,
@@ -17,9 +25,15 @@ from vine.models.video_spec import VideoSpec
 __all__ = [
     "BaseModel",
     "VideoSpec",
-    "TimelineBlock",
+    "VideoTrack",
+    "AudioTrack",
+    "TextTrack",
+    "VideoClip",
+    "ImageClip",
+    "TextClip",
+    "AudioClip",
+    "Transition",
     "AnimationConfig",
-    "TransitionConfig",
     "AudioConfig",
     "VoiceConfig",
     "MusicConfig",
