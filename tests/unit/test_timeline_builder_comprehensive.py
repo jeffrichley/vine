@@ -1,11 +1,23 @@
-"""Comprehensive unit tests for TimelineBuilder."""
+#!/usr/bin/env python3
+"""
+Comprehensive tests for TimelineBuilder functionality.
+
+This module tests all major features of the TimelineBuilder class including
+sequential and explicit timing modes, track management, and edge cases.
+"""
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 
 from vine.builder.timeline_builder import TimelineBuilder
 from vine.models.video_spec import VideoSpec
+
+
+def safe_assert(condition: Any, message: str = "") -> None:
+    """Assert that helps mypy understand control flow."""
+    assert condition, message
 
 
 class TestTimelineBuilderComprehensive:
@@ -748,20 +760,32 @@ class TestTimelineBuilderComprehensive:
         # Clear the duration
         builder.clear_duration()
         # After clear_duration(), _next_duration should be None
-        assert builder._next_duration is None
+        # Use safe_assert to help mypy understand the mutation
+        safe_assert(
+            builder._next_duration is None, "Duration should be None after clear"
+        )
 
         # Add elements without specifying duration
         builder.add_image("image1.jpg")  # Should not use any duration
         builder.add_text("text1")  # Should not use any duration
 
         # Check that clips were created without duration
-        assert builder.video_tracks[0].clips[0].duration is None
-        assert builder.text_tracks[0].clips[0].duration is None
+        safe_assert(
+            builder.video_tracks[0].clips[0].duration is None,
+            "Video clip should have no duration",
+        )
+        safe_assert(
+            builder.text_tracks[0].clips[0].duration is None,
+            "Text clip should have no duration",
+        )
 
         # Test that setting duration again works
         builder.set_duration(3.0)
         builder.add_voice("voice1.mp3")  # Should use 3.0 duration
-        assert builder.voice_tracks[0].clips[0].duration == 3.0
+        safe_assert(
+            builder.voice_tracks[0].clips[0].duration == 3.0,
+            "Voice clip should have 3.0 duration",
+        )
 
     def test_set_duration_batch_operations(self):
         """Test that set_duration works correctly for batch operations with multiple elements."""
