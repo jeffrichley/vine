@@ -1,0 +1,227 @@
+{
+  "id": "0bba2b8a-4de2-4851-8151-12c77b24a9c8",
+  "title": "Generated Video",
+  "description": null,
+  "author": null,
+  "width": 1080,
+  "height": 1920,
+  "fps": 30.0,
+  "duration": null,
+  "video_tracks": [
+    {
+      "id": "6b9a3df3-0a6c-4334-8a3a-184d33e05957",
+      "name": "video_0",
+      "clips": [
+        {
+          "id": "dd4de968-12f9-450c-85d8-4dac41c77781",
+          "path": "tmp/images/fb34586ed041467fad76362573273855.png",
+          "start_time": 0.0,
+          "duration": 3.6694784580498867,
+          "end_time": null,
+          "width": null,
+          "height": null,
+          "x_position": 0.0,
+          "y_position": 0.0,
+          "opacity": 1.0,
+          "animations": [],
+          "metadata": {}
+        },
+        {
+          "id": "9023d0b4-de29-4607-be92-bc31d117cb89",
+          "path": "tmp/images/dde12e61c6bc40eb82d3210d40635c7a.png",
+          "start_time": 3.6694784580498867,
+          "duration": 5.120725623582766,
+          "end_time": null,
+          "width": null,
+          "height": null,
+          "x_position": 0.0,
+          "y_position": 0.0,
+          "opacity": 1.0,
+          "animations": [],
+          "metadata": {}
+        },
+        {
+          "id": "f85c40f1-deaf-4239-9d5c-38fd45e75bde",
+          "path": "tmp/images/4c4bdd47e5484ceb9186d348fc8bc8ed.png",
+          "start_time": 8.790204081632652,
+          "duration": 5.352925170068027,
+          "end_time": null,
+          "width": null,
+          "height": null,
+          "x_position": 0.0,
+          "y_position": 0.0,
+          "opacity": 1.0,
+          "animations": [],
+          "metadata": {}
+        },
+        {
+          "id": "fa62cdf4-882a-49f9-bdf9-2f04e62bc217",
+          "path": "tmp/images/0edd3b03760f48868a7b517ba20095d2.png",
+          "start_time": 14.143129251700678,
+          "duration": 5.643174603174603,
+          "end_time": null,
+          "width": null,
+          "height": null,
+          "x_position": 0.0,
+          "y_position": 0.0,
+          "opacity": 1.0,
+          "animations": [],
+          "metadata": {}
+        },
+        {
+          "id": "614d2876-88b4-4c71-bfdb-7da465f029b0",
+          "path": "tmp/images/4571ca92d8234133a8cf64696d73a102.png",
+          "start_time": 19.786303854875282,
+          "duration": 4.133877551020408,
+          "end_time": null,
+          "width": null,
+          "height": null,
+          "x_position": 0.0,
+          "y_position": 0.0,
+          "opacity": 1.0,
+          "animations": [],
+          "metadata": {}
+        }
+      ],
+      "z_order": 0,
+      "visible": true
+    }
+  ],
+  "audio_tracks": [
+    {
+      "id": "652bb4d4-c614-43f1-b2da-938733f261be",
+      "name": "audio_0",
+      "clips": [
+        {
+          "id": "341873ab-41ef-42db-a5a7-96f8e57088c0",
+          "path": "tmp/music/music_1df9fa775fbb48709efea267d9bf7956.wav",
+          "start_time": 0.0,
+          "duration": null,
+          "end_time": null,
+          "volume": 0.2,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        },
+        {
+          "id": "124d65ac-920b-47ed-a634-7e9a2ece499d",
+          "path": "tmp/chrona_voice/02f648b058c1485589f92177d82caf95.wav",
+          "start_time": 0.0,
+          "duration": 3.6694784580498867,
+          "end_time": null,
+          "volume": 1.0,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        }
+      ],
+      "volume": 1.0,
+      "muted": false
+    },
+    {
+      "id": "cb04172d-9f4c-44ed-b217-afdacceaa228",
+      "name": "audio_1",
+      "clips": [
+        {
+          "id": "a7875d6d-dd46-42ed-a797-6449a87afacd",
+          "path": "tmp/chrona_voice/90ac3767c10048e6bfcc59aef38b9dc5.wav",
+          "start_time": 3.6694784580498867,
+          "duration": 5.120725623582766,
+          "end_time": null,
+          "volume": 1.0,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        },
+        {
+          "id": "b7cea16f-3676-45b4-abd7-78ad15fec598",
+          "path": "tmp/chrona_voice/e3d35b1c4ba14533a5c57a5ce1c63139.wav",
+          "start_time": 8.790204081632652,
+          "duration": 5.352925170068027,
+          "end_time": null,
+          "volume": 1.0,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        },
+        {
+          "id": "2e6bf857-eb12-43e2-9f72-28303862878b",
+          "path": "tmp/chrona_voice/8e72a880e6e049d7a72e73ae3e5429cc.wav",
+          "start_time": 14.143129251700678,
+          "duration": 5.643174603174603,
+          "end_time": null,
+          "volume": 1.0,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        },
+        {
+          "id": "22c41a7a-4be8-4c17-adb7-6c1a19345bf4",
+          "path": "tmp/chrona_voice/e4a0e767613f41f3a3206b0e656726f6.wav",
+          "start_time": 19.786303854875282,
+          "duration": 4.133877551020408,
+          "end_time": null,
+          "volume": 1.0,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        }
+      ],
+      "volume": 1.0,
+      "muted": false
+    }
+  ],
+  "text_tracks": [
+    {
+      "id": "9cd6b385-0c2c-4b92-b893-c1268c74ed0c",
+      "name": "text_0",
+      "clips": [],
+      "z_order": 0,
+      "visible": true
+    }
+  ],
+  "transitions": [
+    {
+      "id": "75cb2ac7-4210-483b-81ce-979a6bdae76b",
+      "transition_type": "fade",
+      "start_time": 0.0,
+      "duration": 1.0,
+      "from_tracks": [],
+      "to_tracks": [],
+      "direction": "in",
+      "easing": "linear",
+      "metadata": {}
+    },
+    {
+      "id": "fdd3d714-2a89-4222-b5ff-f2ad2408591c",
+      "transition_type": "fade",
+      "start_time": 22.92018140589569,
+      "duration": 1.0,
+      "from_tracks": [],
+      "to_tracks": [],
+      "direction": "in",
+      "easing": "linear",
+      "metadata": {}
+    }
+  ],
+  "voice_config": null,
+  "music_config": null,
+  "output_path": null,
+  "output_format": "mp4",
+  "quality": "high",
+  "background_color": "#000000",
+  "enable_audio": true,
+  "enable_video": true
+}

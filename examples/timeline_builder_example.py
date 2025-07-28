@@ -16,7 +16,9 @@ def demonstrate_basic_usage():
 
     print(f"Video tracks: {len(builder.video_tracks)}")
     print(f"Text tracks: {len(builder.text_tracks)}")
-    print(f"Audio tracks: {len(builder.audio_tracks)}")
+    print(f"Music tracks: {len(builder.music_tracks)}")
+    print(f"Voice tracks: {len(builder.voice_tracks)}")
+    print(f"SFX tracks: {len(builder.sfx_tracks)}")
     print(f"Total duration: {builder.get_duration()}")
     print()
 
@@ -38,7 +40,7 @@ def demonstrate_sequential_mode():
 
     print(f"Video clips: {len(builder.video_tracks[0].clips)}")
     print(f"Text clips: {len(builder.text_tracks[0].clips)}")
-    print(f"Audio clips: {len(builder.audio_tracks[0].clips)}")
+    print(f"Voice clips: {len(builder.voice_tracks[0].clips)}")
     print(f"Total duration: {builder.get_duration()}")
     print()
 
@@ -60,15 +62,15 @@ def demonstrate_set_duration_batch():
     # All elements use the 3.0 second duration
     print(f"Video clips: {len(builder.video_tracks[0].clips)}")
     print(f"Text clips: {len(builder.text_tracks[0].clips)}")
-    print(f"Audio clips: {len(builder.audio_tracks[0].clips)}")
+    print(f"Voice clips: {len(builder.voice_tracks[0].clips)}")
 
     # Check that all clips have the set duration
     for clip in builder.video_tracks[0].clips:
         print(f"Video clip duration: {clip.duration}")
     for clip in builder.text_tracks[0].clips:
         print(f"Text clip duration: {clip.duration}")
-    for clip in builder.audio_tracks[0].clips:
-        print(f"Audio clip duration: {clip.duration}")
+    for clip in builder.voice_tracks[0].clips:
+        print(f"Voice clip duration: {clip.duration}")
 
     # Clear the duration and add elements without duration
     builder.clear_duration()
@@ -121,13 +123,13 @@ def demonstrate_track_auto_detection():
     builder.add_voice_at("voice2.mp3", start_time=1.0, duration=3.0)  # Overlaps
 
     print(f"Video tracks: {len(builder.video_tracks)}")
-    print(f"Audio tracks: {len(builder.audio_tracks)}")
+    print(f"Voice tracks: {len(builder.voice_tracks)}")
 
     for i, track in enumerate(builder.video_tracks):
         print(f"  Video track {i}: {len(track.clips)} clips")
 
-    for i, track in enumerate(builder.audio_tracks):
-        print(f"  Audio track {i}: {len(track.clips)} clips")
+    for i, track in enumerate(builder.voice_tracks):
+        print(f"  Voice track {i}: {len(track.clips)} clips")
     print()
 
 
@@ -149,7 +151,7 @@ def demonstrate_method_chaining():
     print(f"FPS: {builder.fps}")
     print(f"Video clips: {len(builder.video_tracks[0].clips)}")
     print(f"Text clips: {len(builder.text_tracks[0].clips)}")
-    print(f"Audio clips: {len(builder.audio_tracks[0].clips)}")
+    print(f"Voice clips: {len(builder.voice_tracks[0].clips)}")
     print()
 
 

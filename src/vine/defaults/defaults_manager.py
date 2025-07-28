@@ -55,3 +55,44 @@ class DefaultsManager:
             Dictionary of all current defaults
         """
         return self._defaults.copy()
+
+    # Audio defaults
+    DEFAULT_MUSIC_VOLUME = 0.3  # Background music should be subtle
+    DEFAULT_VOICE_VOLUME = 0.8  # Voice should be prominent
+    DEFAULT_SFX_VOLUME = 0.5  # SFX should be noticeable but not overwhelming
+
+    def get_audio_defaults(self) -> Dict[str, float]:
+        """Get all audio default settings.
+
+        Returns:
+            Dictionary with all audio defaults
+        """
+        return {
+            "music_volume": self.DEFAULT_MUSIC_VOLUME,
+            "voice_volume": self.DEFAULT_VOICE_VOLUME,
+            "sfx_volume": self.DEFAULT_SFX_VOLUME,
+        }
+
+    def get_music_volume(self) -> float:
+        """Get default music volume.
+
+        Returns:
+            Default music volume (0.3)
+        """
+        return self.DEFAULT_MUSIC_VOLUME
+
+    def get_voice_volume(self) -> float:
+        """Get default voice volume.
+
+        Returns:
+            Default voice volume (0.8)
+        """
+        return self.DEFAULT_VOICE_VOLUME
+
+    def get_sfx_volume(self) -> float:
+        """Get default SFX volume.
+
+        Returns:
+            Default SFX volume (0.5)
+        """
+        return self.DEFAULT_SFX_VOLUME

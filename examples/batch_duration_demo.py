@@ -34,7 +34,7 @@ def demonstrate_batch_duration():
     print("\n3. Checking results:")
     print(f"   Video clips: {len(builder.video_tracks[0].clips)}")
     print(f"   Text clips: {len(builder.text_tracks[0].clips)}")
-    print(f"   Audio clips: {len(builder.audio_tracks[0].clips)}")
+    print(f"   Voice clips: {len(builder.voice_tracks[0].clips)}")
 
     print("\n4. Verifying all clips have the set duration:")
     for i, clip in enumerate(builder.video_tracks[0].clips):
@@ -43,8 +43,8 @@ def demonstrate_batch_duration():
     for i, clip in enumerate(builder.text_tracks[0].clips):
         print(f"   Text clip {i+1}: {clip.duration}s")
 
-    for i, clip in enumerate(builder.audio_tracks[0].clips):
-        print(f"   Audio clip {i+1}: {clip.duration}s")
+    for i, clip in enumerate(builder.voice_tracks[0].clips):
+        print(f"   Voice clip {i+1}: {clip.duration}s")
 
     print(f"\n5. Total timeline duration: {builder.get_duration()}s")
 
@@ -62,7 +62,7 @@ def demonstrate_batch_duration():
     builder.clear_duration()
     builder.add_voice("voice2.mp3")
     print("   ✅ Added voice2.mp3 (no duration set)")
-    print(f"   Audio clip 2 duration: {builder.audio_tracks[0].clips[1].duration}")
+    print(f"   Voice clip 2 duration: {builder.voice_tracks[0].clips[1].duration}")
 
     print("\n9. Testing setting duration again:")
     builder.set_duration(2.0)

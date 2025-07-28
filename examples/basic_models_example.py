@@ -78,8 +78,8 @@ def main():
     text_track = TextTrack(name="main_text", z_order=1)
     text_track.add_clip(text_clip)
 
-    audio_track = AudioTrack(name="main_audio")
-    audio_track.add_clip(audio_clip)
+    voice_track = AudioTrack(name="main_voice")
+    voice_track.add_clip(audio_clip)
 
     # Create a fade transition
     transition = Transition(
@@ -114,7 +114,7 @@ def main():
     # Add tracks and transitions
     video_spec.add_video_track(video_track)
     video_spec.add_text_track(text_track)
-    video_spec.add_audio_track(audio_track)
+    video_spec.add_voice_track(voice_track)
     video_spec.add_transition(transition)
 
     # Display the specification
@@ -125,7 +125,7 @@ def main():
     print(f"🎬 FPS: {video_spec.fps}")
     print(f"⏱️  Duration: {video_spec.get_total_duration():.1f} seconds")
     print(f"📹 Video Tracks: {len(video_spec.video_tracks)}")
-    print(f"🎵 Audio Tracks: {len(video_spec.audio_tracks)}")
+    print(f"🎵 Voice Tracks: {len(video_spec.voice_tracks)}")
     print(f"📝 Text Tracks: {len(video_spec.text_tracks)}")
     print(f"🔄 Transitions: {len(video_spec.transitions)}")
 
@@ -144,8 +144,8 @@ def main():
                 f"    - Clip {j}: '{clip.content}' ({clip.start_time}s - {clip.get_end_time()}s)"
             )
 
-    for i, track in enumerate(video_spec.audio_tracks):
-        print(f"  🎵 Audio Track {i} ({track.name}):")
+    for i, track in enumerate(video_spec.voice_tracks):
+        print(f"  🎵 Voice Track {i} ({track.name}):")
         for j, clip in enumerate(track.clips):
             print(
                 f"    - Clip {j}: {clip.path} ({clip.start_time}s - {clip.get_end_time()}s)"

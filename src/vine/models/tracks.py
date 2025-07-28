@@ -1,7 +1,7 @@
 """Track-based data models for Project Vine."""
 
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 from pydantic import Field, field_validator
 
@@ -205,6 +205,18 @@ class AudioClip(BaseModel):
     volume: float = Field(1.0, ge=0.0, le=2.0, description="Volume level (0-2)")
     fade_in: float = Field(0.0, ge=0.0, description="Fade in duration in seconds")
     fade_out: float = Field(0.0, ge=0.0, description="Fade out duration in seconds")
+
+    # Professional audio controls (leveraging MoviePy effects)
+    crossfade_duration: float = Field(
+        0.5, ge=0.0, description="Crossfade duration with adjacent clips"
+    )
+    auto_crossfade: bool = Field(
+        True, description="Enable automatic crossfades with adjacent clips"
+    )
+    normalize_audio: bool = Field(False, description="Apply audio normalization")
+    volume_curve: Optional[List[Tuple[float, float]]] = Field(
+        None, description="Custom volume envelope as list of (time, volume) tuples"
+    )
 
     # Audio configuration
     voice_config: Optional[VoiceConfig] = Field(None, description="Voice configuration")

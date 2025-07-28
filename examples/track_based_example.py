@@ -67,7 +67,7 @@ def show_timeline_statistics(builder):
     print(f"  🎵 Audio tracks: {track_counts['audio']}")
     print(f"  📝 Text tracks: {track_counts['text']}")
     print(f"  🎬 Video clips: {clip_counts['video']}")
-    print(f"  🎵 Audio clips: {clip_counts['audio']}")
+    print(f"  🎵 Voice clips: {clip_counts['voice']}")
     print(f"  📝 Text clips: {clip_counts['text']}")
     print(f"  ⏱️  Total duration: {total_duration}s")
 
@@ -87,8 +87,8 @@ def show_track_details(builder):
         if track.has_overlapping_clips():
             print("    ⚠️  Has overlapping clips")
 
-    for i, track in enumerate(builder.audio_tracks):
-        print(f"  🎵 Audio Track {i} ({track.name}):")
+    for i, track in enumerate(builder.voice_tracks):
+        print(f"  🎵 Voice Track {i} ({track.name}):")
         for j, clip in enumerate(track.clips):
             print(
                 f"    - Clip {j}: {clip.path} ({clip.start_time}s - {clip.get_end_time()}s)"

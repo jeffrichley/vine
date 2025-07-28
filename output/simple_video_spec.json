@@ -1,0 +1,397 @@
+{
+  "id": "c97cbbff-b22b-40ef-9115-3f333df44976",
+  "title": "Generated Video",
+  "description": null,
+  "author": null,
+  "width": 1080,
+  "height": 1920,
+  "fps": 30.0,
+  "duration": null,
+  "video_tracks": [
+    {
+      "id": "5f2dbdfb-d6ba-4e9c-9882-3be89655a3e8",
+      "name": "video_0",
+      "clips": [
+        {
+          "id": "b7025e33-310f-47aa-a91f-acde60953d20",
+          "path": "tmp/images/fb34586ed041467fad76362573273855.png",
+          "start_time": 0.0,
+          "duration": 3.6694784580498867,
+          "end_time": null,
+          "width": null,
+          "height": null,
+          "x_position": 0.0,
+          "y_position": 0.0,
+          "opacity": 1.0,
+          "animations": [],
+          "metadata": {}
+        },
+        {
+          "id": "a346260f-aae5-41b8-858e-49e410e83650",
+          "path": "tmp/images/dde12e61c6bc40eb82d3210d40635c7a.png",
+          "start_time": 3.6694784580498867,
+          "duration": 5.120725623582766,
+          "end_time": null,
+          "width": null,
+          "height": null,
+          "x_position": 0.0,
+          "y_position": 0.0,
+          "opacity": 1.0,
+          "animations": [],
+          "metadata": {}
+        },
+        {
+          "id": "7a72c70c-cbb1-4b40-a8a9-a0f8c7683dea",
+          "path": "tmp/images/4c4bdd47e5484ceb9186d348fc8bc8ed.png",
+          "start_time": 8.790204081632652,
+          "duration": 5.352925170068027,
+          "end_time": null,
+          "width": null,
+          "height": null,
+          "x_position": 0.0,
+          "y_position": 0.0,
+          "opacity": 1.0,
+          "animations": [],
+          "metadata": {}
+        },
+        {
+          "id": "609faf72-bf13-42d6-8e7a-828455f12f05",
+          "path": "tmp/images/0edd3b03760f48868a7b517ba20095d2.png",
+          "start_time": 14.143129251700678,
+          "duration": 5.643174603174603,
+          "end_time": null,
+          "width": null,
+          "height": null,
+          "x_position": 0.0,
+          "y_position": 0.0,
+          "opacity": 1.0,
+          "animations": [],
+          "metadata": {}
+        },
+        {
+          "id": "09711aa0-1de4-4d62-b5c3-a7df51fd3a31",
+          "path": "tmp/images/4571ca92d8234133a8cf64696d73a102.png",
+          "start_time": 19.786303854875282,
+          "duration": 4.133877551020408,
+          "end_time": null,
+          "width": null,
+          "height": null,
+          "x_position": 0.0,
+          "y_position": 0.0,
+          "opacity": 1.0,
+          "animations": [],
+          "metadata": {}
+        }
+      ],
+      "z_order": 0,
+      "visible": true
+    }
+  ],
+  "audio_tracks": [
+    {
+      "id": "32c18158-34fc-4e3f-9f54-b8a34faca76a",
+      "name": "audio_0",
+      "clips": [
+        {
+          "id": "57ac2d66-e4de-4224-bfe7-075b564f3d24",
+          "path": "tmp/music/music_1df9fa775fbb48709efea267d9bf7956.wav",
+          "start_time": 0.0,
+          "duration": null,
+          "end_time": null,
+          "volume": 0.3,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        },
+        {
+          "id": "e810db5d-8492-45fa-8bc9-68ca3189109e",
+          "path": "tmp/chrona_voice/02f648b058c1485589f92177d82caf95.wav",
+          "start_time": 0.0,
+          "duration": 3.6694784580498867,
+          "end_time": null,
+          "volume": 1.0,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        }
+      ],
+      "volume": 1.0,
+      "muted": false
+    },
+    {
+      "id": "98b8679b-c519-411d-90f7-86dba40f1d01",
+      "name": "audio_1",
+      "clips": [
+        {
+          "id": "14dce72d-91a0-433b-92b2-3a79985e2cee",
+          "path": "tmp/sfx/sfx_659d621622fa413ebe2ce257d98e1d34.wav",
+          "start_time": 0.0,
+          "duration": 1.0,
+          "end_time": null,
+          "volume": 0.5,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        },
+        {
+          "id": "2c9234d3-bb53-4478-a8b5-10f0d8050f0e",
+          "path": "tmp/sfx/sfx_0c897f8f1c864606a0bdc5981f3229b6.wav",
+          "start_time": 0.0,
+          "duration": 1.5,
+          "end_time": null,
+          "volume": 0.5,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        }
+      ],
+      "volume": 1.0,
+      "muted": false
+    },
+    {
+      "id": "5afc9f4d-11d4-4e09-9240-881338ed9d9c",
+      "name": "audio_2",
+      "clips": [
+        {
+          "id": "c36c1f29-99c3-4a83-9b5f-9dde1be0b90c",
+          "path": "tmp/sfx/sfx_44f8658147524dc6b47d3594497780bc.wav",
+          "start_time": 0.0,
+          "duration": 0.5,
+          "end_time": null,
+          "volume": 0.5,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        },
+        {
+          "id": "06b29b1a-99c9-4277-aa0c-ac11c2c6b2fd",
+          "path": "tmp/chrona_voice/90ac3767c10048e6bfcc59aef38b9dc5.wav",
+          "start_time": 3.6694784580498867,
+          "duration": 5.120725623582766,
+          "end_time": null,
+          "volume": 1.0,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        },
+        {
+          "id": "35f855cc-79bb-4a92-a4ad-14221bddab47",
+          "path": "tmp/sfx/sfx_84d31ca593c7462abfda0a4fef50c66c.wav",
+          "start_time": 3.6694784580498867,
+          "duration": 1.5,
+          "end_time": null,
+          "volume": 0.5,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        }
+      ],
+      "volume": 1.0,
+      "muted": false
+    },
+    {
+      "id": "0f5498bc-08d1-4def-adfa-d935ccc02646",
+      "name": "audio_3",
+      "clips": [
+        {
+          "id": "4d5769a2-2ae7-4d91-a9f2-974551b5b0d7",
+          "path": "tmp/sfx/sfx_ef7da977f2124e6c9fbc04b95adf5d80.wav",
+          "start_time": 3.6694784580498867,
+          "duration": 1.0,
+          "end_time": null,
+          "volume": 0.5,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        },
+        {
+          "id": "8d7ca332-b76f-48da-9482-042b4e60bb84",
+          "path": "tmp/chrona_voice/e3d35b1c4ba14533a5c57a5ce1c63139.wav",
+          "start_time": 8.790204081632652,
+          "duration": 5.352925170068027,
+          "end_time": null,
+          "volume": 1.0,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        },
+        {
+          "id": "04916409-135f-494c-9c34-871ceeee7138",
+          "path": "tmp/sfx/sfx_d94e0458292d4645a0978c22d8ffdc64.wav",
+          "start_time": 8.790204081632652,
+          "duration": 1.0,
+          "end_time": null,
+          "volume": 0.5,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        }
+      ],
+      "volume": 1.0,
+      "muted": false
+    },
+    {
+      "id": "9c820f52-ff1e-419f-a697-b36e03e6f80a",
+      "name": "audio_4",
+      "clips": [
+        {
+          "id": "dcdb84b3-451c-4d0e-bdbb-db57b086447d",
+          "path": "tmp/sfx/sfx_c525a92c26d0432e8105d32143fd6a27.wav",
+          "start_time": 8.790204081632652,
+          "duration": 1.5,
+          "end_time": null,
+          "volume": 0.5,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        },
+        {
+          "id": "7d257547-b180-4711-8361-1402509ae70f",
+          "path": "tmp/chrona_voice/8e72a880e6e049d7a72e73ae3e5429cc.wav",
+          "start_time": 14.143129251700678,
+          "duration": 5.643174603174603,
+          "end_time": null,
+          "volume": 1.0,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        },
+        {
+          "id": "05d42c05-427a-4c44-8406-54e891865426",
+          "path": "tmp/sfx/sfx_1a1cf4a623654980a39b34e2175ea549.wav",
+          "start_time": 14.143129251700678,
+          "duration": 1.0,
+          "end_time": null,
+          "volume": 0.5,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        }
+      ],
+      "volume": 1.0,
+      "muted": false
+    },
+    {
+      "id": "df7546f1-b5d1-4f49-bec3-d7348df63dbd",
+      "name": "audio_5",
+      "clips": [
+        {
+          "id": "0de42ef6-088b-44a3-9db7-d56e55810615",
+          "path": "tmp/chrona_voice/e4a0e767613f41f3a3206b0e656726f6.wav",
+          "start_time": 19.786303854875282,
+          "duration": 4.133877551020408,
+          "end_time": null,
+          "volume": 1.0,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        },
+        {
+          "id": "8270bcb8-3049-4a7f-ae43-910f38183c05",
+          "path": "tmp/sfx/sfx_d827c1b93d764c44bd3c51598af44ee9.wav",
+          "start_time": 19.786303854875282,
+          "duration": 1.0,
+          "end_time": null,
+          "volume": 0.5,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        }
+      ],
+      "volume": 1.0,
+      "muted": false
+    },
+    {
+      "id": "6c1866b1-58fc-40f9-adf0-94d1ec076044",
+      "name": "audio_6",
+      "clips": [
+        {
+          "id": "f71df05a-8c37-4379-bf64-2d3b578870c9",
+          "path": "tmp/sfx/sfx_94178b179f754b41a691d3f5ab34dccb.wav",
+          "start_time": 19.786303854875282,
+          "duration": 1.5,
+          "end_time": null,
+          "volume": 0.5,
+          "fade_in": 0.0,
+          "fade_out": 0.0,
+          "voice_config": null,
+          "music_config": null,
+          "metadata": {}
+        }
+      ],
+      "volume": 1.0,
+      "muted": false
+    }
+  ],
+  "text_tracks": [
+    {
+      "id": "ea81fae0-0f9b-4f8a-ab54-3eeebd1b9459",
+      "name": "text_0",
+      "clips": [],
+      "z_order": 0,
+      "visible": true
+    }
+  ],
+  "transitions": [
+    {
+      "id": "1af673c4-d4f5-4900-b04a-b0d387b517a6",
+      "transition_type": "fade",
+      "start_time": 0.0,
+      "duration": 1.0,
+      "from_tracks": [],
+      "to_tracks": [],
+      "direction": "in",
+      "easing": "linear",
+      "metadata": {}
+    },
+    {
+      "id": "aba0a13c-960d-40c6-a15f-cc568548b070",
+      "transition_type": "fade",
+      "start_time": 22.92018140589569,
+      "duration": 1.0,
+      "from_tracks": [],
+      "to_tracks": [],
+      "direction": "in",
+      "easing": "linear",
+      "metadata": {}
+    }
+  ],
+  "voice_config": null,
+  "music_config": null,
+  "output_path": null,
+  "output_format": "mp4",
+  "quality": "high",
+  "background_color": "#000000",
+  "enable_audio": true,
+  "enable_video": true
+}

@@ -63,7 +63,7 @@ class TestTimelineBuilderEdgeCases:
         # Check that clips were created with zero duration
         assert builder.video_tracks[0].clips[0].duration == 0.0
         assert builder.text_tracks[0].clips[0].duration == 0.0
-        assert builder.audio_tracks[0].clips[0].duration == 0.0
+        assert builder.voice_tracks[0].clips[0].duration == 0.0
 
     def test_transition_validation(self):
         """Test transition validation."""
@@ -121,8 +121,8 @@ class TestTimelineBuilderEdgeCases:
         assert builder.video_tracks[0].clips[0].duration == large_duration
         assert builder.text_tracks[0].clips[0].start_time == large_time
         assert builder.text_tracks[0].clips[0].duration == large_duration
-        assert builder.audio_tracks[0].clips[0].start_time == large_time
-        assert builder.audio_tracks[0].clips[0].duration == large_duration
+        assert builder.voice_tracks[0].clips[0].start_time == large_time
+        assert builder.voice_tracks[0].clips[0].duration == large_duration
 
     def test_floating_point_precision(self):
         """Test handling of floating point precision."""
@@ -153,7 +153,7 @@ class TestTimelineBuilderEdgeCases:
         # Check that all clips were added
         assert len(builder.video_tracks[0].clips) == 100
         assert len(builder.text_tracks[0].clips) == 100
-        assert len(builder.audio_tracks[0].clips) == 100
+        assert len(builder.voice_tracks[0].clips) == 100
 
     def test_mixed_path_types(self):
         """Test mixing string and Path objects for file paths."""
@@ -169,8 +169,8 @@ class TestTimelineBuilderEdgeCases:
         # Check that paths were handled correctly
         assert builder.video_tracks[0].clips[0].path == "string_path.jpg"
         assert builder.video_tracks[0].clips[1].path == "pathlib_path.jpg"
-        assert builder.audio_tracks[0].clips[0].path == "string_voice.mp3"
-        assert builder.audio_tracks[0].clips[1].path == "pathlib_voice.mp3"
+        assert builder.voice_tracks[0].clips[0].path == "string_voice.mp3"
+        assert builder.voice_tracks[0].clips[1].path == "pathlib_voice.mp3"
 
     def test_unicode_content(self):
         """Test handling of unicode content in text clips."""
@@ -267,10 +267,10 @@ class TestTimelineBuilderEdgeCases:
         assert text_clip.y_position == 500.0
         assert text_clip.opacity == 1.0
 
-        audio_clip = builder.audio_tracks[0].clips[0]
-        assert audio_clip.volume == 0.0
-        assert audio_clip.fade_in == 0.0
-        assert audio_clip.fade_out == 0.0
+        voice_clip = builder.voice_tracks[0].clips[0]
+        assert voice_clip.volume == 0.0
+        assert voice_clip.fade_in == 0.0
+        assert voice_clip.fade_out == 0.0
 
     def test_invalid_property_values(self):
         """Test that invalid property values are rejected."""
@@ -326,10 +326,10 @@ class TestTimelineBuilderEdgeCases:
 
         # Check that tracks were reset to defaults
         assert len(builder.video_tracks) == 1
-        assert len(builder.audio_tracks) == 1
+        assert len(builder.voice_tracks) == 1
         assert len(builder.text_tracks) == 1
         assert builder.video_tracks[0].name == "video_0"
-        assert builder.audio_tracks[0].name == "audio_0"
+        assert builder.voice_tracks[0].name == "voice_0"
         assert builder.text_tracks[0].name == "text_0"
 
     def test_get_duration_with_infinite_clips(self):
@@ -373,15 +373,15 @@ class TestTimelineBuilderEdgeCases:
 
         # Check that multiple tracks were created
         assert len(builder.video_tracks) > 1
-        assert len(builder.audio_tracks) > 1
+        assert len(builder.voice_tracks) > 1
         assert len(builder.text_tracks) > 1
 
         # Check track naming
         for i, track in enumerate(builder.video_tracks):
             assert track.name == f"video_{i}"
 
-        for i, track in enumerate(builder.audio_tracks):
-            assert track.name == f"audio_{i}"
+        for i, track in enumerate(builder.voice_tracks):
+            assert track.name == f"voice_{i}"
 
         for i, track in enumerate(builder.text_tracks):
             assert track.name == f"text_{i}"
@@ -389,11 +389,11 @@ class TestTimelineBuilderEdgeCases:
         # Check that clips are distributed across tracks
         total_video_clips = sum(len(track.clips) for track in builder.video_tracks)
         total_text_clips = sum(len(track.clips) for track in builder.text_tracks)
-        total_audio_clips = sum(len(track.clips) for track in builder.audio_tracks)
+        total_voice_clips = sum(len(track.clips) for track in builder.voice_tracks)
 
         assert total_video_clips == 50
         assert total_text_clips == 50
-        assert total_audio_clips == 50
+        assert total_voice_clips == 50
 
     def test_method_chaining_with_clear(self):
         """Test method chaining with clear operation."""
@@ -431,11 +431,11 @@ class TestTimelineBuilderEdgeCases:
 
         # Check that empty tracks are included
         assert len(video_spec.video_tracks) == 1
-        assert len(video_spec.audio_tracks) == 1
+        assert len(video_spec.voice_tracks) == 1
         assert len(video_spec.text_tracks) == 1
         assert len(video_spec.transitions) == 0
 
         # Check that tracks are empty
         assert len(video_spec.video_tracks[0].clips) == 0
-        assert len(video_spec.audio_tracks[0].clips) == 0
+        assert len(video_spec.voice_tracks[0].clips) == 0
         assert len(video_spec.text_tracks[0].clips) == 0

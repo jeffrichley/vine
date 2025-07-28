@@ -30,8 +30,14 @@ class VideoSpec(BaseModel):
     video_tracks: List[VideoTrack] = Field(
         default_factory=lambda: [VideoTrack(name="video_0")], description="Video tracks"
     )
-    audio_tracks: List[AudioTrack] = Field(
-        default_factory=lambda: [AudioTrack(name="audio_0")], description="Audio tracks"
+    music_tracks: List[AudioTrack] = Field(
+        default_factory=lambda: [AudioTrack(name="music_0")], description="Music tracks"
+    )
+    voice_tracks: List[AudioTrack] = Field(
+        default_factory=lambda: [AudioTrack(name="voice_0")], description="Voice tracks"
+    )
+    sfx_tracks: List[AudioTrack] = Field(
+        default_factory=lambda: [AudioTrack(name="sfx_0")], description="SFX tracks"
     )
     text_tracks: List[TextTrack] = Field(
         default_factory=lambda: [TextTrack(name="text_0")], description="Text tracks"
@@ -98,9 +104,17 @@ class VideoSpec(BaseModel):
         video_max = self._get_max_end_time_from_tracks(self.video_tracks)
         max_end_time = max(max_end_time, video_max)
 
-        # Check audio tracks
-        audio_max = self._get_max_end_time_from_tracks(self.audio_tracks)
-        max_end_time = max(max_end_time, audio_max)
+        # Check music tracks
+        music_max = self._get_max_end_time_from_tracks(self.music_tracks)
+        max_end_time = max(max_end_time, music_max)
+
+        # Check voice tracks
+        voice_max = self._get_max_end_time_from_tracks(self.voice_tracks)
+        max_end_time = max(max_end_time, voice_max)
+
+        # Check SFX tracks
+        sfx_max = self._get_max_end_time_from_tracks(self.sfx_tracks)
+        max_end_time = max(max_end_time, sfx_max)
 
         # Check text tracks
         text_max = self._get_max_end_time_from_tracks(self.text_tracks)
@@ -120,9 +134,19 @@ class VideoSpec(BaseModel):
                 for track in self.video_tracks
                 for clip in track.get_active_clips_at_time(time)
             ],
-            "audio": [
+            "music": [
                 clip
-                for track in self.audio_tracks
+                for track in self.music_tracks
+                for clip in track.get_active_clips_at_time(time)
+            ],
+            "voice": [
+                clip
+                for track in self.voice_tracks
+                for clip in track.get_active_clips_at_time(time)
+            ],
+            "sfx": [
+                clip
+                for track in self.sfx_tracks
                 for clip in track.get_active_clips_at_time(time)
             ],
             "text": [
@@ -136,22 +160,25 @@ class VideoSpec(BaseModel):
         """Get transitions active at the given time."""
         return [trans for trans in self.transitions if trans.is_active_at_time(time)]
 
+    def _get_tracks_by_type(self, track_type: str) -> List:
+        """Get tracks list by type."""
+        track_mapping = {
+            "video": self.video_tracks,
+            "music": self.music_tracks,
+            "voice": self.voice_tracks,
+            "sfx": self.sfx_tracks,
+            "text": self.text_tracks,
+        }
+        return track_mapping.get(track_type, [])
+
     def get_track_by_name(
         self, track_name: str, track_type: str = "video"
     ) -> Optional[VideoTrack | AudioTrack | TextTrack]:
         """Get a track by name and type."""
-        if track_type == "video":
-            for track in self.video_tracks:
-                if track.name == track_name:
-                    return track
-        elif track_type == "audio":
-            for track in self.audio_tracks:
-                if track.name == track_name:
-                    return track
-        elif track_type == "text":
-            for track in self.text_tracks:
-                if track.name == track_name:
-                    return track
+        tracks = self._get_tracks_by_type(track_type)
+        for track in tracks:
+            if track.name == track_name:
+                return track
         return None
 
     def add_video_track(self, track: VideoTrack) -> None:
@@ -160,9 +187,17 @@ class VideoSpec(BaseModel):
         # Sort tracks by z_order for consistent rendering
         self.video_tracks.sort(key=lambda t: t.z_order)
 
-    def add_audio_track(self, track: AudioTrack) -> None:
-        """Add an audio track to the timeline."""
-        self.audio_tracks.append(track)
+    def add_music_track(self, track: AudioTrack) -> None:
+        """Add a music track to the timeline."""
+        self.music_tracks.append(track)
+
+    def add_voice_track(self, track: AudioTrack) -> None:
+        """Add a voice track to the timeline."""
+        self.voice_tracks.append(track)
+
+    def add_sfx_track(self, track: AudioTrack) -> None:
+        """Add an SFX track to the timeline."""
+        self.sfx_tracks.append(track)
 
     def add_text_track(self, track: TextTrack) -> None:
         """Add a text track to the timeline."""
@@ -176,21 +211,11 @@ class VideoSpec(BaseModel):
 
     def remove_track(self, track_name: str, track_type: str = "video") -> bool:
         """Remove a track by name and type."""
-        if track_type == "video":
-            for i, track in enumerate(self.video_tracks):
-                if track.name == track_name:
-                    self.video_tracks.pop(i)
-                    return True
-        elif track_type == "audio":
-            for i, track in enumerate(self.audio_tracks):
-                if track.name == track_name:
-                    self.audio_tracks.pop(i)
-                    return True
-        elif track_type == "text":
-            for i, track in enumerate(self.text_tracks):
-                if track.name == track_name:
-                    self.text_tracks.pop(i)
-                    return True
+        tracks = self._get_tracks_by_type(track_type)
+        for i, track in enumerate(tracks):
+            if track.name == track_name:
+                tracks.pop(i)
+                return True
         return False
 
     def remove_transition(self, transition_index: int) -> bool:

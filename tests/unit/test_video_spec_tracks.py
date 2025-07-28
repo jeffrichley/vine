@@ -105,7 +105,9 @@ class TestVideoSpecTracks:
         # Test get_active_clips_at_time with empty tracks
         active_clips = spec.get_active_clips_at_time(0.0)
         assert active_clips["video"] == []
-        assert active_clips["audio"] == []
+        assert active_clips["music"] == []
+        assert active_clips["voice"] == []
+        assert active_clips["sfx"] == []
         assert active_clips["text"] == []
 
         # Test get_transitions_at_time with empty transitions
@@ -118,15 +120,21 @@ class TestVideoSpecTracks:
 
         # Test adding tracks
         video_track = VideoTrack(name="video_1")
-        audio_track = AudioTrack(name="audio_1")
+        music_track = AudioTrack(name="music_1")
+        voice_track = AudioTrack(name="voice_1")
+        sfx_track = AudioTrack(name="sfx_1")
         text_track = TextTrack(name="text_1")
 
         spec.add_video_track(video_track)
-        spec.add_audio_track(audio_track)
+        spec.add_music_track(music_track)
+        spec.add_voice_track(voice_track)
+        spec.add_sfx_track(sfx_track)
         spec.add_text_track(text_track)
 
         assert len(spec.video_tracks) == 2  # Default + added
-        assert len(spec.audio_tracks) == 2  # Default + added
+        assert len(spec.music_tracks) == 2  # Default + added
+        assert len(spec.voice_tracks) == 2  # Default + added
+        assert len(spec.sfx_tracks) == 2  # Default + added
         assert len(spec.text_tracks) == 2  # Default + added
 
         # Test getting track by name
@@ -134,9 +142,17 @@ class TestVideoSpecTracks:
         assert found_video is not None
         assert found_video.name == "video_1"
 
-        found_audio = spec.get_track_by_name("audio_1", "audio")
-        assert found_audio is not None
-        assert found_audio.name == "audio_1"
+        found_music = spec.get_track_by_name("music_1", "music")
+        assert found_music is not None
+        assert found_music.name == "music_1"
+
+        found_voice = spec.get_track_by_name("voice_1", "voice")
+        assert found_voice is not None
+        assert found_voice.name == "voice_1"
+
+        found_sfx = spec.get_track_by_name("sfx_1", "sfx")
+        assert found_sfx is not None
+        assert found_sfx.name == "sfx_1"
 
         found_text = spec.get_track_by_name("text_1", "text")
         assert found_text is not None
@@ -144,11 +160,15 @@ class TestVideoSpecTracks:
 
         # Test removing tracks
         assert spec.remove_track("video_1", "video")
-        assert spec.remove_track("audio_1", "audio")
+        assert spec.remove_track("music_1", "music")
+        assert spec.remove_track("voice_1", "voice")
+        assert spec.remove_track("sfx_1", "sfx")
         assert spec.remove_track("text_1", "text")
 
         assert len(spec.video_tracks) == 1  # Only default
-        assert len(spec.audio_tracks) == 1  # Only default
+        assert len(spec.music_tracks) == 1  # Only default
+        assert len(spec.voice_tracks) == 1  # Only default
+        assert len(spec.sfx_tracks) == 1  # Only default
         assert len(spec.text_tracks) == 1  # Only default
 
     def test_get_track_by_name_edge_cases(self):
@@ -159,8 +179,16 @@ class TestVideoSpecTracks:
         result = spec.get_track_by_name("non_existent", "video")
         assert result is None
 
-        # Test getting non-existent audio track
-        result = spec.get_track_by_name("non_existent", "audio")
+        # Test getting non-existent music track
+        result = spec.get_track_by_name("non_existent", "music")
+        assert result is None
+
+        # Test getting non-existent voice track
+        result = spec.get_track_by_name("non_existent", "voice")
+        assert result is None
+
+        # Test getting non-existent sfx track
+        result = spec.get_track_by_name("non_existent", "sfx")
         assert result is None
 
         # Test getting non-existent text track
@@ -175,8 +203,8 @@ class TestVideoSpecTracks:
         result = spec.get_track_by_name("", "video")
         assert result is None
 
-        # Test with None track name
-        result = spec.get_track_by_name(None, "video")
+        # Test with None track name (should return None gracefully)
+        result = spec.get_track_by_name(None, "video")  # type: ignore[arg-type]
         assert result is None
 
     def test_remove_track_edge_cases(self):
@@ -187,8 +215,16 @@ class TestVideoSpecTracks:
         result = spec.remove_track("non_existent", "video")
         assert result is False
 
-        # Test removing non-existent audio track
-        result = spec.remove_track("non_existent", "audio")
+        # Test removing non-existent music track
+        result = spec.remove_track("non_existent", "music")
+        assert result is False
+
+        # Test removing non-existent voice track
+        result = spec.remove_track("non_existent", "voice")
+        assert result is False
+
+        # Test removing non-existent sfx track
+        result = spec.remove_track("non_existent", "sfx")
         assert result is False
 
         # Test removing non-existent text track
@@ -203,15 +239,21 @@ class TestVideoSpecTracks:
         result = spec.remove_track("", "video")
         assert result is False
 
-        # Test with None track name
-        result = spec.remove_track(None, "video")
+        # Test with None track name (should return False gracefully)
+        result = spec.remove_track(None, "video")  # type: ignore[arg-type]
         assert result is False
 
         # Test removing default tracks (should succeed since there's no protection)
         result = spec.remove_track("video_0", "video")
         assert result is True
 
-        result = spec.remove_track("audio_0", "audio")
+        result = spec.remove_track("music_0", "music")
+        assert result is True
+
+        result = spec.remove_track("voice_0", "voice")
+        assert result is True
+
+        result = spec.remove_track("sfx_0", "sfx")
         assert result is True
 
         result = spec.remove_track("text_0", "text")
@@ -240,26 +282,26 @@ class TestVideoSpecTracks:
 
         # Add some clips to tracks
         video_track = spec.video_tracks[0]
-        audio_track = spec.audio_tracks[0]
+        voice_track = spec.voice_tracks[0]
         text_track = spec.text_tracks[0]
 
         video_clip = VideoClip(path="video.mp4", start_time=0.0, duration=5.0)
-        audio_clip = AudioClip(path="audio.mp3", start_time=1.0, duration=3.0)
+        voice_clip = AudioClip(path="voice.mp3", start_time=1.0, duration=3.0)
         text_clip = TextClip(content="Hello", start_time=2.0, duration=2.0)
 
         video_track.add_clip(video_clip)
-        audio_track.add_clip(audio_clip)
+        voice_track.add_clip(voice_clip)
         text_track.add_clip(text_clip)
 
         # Test get_active_clips_at_time
         active_clips = spec.get_active_clips_at_time(1.5)
         assert len(active_clips["video"]) == 1
-        assert len(active_clips["audio"]) == 1
+        assert len(active_clips["voice"]) == 1
         assert len(active_clips["text"]) == 0  # Text starts at 2.0
 
         active_clips = spec.get_active_clips_at_time(2.5)
         assert len(active_clips["video"]) == 1
-        assert len(active_clips["audio"]) == 1
+        assert len(active_clips["voice"]) == 1
         assert len(active_clips["text"]) == 1
 
         # Test get_total_duration

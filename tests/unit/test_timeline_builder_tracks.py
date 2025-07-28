@@ -15,16 +15,22 @@ class TestTimelineBuilderTracks:
 
         # Check default tracks are created
         assert len(builder.video_tracks) == 1
-        assert len(builder.audio_tracks) == 1
+        assert len(builder.music_tracks) == 1
+        assert len(builder.voice_tracks) == 1
+        assert len(builder.sfx_tracks) == 1
         assert len(builder.text_tracks) == 1
 
         assert builder.video_tracks[0].name == "video_0"
-        assert builder.audio_tracks[0].name == "audio_0"
+        assert builder.music_tracks[0].name == "music_0"
+        assert builder.voice_tracks[0].name == "voice_0"
+        assert builder.sfx_tracks[0].name == "sfx_0"
         assert builder.text_tracks[0].name == "text_0"
 
         # Check track-specific current times
         assert builder._video_current_time == 0.0
-        assert builder._audio_current_time == 0.0
+        assert builder._music_current_time == 0.0
+        assert builder._voice_current_time == 0.0
+        assert builder._sfx_current_time == 0.0
         assert builder._text_current_time == 0.0
 
     def test_add_image_sequential(self):
@@ -101,16 +107,16 @@ class TestTimelineBuilderTracks:
 
         builder.add_voice("test_voice.mp3", duration=4.0)
 
-        # Check clip was added to audio track
-        assert len(builder.audio_tracks[0].clips) == 1
-        clip = builder.audio_tracks[0].clips[0]
+        # Check clip was added to voice track
+        assert len(builder.voice_tracks[0].clips) == 1
+        clip = builder.voice_tracks[0].clips[0]
         assert isinstance(clip, AudioClip)
         assert clip.path == "test_voice.mp3"
         assert clip.start_time == 0.0
         assert clip.duration == 4.0
 
-        # Check audio track current time was updated
-        assert builder._audio_current_time == 4.0
+        # Check voice track current time was updated
+        assert builder._voice_current_time == 4.0
 
     def test_add_voice_at_explicit(self):
         """Test adding voice with explicit timing."""
@@ -118,16 +124,16 @@ class TestTimelineBuilderTracks:
 
         builder.add_voice_at("test_voice.mp3", start_time=2.0, duration=4.0)
 
-        # Check clip was added to audio track
-        assert len(builder.audio_tracks[0].clips) == 1
-        clip = builder.audio_tracks[0].clips[0]
+        # Check clip was added to voice track
+        assert len(builder.voice_tracks[0].clips) == 1
+        clip = builder.voice_tracks[0].clips[0]
         assert isinstance(clip, AudioClip)
         assert clip.path == "test_voice.mp3"
         assert clip.start_time == 2.0
         assert clip.duration == 4.0
 
-        # Check audio track current time was updated to reflect the end of the clip
-        assert builder._audio_current_time == 6.0
+        # Check voice track current time was updated to reflect the end of the clip
+        assert builder._voice_current_time == 6.0
 
     def test_auto_track_creation(self):
         """Test automatic track creation when tracks have overlaps."""
@@ -191,7 +197,7 @@ class TestTimelineBuilderTracks:
         # Check track-specific current times
         assert builder._video_current_time == 15.0  # 10.0 + 5.0 (from explicit clip)
         assert builder._text_current_time == 12.0  # 8.0 + 4.0 (from explicit clip)
-        assert builder._audio_current_time == 0.0  # No audio clips added
+        assert builder._voice_current_time == 0.0  # No voice clips added
 
     def test_transition_sequential(self):
         """Test adding transition in sequential mode."""
@@ -240,13 +246,15 @@ class TestTimelineBuilderTracks:
 
         # Check tracks were transferred
         assert len(video_spec.video_tracks) == 1
-        assert len(video_spec.audio_tracks) == 1
+        assert len(video_spec.music_tracks) == 1
+        assert len(video_spec.voice_tracks) == 1
+        assert len(video_spec.sfx_tracks) == 1
         assert len(video_spec.text_tracks) == 1
         assert len(video_spec.transitions) == 1
 
         # Check clips were transferred
         assert len(video_spec.video_tracks[0].clips) == 1
-        assert len(video_spec.audio_tracks[0].clips) == 1
+        assert len(video_spec.voice_tracks[0].clips) == 1
         assert len(video_spec.text_tracks[0].clips) == 1
 
     def test_get_duration(self):
@@ -273,7 +281,9 @@ class TestTimelineBuilderTracks:
 
         counts = builder.get_track_count()
         assert counts["video"] == 1  # Should still be 1 track
-        assert counts["audio"] == 1
+        assert counts["music"] == 1
+        assert counts["voice"] == 1
+        assert counts["sfx"] == 1
         assert counts["text"] == 1
 
     def test_get_clip_count(self):
@@ -288,7 +298,7 @@ class TestTimelineBuilderTracks:
 
         counts = builder.get_clip_count()
         assert counts["video"] == 2
-        assert counts["audio"] == 1
+        assert counts["voice"] == 1
         assert counts["text"] == 1
 
     def test_clear(self):
@@ -305,18 +315,24 @@ class TestTimelineBuilderTracks:
 
         # Check everything was reset
         assert len(builder.video_tracks) == 1
-        assert len(builder.audio_tracks) == 1
+        assert len(builder.music_tracks) == 1
+        assert len(builder.voice_tracks) == 1
+        assert len(builder.sfx_tracks) == 1
         assert len(builder.text_tracks) == 1
         assert len(builder.transitions) == 0
 
         # Check track-specific current times were reset
         assert builder._video_current_time == 0.0
-        assert builder._audio_current_time == 0.0
+        assert builder._music_current_time == 0.0
+        assert builder._voice_current_time == 0.0
+        assert builder._sfx_current_time == 0.0
         assert builder._text_current_time == 0.0
 
         # Check default tracks are empty
         assert len(builder.video_tracks[0].clips) == 0
-        assert len(builder.audio_tracks[0].clips) == 0
+        assert len(builder.music_tracks[0].clips) == 0
+        assert len(builder.voice_tracks[0].clips) == 0
+        assert len(builder.sfx_tracks[0].clips) == 0
         assert len(builder.text_tracks[0].clips) == 0
 
     def test_validation_errors(self):
@@ -342,3 +358,64 @@ class TestTimelineBuilderTracks:
             builder.add_voice_at(
                 "voice1.mp3", start_time=0.0, duration=4.0, end_time=12.0
             )
+
+    def test_professional_audio_controls(self):
+        """Test that professional audio controls are applied correctly."""
+        builder = TimelineBuilder()
+
+        # Test music with professional controls
+        builder.add_music_at(
+            "test_music.mp3",
+            start_time=0.0,
+            duration=5.0,
+            volume=0.3,
+            fade_in=1.0,
+            fade_out=1.0,
+            crossfade_duration=0.5,
+            auto_crossfade=True,
+            volume_curve=[(0.0, 0.0), (1.0, 1.0), (4.0, 1.0), (5.0, 0.0)],
+        )
+
+        # Test SFX with professional controls
+        builder.add_sfx_at(
+            "test_sfx.wav",
+            start_time=2.0,
+            duration=2.0,
+            volume=0.5,
+            fade_in=0.2,
+            fade_out=0.2,
+            normalize_audio=True,
+        )
+
+        # Test voice with professional controls
+        builder.add_voice_at(
+            "test_voice.mp3",
+            start_time=1.0,
+            duration=3.0,
+            volume=0.8,
+            fade_in=0.5,
+            fade_out=0.5,
+        )
+
+        # Verify clips were created with professional controls
+        music_clip = builder.music_tracks[0].clips[0]
+        assert music_clip.fade_in == 1.0
+        assert music_clip.fade_out == 1.0
+        assert music_clip.crossfade_duration == 0.5
+        assert music_clip.auto_crossfade is True
+        assert music_clip.volume_curve == [
+            (0.0, 0.0),
+            (1.0, 1.0),
+            (4.0, 1.0),
+            (5.0, 0.0),
+        ]
+
+        sfx_clip = builder.sfx_tracks[0].clips[0]
+        assert sfx_clip.fade_in == 0.2
+        assert sfx_clip.fade_out == 0.2
+        assert sfx_clip.normalize_audio is True
+
+        voice_clip = builder.voice_tracks[0].clips[0]
+        assert voice_clip.fade_in == 0.5
+        assert voice_clip.fade_out == 0.5
+        assert voice_clip.volume == 0.8
