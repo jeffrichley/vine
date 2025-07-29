@@ -1,14 +1,46 @@
 """Audio-specific renderer implementation."""
 
+from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from moviepy import AudioFileClip, CompositeAudioClip
+from moviepy import AudioClip, CompositeAudioClip
 
 from vine.models.video_spec import VideoSpec
-from vine.rendering.base_renderer import BaseRenderer
+from vine.rendering.moviepy_adapter import MoviePyAdapter
 
 
-class AudioRenderer(BaseRenderer):
+class AudioRendererBase(ABC):
+    """
+    Abstract base class for audio rendering algorithms.
+    """
+
+    def __init__(self) -> None:
+        """Initialize the renderer with an adapter."""
+        self.adapter = MoviePyAdapter()
+
+    @abstractmethod
+    def create_clips(self, video_spec: VideoSpec) -> List[AudioClip]:
+        """Create audio clips from the video spec."""
+        pass
+
+    @abstractmethod
+    def compose_clips(self, clips: List[AudioClip], video_spec: VideoSpec) -> AudioClip:
+        """Compose audio clips into a final audio."""
+        pass
+
+    def finalize(self, composite: AudioClip, video_spec: VideoSpec) -> AudioClip:
+        """Finalize the audio with additional processing."""
+        # Set duration if specified
+        if video_spec.duration is not None:
+            return composite.set_duration(video_spec.duration)
+
+        # Audio clips don't have FPS like video clips
+        # If we need to set FPS for audio, we'll need to implement this
+        # For now, we'll just return the composite as-is
+        return composite
+
+
+class AudioRenderer(AudioRendererBase):
     """
     Audio-specific renderer implementation.
 
@@ -16,7 +48,7 @@ class AudioRenderer(BaseRenderer):
     focusing on audio clips and mixing.
     """
 
-    def create_clips(self, video_spec: VideoSpec) -> List[AudioFileClip]:
+    def create_clips(self, video_spec: VideoSpec) -> List[AudioClip]:
         """
         Create audio clips from the video spec.
 
@@ -24,7 +56,7 @@ class AudioRenderer(BaseRenderer):
             video_spec: Project Vine VideoSpec model
 
         Returns:
-            List of MoviePy AudioFileClip objects
+            List of MoviePy AudioClip objects
         """
         clips = []
 
@@ -48,33 +80,28 @@ class AudioRenderer(BaseRenderer):
 
         return clips
 
-    def compose_clips(
-        self, clips: List[AudioFileClip], video_spec: VideoSpec
-    ) -> CompositeAudioClip:
+    def compose_clips(self, clips: List[AudioClip], video_spec: VideoSpec) -> AudioClip:
         """
         Compose audio clips into a composite audio.
 
         Args:
-            clips: List of MoviePy AudioFileClip objects
+            clips: List of MoviePy AudioClip objects
             video_spec: Project Vine VideoSpec model
 
         Returns:
-            MoviePy CompositeAudioClip object
+            MoviePy AudioClip object
         """
+        # Create composite from all audio clips or silent clip
         if clips:
-            # Create composite from all audio clips
-            composite = CompositeAudioClip(clips)
+            composite_result: AudioClip = CompositeAudioClip(clips)
         else:
-            # Create silent audio clip if no clips
-            from moviepy import AudioClip
+            composite_result = AudioClip(
+                lambda _: 0, duration=video_spec.get_total_duration()
+            )
 
-            composite = AudioClip(lambda _: 0, duration=video_spec.get_total_duration())
+        return composite_result
 
-        return composite
-
-    def finalize(
-        self, composite: CompositeAudioClip, video_spec: VideoSpec
-    ) -> CompositeAudioClip:
+    def finalize(self, composite: AudioClip, video_spec: VideoSpec) -> AudioClip:
         """
         Finalize the audio with additional processing.
 
@@ -83,15 +110,17 @@ class AudioRenderer(BaseRenderer):
             video_spec: Project Vine VideoSpec model
 
         Returns:
-            Finalized MoviePy CompositeAudioClip object
+            Finalized MoviePy AudioClip object
         """
         # Set duration if specified
         if video_spec.duration is not None:
-            composite = composite.set_duration(video_spec.duration)
+            final_composite: AudioClip = composite.set_duration(video_spec.duration)
+        else:
+            final_composite = composite
 
-        return composite
+        return final_composite
 
-    def render_audio_only(self, video_spec: VideoSpec) -> Optional[AudioFileClip]:
+    def render_audio_only(self, video_spec: VideoSpec) -> Optional[AudioClip]:
         """
         Render audio only from the video spec.
 
@@ -99,12 +128,12 @@ class AudioRenderer(BaseRenderer):
             video_spec: Project Vine VideoSpec model
 
         Returns:
-            MoviePy AudioFileClip object or None if no audio
+            MoviePy AudioClip object or None if no audio
         """
         clips = self.create_clips(video_spec)
 
         if not clips:
             return None
 
-        composite = self.compose_clips(clips, video_spec)
-        return self.finalize(composite, video_spec)
+        result = self.compose_clips(clips, video_spec)
+        return self.finalize(result, video_spec)

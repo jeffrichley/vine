@@ -2,13 +2,13 @@
 
 from typing import List
 
-from moviepy import CompositeVideoClip, TextClip
+from moviepy import CompositeVideoClip, TextClip, VideoClip
 
 from vine.models.video_spec import VideoSpec
 from vine.rendering.base_renderer import BaseRenderer
 
 
-class TextRenderer(BaseRenderer):
+class TextRenderer(BaseRenderer[VideoClip]):
     """
     Text-specific renderer implementation.
 
@@ -16,7 +16,7 @@ class TextRenderer(BaseRenderer):
     focusing on text overlays and typography.
     """
 
-    def create_clips(self, video_spec: VideoSpec) -> List[TextClip]:
+    def create_clips(self, video_spec: VideoSpec) -> List[VideoClip]:
         """
         Create text clips from the video spec.
 
@@ -24,7 +24,7 @@ class TextRenderer(BaseRenderer):
             video_spec: Project Vine VideoSpec model
 
         Returns:
-            List of MoviePy TextClip objects
+            List of MoviePy VideoClip objects
         """
         clips = []
 
@@ -36,9 +36,7 @@ class TextRenderer(BaseRenderer):
 
         return clips
 
-    def compose_clips(
-        self, clips: List[TextClip], video_spec: VideoSpec
-    ) -> CompositeVideoClip:
+    def compose_clips(self, clips: List[TextClip], video_spec: VideoSpec) -> VideoClip:
         """
         Compose text clips into a composite video.
 
@@ -47,48 +45,45 @@ class TextRenderer(BaseRenderer):
             video_spec: Project Vine VideoSpec model
 
         Returns:
-            MoviePy CompositeVideoClip object
+            MoviePy VideoClip object
         """
+        # Create composite from all text clips or empty video
         if clips:
-            # Create composite from all text clips
-            composite = CompositeVideoClip(
+            result: VideoClip = CompositeVideoClip(
                 clips, size=(video_spec.width, video_spec.height)
             )
         else:
-            # Create empty video if no text clips
             from moviepy import ColorClip
 
-            composite = ColorClip(
+            result = ColorClip(
                 size=(video_spec.width, video_spec.height), color=(0, 0, 0)
             )
 
-        return composite
+        return result
 
-    def finalize(
-        self, composite: CompositeVideoClip, video_spec: VideoSpec
-    ) -> CompositeVideoClip:
+    def finalize(self, composite: VideoClip, video_spec: VideoSpec) -> VideoClip:
         """
         Finalize the text video with additional processing.
 
         Args:
-            composite: MoviePy CompositeVideoClip object
+            composite: MoviePy VideoClip object
             video_spec: Project Vine VideoSpec model
 
         Returns:
-            Finalized MoviePy CompositeVideoClip object
+            Finalized MoviePy VideoClip object
         """
         # Call parent finalize method
-        composite = super().finalize(composite, video_spec)
+        final_result = super().finalize(composite, video_spec)
 
         # Set background color for text-only videos
         if video_spec.background_color != "#000000":
             # This would require additional processing to set background color
             # For now, we'll use the default black background
-            pass
+            raise NotImplementedError("Background color setting not yet implemented")
 
-        return composite
+        return final_result
 
-    def render_text_overlay(self, video_spec: VideoSpec) -> List[TextClip]:
+    def render_text_overlay(self, video_spec: VideoSpec) -> List[VideoClip]:
         """
         Render text clips as overlays (without background).
 

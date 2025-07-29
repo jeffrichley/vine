@@ -12,7 +12,7 @@ class BaseRegistry(ABC):
     components by name with validation and error handling.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize an empty registry."""
         self._components: Dict[str, Any] = {}
         self._validators: Dict[str, Callable] = {}

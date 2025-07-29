@@ -16,7 +16,7 @@ from vine.models.tracks import (
 class TestVideoClip:
     """Test VideoClip model."""
 
-    def test_video_clip_creation(self):
+    def test_video_clip_creation(self) -> None:
         """Test basic video clip creation."""
         clip = VideoClip(path="test_video.mp4", start_time=0.0, duration=10.0)
         assert clip.path == "test_video.mp4"
@@ -24,7 +24,7 @@ class TestVideoClip:
         assert clip.duration == 10.0
         assert clip.get_end_time() == 10.0
 
-    def test_video_clip_with_end_time(self):
+    def test_video_clip_with_end_time(self) -> None:
         """Test video clip with end_time instead of duration."""
         clip = VideoClip(path="test_video.mp4", start_time=5.0, end_time=15.0)
         assert clip.start_time == 5.0
@@ -32,7 +32,7 @@ class TestVideoClip:
         assert clip.end_time == 15.0
         assert clip.get_end_time() == 15.0
 
-    def test_video_clip_validation_error(self):
+    def test_video_clip_validation_error(self) -> None:
         """Test validation error when both duration and end_time are specified."""
         with pytest.raises(
             ValueError, match="Cannot specify both duration and end_time"
@@ -41,7 +41,7 @@ class TestVideoClip:
                 path="test_video.mp4", start_time=0.0, duration=10.0, end_time=15.0
             )
 
-    def test_video_clip_is_active_at_time(self):
+    def test_video_clip_is_active_at_time(self) -> None:
         """Test is_active_at_time method."""
         clip = VideoClip(path="test_video.mp4", start_time=5.0, duration=10.0)
         assert not clip.is_active_at_time(0.0)
@@ -52,13 +52,13 @@ class TestVideoClip:
         assert not clip.is_active_at_time(15.0)  # End time is exclusive
         assert not clip.is_active_at_time(20.0)
 
-    def test_video_clip_validate_end_time_after_start_time(self):
+    def test_video_clip_validate_end_time_after_start_time(self) -> None:
         """Test validate_end_time when end_time is after start_time."""
         # This should work fine
         clip = VideoClip(path="test_video.mp4", start_time=5.0, end_time=15.0)
         assert clip.end_time == 15.0
 
-    def test_video_clip_validate_end_time_before_start_time(self):
+    def test_video_clip_validate_end_time_before_start_time(self) -> None:
         """Test validate_end_time error when end_time is before or equal to start_time."""
         # End time equal to start time
         with pytest.raises(ValueError, match="End time must be after start time"):
@@ -68,7 +68,7 @@ class TestVideoClip:
         with pytest.raises(ValueError, match="End time must be after start time"):
             VideoClip(path="test_video.mp4", start_time=10.0, end_time=5.0)
 
-    def test_video_clip_validate_end_time_with_duration_conflict(self):
+    def test_video_clip_validate_end_time_with_duration_conflict(self) -> None:
         """Test validate_end_time error when both duration and end_time are specified."""
         with pytest.raises(
             ValueError, match="Cannot specify both duration and end_time"
@@ -77,7 +77,7 @@ class TestVideoClip:
                 path="test_video.mp4", start_time=0.0, duration=10.0, end_time=15.0
             )
 
-    def test_video_clip_is_active_at_time_with_end_time_only(self):
+    def test_video_clip_is_active_at_time_with_end_time_only(self) -> None:
         """Test is_active_at_time with end_time instead of duration."""
         clip = VideoClip(path="test_video.mp4", start_time=5.0, end_time=15.0)
         assert not clip.is_active_at_time(0.0)
@@ -88,7 +88,7 @@ class TestVideoClip:
         assert not clip.is_active_at_time(15.0)  # End time is exclusive
         assert not clip.is_active_at_time(20.0)
 
-    def test_video_clip_is_active_at_time_with_no_end(self):
+    def test_video_clip_is_active_at_time_with_no_end(self) -> None:
         """Test is_active_at_time when clip has no end time (infinite duration)."""
         clip = VideoClip(path="test_video.mp4", start_time=5.0)
         assert not clip.is_active_at_time(0.0)
@@ -98,7 +98,7 @@ class TestVideoClip:
         assert clip.is_active_at_time(100.0)  # Should be active indefinitely
         assert clip.is_active_at_time(1000.0)  # Should be active indefinitely
 
-    def test_video_clip_return_time_gte_start_time_specific(self):
+    def test_video_clip_return_time_gte_start_time_specific(self) -> None:
         """Test the specific 'return time >= self.start_time' line in is_active_at_time."""
         # Test with start_time = 0.0
         clip = VideoClip(path="test_video.mp4", start_time=0.0)
@@ -118,7 +118,7 @@ class TestVideoClip:
         assert clip.is_active_at_time(10.0)  # time == start_time
         assert clip.is_active_at_time(10.1)  # time > start_time
 
-    def test_video_clip_return_time_gte_start_time_edge_cases(self):
+    def test_video_clip_return_time_gte_start_time_edge_cases(self) -> None:
         """Test edge cases for the 'return time >= self.start_time' line."""
         # Test with very small start_time
         clip = VideoClip(path="test_video.mp4", start_time=0.0001)
@@ -142,7 +142,7 @@ class TestVideoClip:
 class TestImageClip:
     """Test ImageClip model."""
 
-    def test_image_clip_creation(self):
+    def test_image_clip_creation(self) -> None:
         """Test basic image clip creation."""
         clip = ImageClip(path="test_image.jpg", start_time=0.0, duration=5.0)
         assert clip.path == "test_image.jpg"
@@ -150,7 +150,7 @@ class TestImageClip:
         assert clip.duration == 5.0
         assert clip.get_end_time() == 5.0
 
-    def test_image_clip_display_settings(self):
+    def test_image_clip_display_settings(self) -> None:
         """Test image clip with display settings."""
         clip = ImageClip(
             path="test_image.jpg",
@@ -168,12 +168,12 @@ class TestImageClip:
         assert clip.y_position == 200.0
         assert clip.opacity == 0.8
 
-    def test_image_clip_validate_end_time_after_start_time(self):
+    def test_image_clip_validate_end_time_after_start_time(self) -> None:
         """Test validate_end_time when end_time is after start_time."""
         clip = ImageClip(path="test_image.jpg", start_time=5.0, end_time=15.0)
         assert clip.end_time == 15.0
 
-    def test_image_clip_validate_end_time_before_start_time(self):
+    def test_image_clip_validate_end_time_before_start_time(self) -> None:
         """Test validate_end_time error when end_time is before or equal to start_time."""
         with pytest.raises(ValueError, match="End time must be after start time"):
             ImageClip(path="test_image.jpg", start_time=10.0, end_time=10.0)
@@ -181,7 +181,7 @@ class TestImageClip:
         with pytest.raises(ValueError, match="End time must be after start time"):
             ImageClip(path="test_image.jpg", start_time=10.0, end_time=5.0)
 
-    def test_image_clip_validate_end_time_with_duration_conflict(self):
+    def test_image_clip_validate_end_time_with_duration_conflict(self) -> None:
         """Test validate_end_time error when both duration and end_time are specified."""
         with pytest.raises(
             ValueError, match="Cannot specify both duration and end_time"
@@ -190,7 +190,7 @@ class TestImageClip:
                 path="test_image.jpg", start_time=0.0, duration=10.0, end_time=15.0
             )
 
-    def test_image_clip_is_active_at_time_edge_cases(self):
+    def test_image_clip_is_active_at_time_edge_cases(self) -> None:
         """Test is_active_at_time edge cases."""
         clip = ImageClip(path="test_image.jpg", start_time=5.0, duration=10.0)
         # Test exact boundary conditions
@@ -199,7 +199,7 @@ class TestImageClip:
         assert clip.is_active_at_time(15.0 - 1e-10)  # Just before end
         assert not clip.is_active_at_time(15.0)  # Exactly at end
 
-    def test_image_clip_return_time_gte_start_time_specific(self):
+    def test_image_clip_return_time_gte_start_time_specific(self) -> None:
         """Test the specific 'return time >= self.start_time' line in is_active_at_time."""
         # Test with start_time = 0.0
         clip = ImageClip(path="test_image.jpg", start_time=0.0)
@@ -217,7 +217,7 @@ class TestImageClip:
 class TestTextClip:
     """Test TextClip model."""
 
-    def test_text_clip_creation(self):
+    def test_text_clip_creation(self) -> None:
         """Test basic text clip creation."""
         clip = TextClip(content="Hello World", start_time=0.0, duration=3.0)
         assert clip.content == "Hello World"
@@ -225,7 +225,7 @@ class TestTextClip:
         assert clip.duration == 3.0
         assert clip.get_end_time() == 3.0
 
-    def test_text_clip_styling(self):
+    def test_text_clip_styling(self) -> None:
         """Test text clip with styling options."""
         clip = TextClip(
             content="Styled Text",
@@ -243,12 +243,12 @@ class TestTextClip:
         assert clip.font_weight == "bold"
         assert clip.alignment == "left"
 
-    def test_text_clip_validate_end_time_after_start_time(self):
+    def test_text_clip_validate_end_time_after_start_time(self) -> None:
         """Test validate_end_time when end_time is after start_time."""
         clip = TextClip(content="Test text", start_time=5.0, end_time=15.0)
         assert clip.end_time == 15.0
 
-    def test_text_clip_validate_end_time_before_start_time(self):
+    def test_text_clip_validate_end_time_before_start_time(self) -> None:
         """Test validate_end_time error when end_time is before or equal to start_time."""
         with pytest.raises(ValueError, match="End time must be after start time"):
             TextClip(content="Test text", start_time=10.0, end_time=10.0)
@@ -256,14 +256,14 @@ class TestTextClip:
         with pytest.raises(ValueError, match="End time must be after start time"):
             TextClip(content="Test text", start_time=10.0, end_time=5.0)
 
-    def test_text_clip_validate_end_time_with_duration_conflict(self):
+    def test_text_clip_validate_end_time_with_duration_conflict(self) -> None:
         """Test validate_end_time error when both duration and end_time are specified."""
         with pytest.raises(
             ValueError, match="Cannot specify both duration and end_time"
         ):
             TextClip(content="Test text", start_time=0.0, duration=10.0, end_time=15.0)
 
-    def test_text_clip_is_active_at_time_edge_cases(self):
+    def test_text_clip_is_active_at_time_edge_cases(self) -> None:
         """Test is_active_at_time edge cases."""
         clip = TextClip(content="Test text", start_time=5.0, duration=10.0)
         # Test exact boundary conditions
@@ -272,7 +272,7 @@ class TestTextClip:
         assert clip.is_active_at_time(15.0 - 1e-10)  # Just before end
         assert not clip.is_active_at_time(15.0)  # Exactly at end
 
-    def test_text_clip_return_time_gte_start_time_specific(self):
+    def test_text_clip_return_time_gte_start_time_specific(self) -> None:
         """Test the specific 'return time >= self.start_time' line in is_active_at_time."""
         # Test with start_time = 0.0
         clip = TextClip(content="Test text", start_time=0.0)
@@ -290,7 +290,7 @@ class TestTextClip:
 class TestAudioClip:
     """Test AudioClip model."""
 
-    def test_audio_clip_creation(self):
+    def test_audio_clip_creation(self) -> None:
         """Test basic audio clip creation."""
         clip = AudioClip(path="test_audio.mp3", start_time=0.0, duration=10.0)
         assert clip.path == "test_audio.mp3"
@@ -298,7 +298,7 @@ class TestAudioClip:
         assert clip.duration == 10.0
         assert clip.get_end_time() == 10.0
 
-    def test_audio_clip_settings(self):
+    def test_audio_clip_settings(self) -> None:
         """Test audio clip with audio settings."""
         clip = AudioClip(
             path="test_audio.mp3",
@@ -312,12 +312,12 @@ class TestAudioClip:
         assert clip.fade_in == 1.0
         assert clip.fade_out == 2.0
 
-    def test_audio_clip_validate_end_time_after_start_time(self):
+    def test_audio_clip_validate_end_time_after_start_time(self) -> None:
         """Test validate_end_time when end_time is after start_time."""
         clip = AudioClip(path="test_audio.mp3", start_time=5.0, end_time=15.0)
         assert clip.end_time == 15.0
 
-    def test_audio_clip_validate_end_time_before_start_time(self):
+    def test_audio_clip_validate_end_time_before_start_time(self) -> None:
         """Test validate_end_time error when end_time is before or equal to start_time."""
         with pytest.raises(ValueError, match="End time must be after start time"):
             AudioClip(path="test_audio.mp3", start_time=10.0, end_time=10.0)
@@ -325,7 +325,7 @@ class TestAudioClip:
         with pytest.raises(ValueError, match="End time must be after start time"):
             AudioClip(path="test_audio.mp3", start_time=10.0, end_time=5.0)
 
-    def test_audio_clip_validate_end_time_with_duration_conflict(self):
+    def test_audio_clip_validate_end_time_with_duration_conflict(self) -> None:
         """Test validate_end_time error when both duration and end_time are specified."""
         with pytest.raises(
             ValueError, match="Cannot specify both duration and end_time"
@@ -334,7 +334,7 @@ class TestAudioClip:
                 path="test_audio.mp3", start_time=0.0, duration=10.0, end_time=15.0
             )
 
-    def test_audio_clip_is_active_at_time_edge_cases(self):
+    def test_audio_clip_is_active_at_time_edge_cases(self) -> None:
         """Test is_active_at_time edge cases."""
         clip = AudioClip(path="test_audio.mp3", start_time=5.0, duration=10.0)
         # Test exact boundary conditions
@@ -343,7 +343,7 @@ class TestAudioClip:
         assert clip.is_active_at_time(15.0 - 1e-10)  # Just before end
         assert not clip.is_active_at_time(15.0)  # Exactly at end
 
-    def test_audio_clip_return_time_gte_start_time_specific(self):
+    def test_audio_clip_return_time_gte_start_time_specific(self) -> None:
         """Test the specific 'return time >= self.start_time' line in is_active_at_time."""
         # Test with start_time = 0.0
         clip = AudioClip(path="test_audio.mp3", start_time=0.0)
@@ -361,7 +361,7 @@ class TestAudioClip:
 class TestVideoTrack:
     """Test VideoTrack model."""
 
-    def test_video_track_creation(self):
+    def test_video_track_creation(self) -> None:
         """Test basic video track creation."""
         track = VideoTrack(name="test_video_track")
         assert track.name == "test_video_track"
@@ -369,7 +369,7 @@ class TestVideoTrack:
         assert track.z_order == 0
         assert track.visible is True
 
-    def test_video_track_add_clip(self):
+    def test_video_track_add_clip(self) -> None:
         """Test adding clips to video track."""
         track = VideoTrack(name="test_video_track")
         clip = ImageClip(path="test_image.jpg", start_time=0.0, duration=5.0)
@@ -377,7 +377,7 @@ class TestVideoTrack:
         assert len(track.clips) == 1
         assert track.clips[0] == clip
 
-    def test_video_track_get_active_clips(self):
+    def test_video_track_get_active_clips(self) -> None:
         """Test getting active clips at a specific time."""
         track = VideoTrack(name="test_video_track")
 
@@ -397,7 +397,7 @@ class TestVideoTrack:
         assert len(track.get_active_clips_at_time(12.0)) == 1  # only clip3
         assert len(track.get_active_clips_at_time(20.0)) == 0  # no clips active
 
-    def test_video_track_has_overlapping_clips(self):
+    def test_video_track_has_overlapping_clips(self) -> None:
         """Test detection of overlapping clips."""
         track = VideoTrack(name="test_video_track")
 
@@ -416,7 +416,7 @@ class TestVideoTrack:
         track.add_clip(clip3)
         assert track.has_overlapping_clips()
 
-    def test_video_track_return_true_infinite_duration_specific(self):
+    def test_video_track_return_true_infinite_duration_specific(self) -> None:
         """Test the specific 'return True  # Infinite duration clips overlap with everything' line."""
         track = VideoTrack(name="test_video_track")
 
@@ -457,7 +457,7 @@ class TestVideoTrack:
             track.has_overlapping_clips()
         )  # Should return True due to infinite duration
 
-    def test_video_track_return_true_infinite_duration_edge_cases(self):
+    def test_video_track_return_true_infinite_duration_edge_cases(self) -> None:
         """Test edge cases for the 'return True  # Infinite duration clips overlap with everything' line."""
         track = VideoTrack(name="test_video_track")
 
@@ -504,7 +504,7 @@ class TestVideoTrack:
 class TestAudioTrack:
     """Test AudioTrack model."""
 
-    def test_audio_track_creation(self):
+    def test_audio_track_creation(self) -> None:
         """Test basic audio track creation."""
         track = AudioTrack(name="test_audio_track")
         assert track.name == "test_audio_track"
@@ -512,7 +512,7 @@ class TestAudioTrack:
         assert track.volume == 1.0
         assert track.muted is False
 
-    def test_audio_track_add_clip(self):
+    def test_audio_track_add_clip(self) -> None:
         """Test adding clips to audio track."""
         track = AudioTrack(name="test_audio_track")
         clip = AudioClip(path="test_audio.mp3", start_time=0.0, duration=10.0)
@@ -520,7 +520,7 @@ class TestAudioTrack:
         assert len(track.clips) == 1
         assert track.clips[0] == clip
 
-    def test_audio_track_return_true_infinite_duration_specific(self):
+    def test_audio_track_return_true_infinite_duration_specific(self) -> None:
         """Test the specific 'return True  # Infinite duration clips overlap with everything' line."""
         track = AudioTrack(name="test_audio_track")
 
@@ -551,7 +551,7 @@ class TestAudioTrack:
 class TestTextTrack:
     """Test TextTrack model."""
 
-    def test_text_track_creation(self):
+    def test_text_track_creation(self) -> None:
         """Test basic text track creation."""
         track = TextTrack(name="test_text_track")
         assert track.name == "test_text_track"
@@ -559,7 +559,7 @@ class TestTextTrack:
         assert track.z_order == 0
         assert track.visible is True
 
-    def test_text_track_add_clip(self):
+    def test_text_track_add_clip(self) -> None:
         """Test adding clips to text track."""
         track = TextTrack(name="test_text_track")
         clip = TextClip(content="Test text", start_time=0.0, duration=5.0)
@@ -567,7 +567,7 @@ class TestTextTrack:
         assert len(track.clips) == 1
         assert track.clips[0] == clip
 
-    def test_text_track_return_true_infinite_duration_specific(self):
+    def test_text_track_return_true_infinite_duration_specific(self) -> None:
         """Test the specific 'return True  # Infinite duration clips overlap with everything' line."""
         track = TextTrack(name="test_text_track")
 

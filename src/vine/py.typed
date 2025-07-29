@@ -1,0 +1,2 @@
+# This file marks the vine package as supporting type hints
+# See PEP 561 for details: https://www.python.org/dev/peps/pep-0561/

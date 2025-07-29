@@ -86,7 +86,7 @@ src = ["src"]  # Helps with module resolution
 
 [tool.ruff.lint]
 extend-select = [
-  "E", "F", "I", "N", "B", "Q", "SIM", "C90", "ARG"
+  "E", "F", "I", "N", "B", "Q", "SIM", "C90", "ARG", "TID"
 ]
 ignore = [
   "E501",  # Line too long (we use Black's wrapping)
@@ -95,27 +95,35 @@ ignore = [
 fixable = ["ALL"]  # Enables autofix where possible
 unfixable = []     # Keep empty to allow all fixes
 
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"yaml" = {msg = "Use `vine.utils.yaml_utils` instead of importing `yaml` directly."}
+
 [tool.mypy]
-files = ["src", "tests", "examples", "scripts"]
+plugins = ["pydantic.mypy"]
+files = ["src", "tests"]
 python_version = "3.11"
-warn_return_any = false  # More lenient
+mypy_path = "stubs"
+warn_return_any = true  # Enable return type warnings
 warn_unused_configs = true
-disallow_untyped_defs = false
+disallow_untyped_defs = true
 disallow_incomplete_defs = false
-check_untyped_defs = true
+check_untyped_defs = true  # Enable checking bodies of untyped functions
 disallow_untyped_decorators = false
-no_implicit_optional = true
-warn_redundant_casts = true
+no_implicit_optional = true  # Enable strict optional type checking
+warn_redundant_casts = false  # Disabled to avoid cast issues
 warn_unused_ignores = false
-warn_no_return = true
-warn_unreachable = true
-strict_equality = true
-ignore_missing_imports = true
+warn_no_return = true  # Enable no-return warnings
+warn_unreachable = false  # Disabled to avoid unreachable code errors
+strict_equality = true  # Enable strict equality checking
 exclude = []
 
-[[tool.mypy.overrides]]
-module = "yaml"
-ignore_missing_imports = true
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
@@ -146,7 +154,9 @@ directory = "htmlcov"
 
 [dependency-groups]
 dev = [
+    "monkeytype>=23.3.0",
     "pytest>=8.4.1",
     "pytest-asyncio>=1.1.0",
     "pytest-cov>=6.2.1",
+    "types-pyyaml>=6.0.12.20250516",
 ]

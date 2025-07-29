@@ -1,15 +1,17 @@
-"""Template Method pattern for rendering algorithms."""
+"""Base renderer implementation."""
 
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Generic, Optional, TypeVar, cast
 
-from moviepy import AudioFileClip, CompositeVideoClip
+from moviepy import AudioClip, VideoClip
 
 from vine.models.video_spec import VideoSpec
 from vine.rendering.moviepy_adapter import MoviePyAdapter
 
+T = TypeVar("T", bound=VideoClip)
 
-class BaseRenderer(ABC):
+
+class BaseRenderer(ABC, Generic[T]):
     """
     Abstract base class for rendering algorithms.
 
@@ -18,11 +20,11 @@ class BaseRenderer(ABC):
     implement specific parts.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the renderer with an adapter."""
         self.adapter = MoviePyAdapter()
 
-    def render(self, video_spec: VideoSpec) -> CompositeVideoClip:
+    def render(self, video_spec: VideoSpec) -> T:
         """
         Template method for rendering a video spec.
 
@@ -35,18 +37,18 @@ class BaseRenderer(ABC):
             video_spec: Project Vine VideoSpec model
 
         Returns:
-            MoviePy CompositeVideoClip object
+            MoviePy clip object
         """
         # Step 1: Create clips (implemented by subclasses)
         clips = self.create_clips(video_spec)
 
         # Step 2: Compose clips (implemented by subclasses)
-        composite = self.compose_clips(clips, video_spec)
+        result: T = self.compose_clips(clips, video_spec)
 
         # Step 3: Finalize (optional hook)
-        composite = self.finalize(composite, video_spec)
+        final_result: T = self.finalize(result, video_spec)
 
-        return composite
+        return final_result
 
     @abstractmethod
     def create_clips(self, video_spec: VideoSpec) -> list:
@@ -62,7 +64,7 @@ class BaseRenderer(ABC):
         pass
 
     @abstractmethod
-    def compose_clips(self, clips: list, video_spec: VideoSpec) -> CompositeVideoClip:
+    def compose_clips(self, clips: list, video_spec: VideoSpec) -> T:
         """
         Compose clips into a final video.
 
@@ -71,23 +73,21 @@ class BaseRenderer(ABC):
             video_spec: Project Vine VideoSpec model
 
         Returns:
-            MoviePy CompositeVideoClip object
+            MoviePy clip object
         """
         pass
 
-    def finalize(
-        self, composite: CompositeVideoClip, video_spec: VideoSpec
-    ) -> CompositeVideoClip:
+    def finalize(self, composite: T, video_spec: VideoSpec) -> T:
         """Finalize the composite clip with video spec settings."""
         # Set FPS if not already set
         if not hasattr(composite, "fps") or composite.fps is None:
-            composite = composite.with_fps(video_spec.fps)
+            return cast(T, composite.with_fps(video_spec.fps))
 
         return composite
 
     def render_with_audio(
         self, video_spec: VideoSpec
-    ) -> tuple[CompositeVideoClip, Optional[AudioFileClip]]:
+    ) -> tuple[VideoClip, Optional[AudioClip]]:
         """
         Render video with audio.
 

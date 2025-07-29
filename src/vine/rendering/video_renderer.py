@@ -2,13 +2,13 @@
 
 from typing import List
 
-from moviepy import CompositeVideoClip, ImageClip
+from moviepy import CompositeVideoClip, ImageClip, VideoClip
 
 from vine.models.video_spec import VideoSpec
 from vine.rendering.base_renderer import BaseRenderer
 
 
-class VideoRenderer(BaseRenderer):
+class VideoRenderer(BaseRenderer[VideoClip]):
     """
     Video-specific renderer implementation.
 
@@ -16,7 +16,7 @@ class VideoRenderer(BaseRenderer):
     focusing on image clips and text overlays.
     """
 
-    def create_clips(self, video_spec: VideoSpec) -> List[ImageClip]:
+    def create_clips(self, video_spec: VideoSpec) -> List[VideoClip]:
         """
         Create video clips from the video spec.
 
@@ -24,27 +24,25 @@ class VideoRenderer(BaseRenderer):
             video_spec: Project Vine VideoSpec model
 
         Returns:
-            List of MoviePy ImageClip objects
+            List of MoviePy VideoClip objects
         """
         clips = []
 
         # Create clips from video tracks
-        for track in video_spec.video_tracks:
-            if track.visible:
-                track_clips = self.adapter.adapt_video_track(track)
+        for video_track in video_spec.video_tracks:
+            if video_track.visible:
+                track_clips = self.adapter.adapt_video_track(video_track)
                 clips.extend(track_clips)
 
         # Create clips from text tracks (overlays)
-        for track in video_spec.text_tracks:
-            if track.visible:
-                track_clips = self.adapter.adapt_text_track(track)
+        for text_track in video_spec.text_tracks:
+            if text_track.visible:
+                track_clips = self.adapter.adapt_text_track(text_track)
                 clips.extend(track_clips)
 
         return clips
 
-    def compose_clips(
-        self, clips: List[ImageClip], video_spec: VideoSpec
-    ) -> CompositeVideoClip:
+    def compose_clips(self, clips: List[ImageClip], video_spec: VideoSpec) -> VideoClip:
         """
         Compose video clips into a composite video.
 
@@ -55,41 +53,38 @@ class VideoRenderer(BaseRenderer):
         Returns:
             MoviePy CompositeVideoClip object
         """
+        # Create composite from all clips or empty video
         if clips:
-            # Create composite from all clips
-            composite = CompositeVideoClip(
+            result: VideoClip = CompositeVideoClip(
                 clips, size=(video_spec.width, video_spec.height)
             )
         else:
-            # Create empty black video if no clips
             from moviepy import ColorClip
 
-            composite = ColorClip(
+            result = ColorClip(
                 size=(video_spec.width, video_spec.height), color=(0, 0, 0)
             )
 
-        return composite
+        return result
 
-    def finalize(
-        self, composite: CompositeVideoClip, video_spec: VideoSpec
-    ) -> CompositeVideoClip:
+    def finalize(self, composite: VideoClip, video_spec: VideoSpec) -> VideoClip:
         """
         Finalize the video with additional processing.
 
         Args:
-            composite: MoviePy CompositeVideoClip object
+            composite: MoviePy VideoClip object
             video_spec: Project Vine VideoSpec model
 
         Returns:
-            Finalized MoviePy CompositeVideoClip object
+            Finalized MoviePy VideoClip object
         """
         # Call parent finalize method
-        composite = super().finalize(composite, video_spec)
+        final_result = super().finalize(composite, video_spec)
 
         # Set background color if specified
         if video_spec.background_color != "#000000":
             # This would require additional processing to set background color
             # For now, we'll use the default black background
-            pass
+            raise NotImplementedError("Background color setting not yet implemented")
 
-        return composite
+        return final_result

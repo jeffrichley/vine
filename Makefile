@@ -8,11 +8,11 @@ install-dev:  ## Install development dependencies
 	uv pip install -e ".[dev,docs]"
 
 format:  ## Format code with black and ruff
-	uv run black .
-	uv run ruff check . --fix
+	uv run black src/ tests/ examples/ scripts/
+	uv run ruff check src/ tests/ examples/ scripts/ --fix
 
 lint:  ## Lint code with ruff
-	uv run ruff check .
+	uv run ruff check src/ tests/ examples/ scripts/
 
 test:  ## Run tests
 	uv run pytest tests/ -v
@@ -24,10 +24,10 @@ test-cov-check:  ## Run tests with coverage and fail if below 80%
 	uv run pytest tests/ --cov=src/vine --cov-report=term-missing --cov-fail-under=80
 
 vulture:  ## Find dead code with vulture
-	uv run vulture src/ tests/ --min-confidence 80
+	uv run vulture src/ tests/ examples/ scripts/ --min-confidence 80
 
 vulture-all:  ## Find all potential dead code with vulture (lower confidence)
-	uv run vulture src/ tests/ --min-confidence 60
+	uv run vulture src/ tests/ examples/ scripts/ --min-confidence 60
 
 docs:  ## Build documentation
 	cd docs && make html
@@ -52,7 +52,7 @@ docs-build: docs  ## Alias for docs
 docs-view: docs-serve  ## Alias for docs-serve
 
 checkit:
-	mypy src/ tests/
+	uv run mypy --config-file=pyproject.toml src/ tests/
 	pre-commit run --all-files
 	$(MAKE) test-cov-check
 

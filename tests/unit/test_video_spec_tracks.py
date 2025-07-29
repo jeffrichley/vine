@@ -14,12 +14,14 @@ from vine.models import (
     VideoTrack,
     VoiceConfig,
 )
+from vine.models.tracks import TrackType
+from vine.models.transition import TransitionType
 
 
 class TestVideoSpecTracks:
     """Test track-based VideoSpec model."""
 
-    def test_create_basic_video_spec(self):
+    def test_create_basic_video_spec(self) -> None:
         """Test creating a basic video specification."""
         spec = VideoSpec(
             title="Test Video", description="A test video", width=1920, height=1080
@@ -33,7 +35,7 @@ class TestVideoSpecTracks:
         assert spec.output_format == "mp4"
         assert spec.quality == "high"
 
-    def test_video_spec_validation(self):
+    def test_video_spec_validation(self) -> None:
         """Test video specification validation."""
         # Test invalid width
         with pytest.raises(
@@ -57,7 +59,7 @@ class TestVideoSpecTracks:
         with pytest.raises(ValueError, match="String should match pattern"):
             VideoSpec(title="Test", background_color="invalid")
 
-    def test_background_color_validation(self):
+    def test_background_color_validation(self) -> None:
         """Test background color validation."""
         # Test valid hex colors
         valid_colors = [
@@ -83,7 +85,7 @@ class TestVideoSpecTracks:
         with pytest.raises(ValueError, match="String should match pattern"):
             VideoSpec(title="Test", background_color="#0000000")  # Too long
 
-    def test_video_spec_dimension_limits(self):
+    def test_video_spec_dimension_limits(self) -> None:
         """Test video specification dimension limits."""
         # Test maximum dimensions
         spec = VideoSpec(title="Test", width=7680, height=7680)
@@ -95,7 +97,7 @@ class TestVideoSpecTracks:
         assert spec.width == 1
         assert spec.height == 1
 
-    def test_video_spec_methods(self):
+    def test_video_spec_methods(self) -> None:
         """Test VideoSpec methods."""
         spec = VideoSpec(title="Test Video")
 
@@ -114,7 +116,7 @@ class TestVideoSpecTracks:
         transitions = spec.get_transitions_at_time(0.0)
         assert transitions == []
 
-    def test_video_spec_track_management(self):
+    def test_video_spec_track_management(self) -> None:
         """Test VideoSpec track management."""
         spec = VideoSpec(title="Test Video")
 
@@ -138,32 +140,32 @@ class TestVideoSpecTracks:
         assert len(spec.text_tracks) == 2  # Default + added
 
         # Test getting track by name
-        found_video = spec.get_track_by_name("video_1", "video")
+        found_video = spec.get_track_by_name("video_1", TrackType.VIDEO)
         assert found_video is not None
         assert found_video.name == "video_1"
 
-        found_music = spec.get_track_by_name("music_1", "music")
+        found_music = spec.get_track_by_name("music_1", TrackType.MUSIC)
         assert found_music is not None
         assert found_music.name == "music_1"
 
-        found_voice = spec.get_track_by_name("voice_1", "voice")
+        found_voice = spec.get_track_by_name("voice_1", TrackType.VOICE)
         assert found_voice is not None
         assert found_voice.name == "voice_1"
 
-        found_sfx = spec.get_track_by_name("sfx_1", "sfx")
+        found_sfx = spec.get_track_by_name("sfx_1", TrackType.SFX)
         assert found_sfx is not None
         assert found_sfx.name == "sfx_1"
 
-        found_text = spec.get_track_by_name("text_1", "text")
+        found_text = spec.get_track_by_name("text_1", TrackType.TEXT)
         assert found_text is not None
         assert found_text.name == "text_1"
 
         # Test removing tracks
-        assert spec.remove_track("video_1", "video")
-        assert spec.remove_track("music_1", "music")
-        assert spec.remove_track("voice_1", "voice")
-        assert spec.remove_track("sfx_1", "sfx")
-        assert spec.remove_track("text_1", "text")
+        assert spec.remove_track("video_1", TrackType.VIDEO)
+        assert spec.remove_track("music_1", TrackType.MUSIC)
+        assert spec.remove_track("voice_1", TrackType.VOICE)
+        assert spec.remove_track("sfx_1", TrackType.SFX)
+        assert spec.remove_track("text_1", TrackType.TEXT)
 
         assert len(spec.video_tracks) == 1  # Only default
         assert len(spec.music_tracks) == 1  # Only default
@@ -171,100 +173,94 @@ class TestVideoSpecTracks:
         assert len(spec.sfx_tracks) == 1  # Only default
         assert len(spec.text_tracks) == 1  # Only default
 
-    def test_get_track_by_name_edge_cases(self):
+    def test_get_track_by_name_edge_cases(self) -> None:
         """Test get_track_by_name method edge cases that return None."""
         spec = VideoSpec(title="Test Video")
 
         # Test getting non-existent video track
-        result = spec.get_track_by_name("non_existent", "video")
+        result = spec.get_track_by_name("non_existent", TrackType.VIDEO)
         assert result is None
 
         # Test getting non-existent music track
-        result = spec.get_track_by_name("non_existent", "music")
+        result = spec.get_track_by_name("non_existent", TrackType.MUSIC)
         assert result is None
 
         # Test getting non-existent voice track
-        result = spec.get_track_by_name("non_existent", "voice")
+        result = spec.get_track_by_name("non_existent", TrackType.VOICE)
         assert result is None
 
         # Test getting non-existent sfx track
-        result = spec.get_track_by_name("non_existent", "sfx")
+        result = spec.get_track_by_name("non_existent", TrackType.SFX)
         assert result is None
 
         # Test getting non-existent text track
-        result = spec.get_track_by_name("non_existent", "text")
-        assert result is None
-
-        # Test with invalid track type
-        result = spec.get_track_by_name("video_0", "invalid_type")
+        result = spec.get_track_by_name("non_existent", TrackType.TEXT)
         assert result is None
 
         # Test with empty string track name
-        result = spec.get_track_by_name("", "video")
+        result = spec.get_track_by_name("", TrackType.VIDEO)
         assert result is None
 
         # Test with None track name (should return None gracefully)
-        result = spec.get_track_by_name(None, "video")  # type: ignore[arg-type]
+        result = spec.get_track_by_name(None, TrackType.VIDEO)  # type: ignore[arg-type]  # intentional invalid input for testing
         assert result is None
 
-    def test_remove_track_edge_cases(self):
+    def test_remove_track_edge_cases(self) -> None:
         """Test remove_track method edge cases that return False."""
         spec = VideoSpec(title="Test Video")
 
         # Test removing non-existent video track
-        result = spec.remove_track("non_existent", "video")
+        result = spec.remove_track("non_existent", TrackType.VIDEO)
         assert result is False
 
         # Test removing non-existent music track
-        result = spec.remove_track("non_existent", "music")
+        result = spec.remove_track("non_existent", TrackType.MUSIC)
         assert result is False
 
         # Test removing non-existent voice track
-        result = spec.remove_track("non_existent", "voice")
+        result = spec.remove_track("non_existent", TrackType.VOICE)
         assert result is False
 
         # Test removing non-existent sfx track
-        result = spec.remove_track("non_existent", "sfx")
+        result = spec.remove_track("non_existent", TrackType.SFX)
         assert result is False
 
         # Test removing non-existent text track
-        result = spec.remove_track("non_existent", "text")
-        assert result is False
-
-        # Test with invalid track type
-        result = spec.remove_track("video_0", "invalid_type")
+        result = spec.remove_track("non_existent", TrackType.TEXT)
         assert result is False
 
         # Test with empty string track name
-        result = spec.remove_track("", "video")
+        result = spec.remove_track("", TrackType.VIDEO)
         assert result is False
 
         # Test with None track name (should return False gracefully)
-        result = spec.remove_track(None, "video")  # type: ignore[arg-type]
+        result = spec.remove_track(None, TrackType.VIDEO)  # type: ignore[arg-type]  # intentional invalid input for testing
         assert result is False
 
         # Test removing default tracks (should succeed since there's no protection)
-        result = spec.remove_track("video_0", "video")
+        result = spec.remove_track("video_0", TrackType.VIDEO)
         assert result is True
 
-        result = spec.remove_track("music_0", "music")
+        result = spec.remove_track("music_0", TrackType.MUSIC)
         assert result is True
 
-        result = spec.remove_track("voice_0", "voice")
+        result = spec.remove_track("voice_0", TrackType.VOICE)
         assert result is True
 
-        result = spec.remove_track("sfx_0", "sfx")
+        result = spec.remove_track("sfx_0", TrackType.SFX)
         assert result is True
 
-        result = spec.remove_track("text_0", "text")
+        result = spec.remove_track("text_0", TrackType.TEXT)
         assert result is True
 
-    def test_video_spec_transition_management(self):
+    def test_video_spec_transition_management(self) -> None:
         """Test VideoSpec transition management."""
         spec = VideoSpec(title="Test Video")
 
         # Test adding transitions
-        transition = Transition(transition_type="fade", start_time=0.0, duration=1.0)
+        transition = Transition(
+            transition_type=TransitionType.FADE, start_time=0.0, duration=1.0
+        )
 
         spec.add_transition(transition)
         assert len(spec.transitions) == 1
@@ -276,7 +272,7 @@ class TestVideoSpecTracks:
         # Test removing non-existent transition
         assert not spec.remove_transition(0)
 
-    def test_video_spec_time_queries(self):
+    def test_video_spec_time_queries(self) -> None:
         """Test VideoSpec time queries."""
         spec = VideoSpec(title="Test Video")
 
@@ -308,14 +304,16 @@ class TestVideoSpecTracks:
         total_duration = spec.get_total_duration()
         assert total_duration == 5.0  # Video clip ends at 5.0
 
-    def test_video_spec_transitions(self):
+    def test_video_spec_transitions(self) -> None:
         """Test VideoSpec transitions."""
         spec = VideoSpec(title="Test Video")
 
         # Add transitions
-        transition1 = Transition(transition_type="fade", start_time=0.0, duration=1.0)
+        transition1 = Transition(
+            transition_type=TransitionType.FADE, start_time=0.0, duration=1.0
+        )
         transition2 = Transition(
-            transition_type="crossfade", start_time=5.0, duration=2.0
+            transition_type=TransitionType.CROSSFADE, start_time=5.0, duration=2.0
         )
 
         spec.add_transition(transition1)
@@ -333,7 +331,7 @@ class TestVideoSpecTracks:
         transitions = spec.get_transitions_at_time(10.0)
         assert transitions == []
 
-    def test_video_spec_z_order_sorting(self):
+    def test_video_spec_z_order_sorting(self) -> None:
         """Test VideoSpec z_order sorting."""
         spec = VideoSpec(title="Test Video")
 
@@ -353,7 +351,7 @@ class TestVideoSpecTracks:
         assert spec.video_tracks[2].name == "video_1"  # z_order=10
         assert spec.video_tracks[3].name == "video_3"  # z_order=15
 
-    def test_video_spec_with_voice_and_music_config(self):
+    def test_video_spec_with_voice_and_music_config(self) -> None:
         """Test VideoSpec with voice and music configuration."""
         voice_config = VoiceConfig(volume=0.8, speed=1.2)
         music_config = MusicConfig(volume=0.6, loop=True)
@@ -370,7 +368,7 @@ class TestVideoSpecTracks:
         assert spec.music_config.volume == 0.6
         assert spec.music_config.loop is True
 
-    def test_get_total_duration_with_transitions(self):
+    def test_get_total_duration_with_transitions(self) -> None:
         """Test get_total_duration method specifically with transitions to exercise lines 101-102."""
         spec = VideoSpec(title="Test Video")
 
@@ -378,7 +376,9 @@ class TestVideoSpecTracks:
         assert spec.get_total_duration() == 0.0
 
         # Add a transition that ends at 5.0 seconds
-        transition1 = Transition(transition_type="fade", start_time=0.0, duration=5.0)
+        transition1 = Transition(
+            transition_type=TransitionType.FADE, start_time=0.0, duration=5.0
+        )
         spec.add_transition(transition1)
 
         # Now duration should be 5.0 (from transition)
@@ -386,7 +386,9 @@ class TestVideoSpecTracks:
 
         # Add another transition that ends at 8.0 seconds
         transition2 = Transition(
-            transition_type="crossfade", start_time=3.0, duration=5.0  # ends at 8.0
+            transition_type=TransitionType.CROSSFADE,
+            start_time=3.0,
+            duration=5.0,  # ends at 8.0
         )
         spec.add_transition(transition2)
 
@@ -395,7 +397,9 @@ class TestVideoSpecTracks:
 
         # Add a transition that ends at 10.0 seconds
         transition3 = Transition(
-            transition_type="slide", start_time=8.0, duration=2.0  # ends at 10.0
+            transition_type=TransitionType.SLIDE,
+            start_time=8.0,
+            duration=2.0,  # ends at 10.0
         )
         spec.add_transition(transition3)
 
@@ -404,7 +408,9 @@ class TestVideoSpecTracks:
 
         # Test with zero duration transition
         transition4 = Transition(
-            transition_type="dissolve", start_time=15.0, duration=0.0  # ends at 15.0
+            transition_type=TransitionType.DISSOLVE,
+            start_time=15.0,
+            duration=0.0,  # ends at 15.0
         )
         spec.add_transition(transition4)
 

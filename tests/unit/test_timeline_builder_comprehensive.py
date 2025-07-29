@@ -12,6 +12,7 @@ from typing import Any
 import pytest
 
 from vine.builder.timeline_builder import TimelineBuilder
+from vine.models.transition import TransitionType
 from vine.models.video_spec import VideoSpec
 
 
@@ -23,7 +24,7 @@ def safe_assert(condition: Any, message: str = "") -> None:
 class TestTimelineBuilderComprehensive:
     """Comprehensive tests for TimelineBuilder functionality."""
 
-    def test_initialization_with_custom_parameters(self):
+    def test_initialization_with_custom_parameters(self) -> None:
         """Test TimelineBuilder initialization with custom parameters."""
         builder = TimelineBuilder(width=1280, height=720, fps=60)
 
@@ -45,7 +46,7 @@ class TestTimelineBuilderComprehensive:
         assert builder.sfx_tracks[0].name == "sfx_0"
         assert builder.text_tracks[0].name == "text_0"
 
-    def test_sequential_mode_without_duration(self):
+    def test_sequential_mode_without_duration(self) -> None:
         """Test sequential mode when duration is not specified."""
         builder = TimelineBuilder()
 
@@ -74,7 +75,7 @@ class TestTimelineBuilderComprehensive:
         assert builder._text_current_time == 0.0
         assert builder._voice_current_time == 0.0
 
-    def test_explicit_timing_with_end_time(self):
+    def test_explicit_timing_with_end_time(self) -> None:
         """Test explicit timing using end_time instead of duration."""
         builder = TimelineBuilder()
 
@@ -92,7 +93,7 @@ class TestTimelineBuilderComprehensive:
         assert builder._text_current_time == 7.0
         assert builder._voice_current_time == 8.0
 
-    def test_explicit_timing_without_duration_or_end_time(self):
+    def test_explicit_timing_without_duration_or_end_time(self) -> None:
         """Test explicit timing without duration or end_time."""
         builder = TimelineBuilder()
 
@@ -113,7 +114,7 @@ class TestTimelineBuilderComprehensive:
         assert builder._text_current_time == 2.0
         assert builder._voice_current_time == 0.0
 
-    def test_validation_errors_duration_and_end_time(self):
+    def test_validation_errors_duration_and_end_time(self) -> None:
         """Test validation errors when both duration and end_time are specified."""
         builder = TimelineBuilder()
 
@@ -137,7 +138,7 @@ class TestTimelineBuilderComprehensive:
                 "voice1.mp3", start_time=0.0, duration=4.0, end_time=12.0
             )
 
-    def test_auto_track_creation_with_overlaps(self):
+    def test_auto_track_creation_with_overlaps(self) -> None:
         """Test automatic track creation when tracks have overlapping clips."""
         builder = TimelineBuilder()
 
@@ -159,7 +160,7 @@ class TestTimelineBuilderComprehensive:
         # Track should detect overlaps
         assert builder.video_tracks[0].has_overlapping_clips()
 
-    def test_auto_track_creation_voice_tracks(self):
+    def test_auto_track_creation_voice_tracks(self) -> None:
         """Test automatic track creation for voice tracks."""
         builder = TimelineBuilder()
 
@@ -179,7 +180,7 @@ class TestTimelineBuilderComprehensive:
         # Track should detect overlaps
         assert builder.voice_tracks[0].has_overlapping_clips()
 
-    def test_auto_track_creation_text_tracks(self):
+    def test_auto_track_creation_text_tracks(self) -> None:
         """Test automatic track creation for text tracks."""
         builder = TimelineBuilder()
 
@@ -199,7 +200,7 @@ class TestTimelineBuilderComprehensive:
         # Track should detect overlaps
         assert builder.text_tracks[0].has_overlapping_clips()
 
-    def test_sequential_mode_track_specific_timing(self):
+    def test_sequential_mode_track_specific_timing(self) -> None:
         """Test that sequential mode maintains separate timing for each track type."""
         builder = TimelineBuilder()
 
@@ -234,7 +235,7 @@ class TestTimelineBuilderComprehensive:
         assert builder._text_current_time == 5.0  # 3.0 + 2.0
         assert builder._voice_current_time == 4.0  # 0.0 + 4.0
 
-    def test_transition_sequential_mode_timing(self):
+    def test_transition_sequential_mode_timing(self) -> None:
         """Test transition timing in sequential mode."""
         builder = TimelineBuilder()
 
@@ -244,36 +245,38 @@ class TestTimelineBuilderComprehensive:
         builder.add_voice("voice1.mp3", duration=4.0)
 
         # Add transition
-        builder.add_transition("fade", duration=1.0)
+        builder.add_transition(TransitionType.FADE, duration=1.0)
 
         # Check transition timing
         assert len(builder.transitions) == 1
         transition = builder.transitions[0]
-        assert transition.transition_type == "fade"
+        assert transition.transition_type == TransitionType.FADE
         assert transition.duration == 1.0
 
         # Transition should start at max current time minus duration
         # max(5.0, 3.0, 4.0) = 5.0, so start_time = 5.0 - 1.0 = 4.0
         assert transition.start_time == 4.0
 
-    def test_transition_explicit_mode(self):
+    def test_transition_explicit_mode(self) -> None:
         """Test transition with explicit timing."""
         builder = TimelineBuilder()
 
-        builder.add_transition_at("crossfade", start_time=10.0, duration=2.0)
+        builder.add_transition_at(
+            TransitionType.CROSSFADE, start_time=10.0, duration=2.0
+        )
 
         assert len(builder.transitions) == 1
         transition = builder.transitions[0]
-        assert transition.transition_type == "crossfade"
+        assert transition.transition_type == TransitionType.CROSSFADE
         assert transition.start_time == 10.0
         assert transition.duration == 2.0
 
-    def test_transition_with_kwargs(self):
+    def test_transition_with_kwargs(self) -> None:
         """Test transition with additional parameters."""
         builder = TimelineBuilder()
 
         builder.add_transition_at(
-            "slide",
+            TransitionType.SLIDE,
             start_time=5.0,
             duration=1.5,
             direction="left",
@@ -284,7 +287,7 @@ class TestTimelineBuilderComprehensive:
 
         assert len(builder.transitions) == 1
         transition = builder.transitions[0]
-        assert transition.transition_type == "slide"
+        assert transition.transition_type == TransitionType.SLIDE
         assert transition.start_time == 5.0
         assert transition.duration == 1.5
         assert transition.direction == "left"
@@ -292,7 +295,7 @@ class TestTimelineBuilderComprehensive:
         assert transition.from_tracks == ["video_0"]
         assert transition.to_tracks == ["video_1"]
 
-    def test_clip_properties_passed_through(self):
+    def test_clip_properties_passed_through(self) -> None:
         """Test that clip properties are passed through correctly."""
         builder = TimelineBuilder()
 
@@ -351,7 +354,7 @@ class TestTimelineBuilderComprehensive:
         assert voice_clip.fade_in == 0.5
         assert voice_clip.fade_out == 1.0
 
-    def test_pathlib_path_support(self):
+    def test_pathlib_path_support(self) -> None:
         """Test that Path objects are supported for file paths."""
         builder = TimelineBuilder()
 
@@ -365,14 +368,14 @@ class TestTimelineBuilderComprehensive:
         assert builder.video_tracks[0].clips[0].path == "test_image.jpg"
         assert builder.voice_tracks[0].clips[0].path == "test_voice.mp3"
 
-    def test_get_duration_with_no_clips(self):
+    def test_get_duration_with_no_clips(self) -> None:
         """Test get_duration when no clips are present."""
         builder = TimelineBuilder()
 
         duration = builder.get_duration()
         assert duration == 0.0
 
-    def test_get_duration_with_clips_no_duration(self):
+    def test_get_duration_with_clips_no_duration(self) -> None:
         """Test get_duration when clips have no duration specified."""
         builder = TimelineBuilder()
 
@@ -382,7 +385,7 @@ class TestTimelineBuilderComprehensive:
         duration = builder.get_duration()
         assert duration == 0.0  # No duration clips are ignored in get_duration()
 
-    def test_get_duration_with_mixed_clips(self):
+    def test_get_duration_with_mixed_clips(self) -> None:
         """Test get_duration with clips that have and don't have durations."""
         builder = TimelineBuilder()
 
@@ -398,17 +401,19 @@ class TestTimelineBuilderComprehensive:
         duration = builder.get_duration()
         assert duration == 25.0  # Latest end time
 
-    def test_get_duration_with_transitions(self):
+    def test_get_duration_with_transitions(self) -> None:
         """Test get_duration including transitions."""
         builder = TimelineBuilder()
 
         builder.add_image_at("image1.jpg", start_time=0.0, duration=5.0)
-        builder.add_transition_at("fade", start_time=10.0, duration=2.0)  # Ends at 12.0
+        builder.add_transition_at(
+            TransitionType.FADE, start_time=10.0, duration=2.0
+        )  # Ends at 12.0
 
         duration = builder.get_duration()
         assert duration == 12.0  # Latest end time from transition
 
-    def test_set_fps(self):
+    def test_set_fps(self) -> None:
         """Test setting FPS."""
         builder = TimelineBuilder()
 
@@ -420,7 +425,7 @@ class TestTimelineBuilderComprehensive:
         assert result is builder
         assert builder.fps == 30
 
-    def test_clear_resets_everything(self):
+    def test_clear_resets_everything(self) -> None:
         """Test that clear resets all tracks and timing."""
         builder = TimelineBuilder()
 
@@ -428,7 +433,7 @@ class TestTimelineBuilderComprehensive:
         builder.add_image("image1.jpg", duration=5.0)
         builder.add_text("text1", duration=3.0)
         builder.add_voice("voice1.mp3", duration=4.0)
-        builder.add_transition("fade", duration=1.0)
+        builder.add_transition(TransitionType.FADE, duration=1.0)
 
         # Modify FPS
         builder.set_fps(60)
@@ -469,7 +474,7 @@ class TestTimelineBuilderComprehensive:
         # Check FPS was preserved (not reset)
         assert builder.fps == 60
 
-    def test_get_track_count_with_multiple_tracks(self):
+    def test_get_track_count_with_multiple_tracks(self) -> None:
         """Test get_track_count with multiple tracks."""
         builder = TimelineBuilder()
 
@@ -490,7 +495,7 @@ class TestTimelineBuilderComprehensive:
         assert counts["sfx"] == 1
         assert counts["text"] == 1
 
-    def test_get_clip_count_with_multiple_tracks(self):
+    def test_get_clip_count_with_multiple_tracks(self) -> None:
         """Test get_clip_count with multiple tracks."""
         builder = TimelineBuilder()
 
@@ -513,7 +518,7 @@ class TestTimelineBuilderComprehensive:
         assert counts["voice"] == 2
         assert counts["text"] == 2
 
-    def test_build_video_spec_complete(self):
+    def test_build_video_spec_complete(self) -> None:
         """Test building complete VideoSpec."""
         builder = TimelineBuilder(width=1920, height=1080, fps=30)
 
@@ -521,7 +526,7 @@ class TestTimelineBuilderComprehensive:
         builder.add_image("image1.jpg", duration=5.0)
         builder.add_text("Hello", duration=3.0)
         builder.add_voice("voice1.mp3", duration=4.0)
-        builder.add_transition("fade", duration=1.0)
+        builder.add_transition(TransitionType.FADE, duration=1.0)
 
         # Build VideoSpec
         video_spec = builder.build()
@@ -550,9 +555,9 @@ class TestTimelineBuilderComprehensive:
         assert video_spec.video_tracks[0].clips[0].path == "image1.jpg"
         assert video_spec.text_tracks[0].clips[0].content == "Hello"
         assert video_spec.voice_tracks[0].clips[0].path == "voice1.mp3"
-        assert video_spec.transitions[0].transition_type == "fade"
+        assert video_spec.transitions[0].transition_type == TransitionType.FADE
 
-    def test_build_video_spec_empty(self):
+    def test_build_video_spec_empty(self) -> None:
         """Test building VideoSpec with no content."""
         builder = TimelineBuilder(width=1280, height=720, fps=60)
 
@@ -576,7 +581,7 @@ class TestTimelineBuilderComprehensive:
         assert len(video_spec.sfx_tracks[0].clips) == 0
         assert len(video_spec.text_tracks[0].clips) == 0
 
-    def test_method_chaining(self):
+    def test_method_chaining(self) -> None:
         """Test that all methods support method chaining."""
         builder = TimelineBuilder()
 
@@ -590,7 +595,7 @@ class TestTimelineBuilderComprehensive:
         result = builder.add_voice("voice1.mp3", duration=4.0)
         assert result is builder
 
-        result = builder.add_transition("fade", duration=1.0)
+        result = builder.add_transition(TransitionType.FADE, duration=1.0)
         assert result is builder
 
         # Test explicit methods
@@ -603,7 +608,9 @@ class TestTimelineBuilderComprehensive:
         result = builder.add_voice_at("voice2.mp3", start_time=12.0, duration=6.0)
         assert result is builder
 
-        result = builder.add_transition_at("crossfade", start_time=15.0, duration=2.0)
+        result = builder.add_transition_at(
+            TransitionType.CROSSFADE, start_time=15.0, duration=2.0
+        )
         assert result is builder
 
         # Test utility methods
@@ -613,22 +620,22 @@ class TestTimelineBuilderComprehensive:
         result = builder.clear()
         assert result is builder
 
-    def test_track_auto_detection_edge_cases(self):
+    def test_track_auto_detection_edge_cases(self) -> None:
         """Test edge cases in track auto-detection."""
         builder = TimelineBuilder()
 
         # Test with empty tracks (should use first track)
-        track = builder._get_or_create_video_track()
-        assert track is builder.video_tracks[0]
-        assert track.name == "video_0"
+        video_track = builder._get_or_create_video_track()
+        assert video_track is builder.video_tracks[0]
+        assert video_track.name == "video_0"
 
-        track = builder._get_or_create_voice_track()
-        assert track is builder.voice_tracks[0]
-        assert track.name == "voice_0"
+        voice_track = builder._get_or_create_voice_track()
+        assert voice_track is builder.voice_tracks[0]
+        assert voice_track.name == "voice_0"
 
-        track = builder._get_or_create_text_track()
-        assert track is builder.text_tracks[0]
-        assert track.name == "text_0"
+        text_track = builder._get_or_create_text_track()
+        assert text_track is builder.text_tracks[0]
+        assert text_track.name == "text_0"
 
         # Test with non-overlapping clips (should use existing track)
         builder.add_image_at("image1.jpg", start_time=0.0, duration=5.0)
@@ -637,7 +644,7 @@ class TestTimelineBuilderComprehensive:
         track = builder._get_or_create_video_track()
         assert track is builder.video_tracks[0]  # Should use existing track
 
-    def test_current_time_updates_with_explicit_timing(self):
+    def test_current_time_updates_with_explicit_timing(self) -> None:
         """Test that current times are updated correctly with explicit timing."""
         builder = TimelineBuilder()
 
@@ -657,7 +664,7 @@ class TestTimelineBuilderComprehensive:
         # Current time should not decrease
         assert builder._video_current_time == 8.0  # Should stay at 8.0, not 3.0
 
-    def test_current_time_updates_without_duration(self):
+    def test_current_time_updates_without_duration(self) -> None:
         """Test current time updates when duration is not specified."""
         builder = TimelineBuilder()
 
@@ -671,7 +678,7 @@ class TestTimelineBuilderComprehensive:
         assert builder._text_current_time == 2.0
         assert builder._voice_current_time == 10.0
 
-    def test_metadata_preservation(self):
+    def test_metadata_preservation(self) -> None:
         """Test that metadata is preserved in clips."""
         builder = TimelineBuilder()
 
@@ -711,7 +718,7 @@ class TestTimelineBuilderComprehensive:
             "language": "en",
         }
 
-    def test_set_duration_functionality(self):
+    def test_set_duration_functionality(self) -> None:
         """Test that set_duration sets the default duration for subsequent sequential elements."""
         builder = TimelineBuilder()
 
@@ -749,7 +756,7 @@ class TestTimelineBuilderComprehensive:
         builder.add_voice("voice2.mp3")  # Should not use any duration
         assert builder.voice_tracks[0].clips[1].duration is None
 
-    def test_clear_duration_functionality(self):
+    def test_clear_duration_functionality(self) -> None:
         """Test that clear_duration properly resets the default duration."""
         builder = TimelineBuilder()
 
@@ -787,7 +794,7 @@ class TestTimelineBuilderComprehensive:
             "Voice clip should have 3.0 duration",
         )
 
-    def test_set_duration_batch_operations(self):
+    def test_set_duration_batch_operations(self) -> None:
         """Test that set_duration works correctly for batch operations with multiple elements."""
         builder = TimelineBuilder()
 
@@ -807,20 +814,20 @@ class TestTimelineBuilderComprehensive:
         assert len(builder.text_tracks[0].clips) == 2
         assert len(builder.voice_tracks[0].clips) == 2
 
-        for clip in builder.video_tracks[0].clips:
+        for video_clip in builder.video_tracks[0].clips:
             assert (
-                clip.duration == 4.0
-            ), f"Video clip duration should be 4.0, got {clip.duration}"
+                video_clip.duration == 4.0
+            ), f"Video clip duration should be 4.0, got {video_clip.duration}"
 
-        for clip in builder.text_tracks[0].clips:
+        for text_clip in builder.text_tracks[0].clips:
             assert (
-                clip.duration == 4.0
-            ), f"Text clip duration should be 4.0, got {clip.duration}"
+                text_clip.duration == 4.0
+            ), f"Text clip duration should be 4.0, got {text_clip.duration}"
 
-        for clip in builder.voice_tracks[0].clips:
+        for voice_clip in builder.voice_tracks[0].clips:
             assert (
-                clip.duration == 4.0
-            ), f"Voice clip duration should be 4.0, got {clip.duration}"
+                voice_clip.duration == 4.0
+            ), f"Voice clip duration should be 4.0, got {voice_clip.duration}"
 
         # Verify _next_duration persists throughout the batch
         assert (

@@ -2,7 +2,7 @@
 
 from typing import Literal, Optional
 
-from pydantic import Field, field_validator
+from pydantic import Field, ValidationInfo, field_validator
 
 from vine.models.base import BaseModel
 
@@ -24,7 +24,9 @@ class AudioConfig(BaseModel):
 
     @field_validator("end_time")
     @classmethod
-    def validate_end_time(cls, v: Optional[float], info) -> Optional[float]:
+    def validate_end_time(
+        cls, v: Optional[float], info: ValidationInfo
+    ) -> Optional[float]:
         """Validate end_time is after start_time."""
         if v is not None:
             start_time = info.data.get("start_time")

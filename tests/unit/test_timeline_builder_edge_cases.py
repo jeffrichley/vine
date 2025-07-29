@@ -5,13 +5,14 @@ from pathlib import Path
 import pytest
 
 from vine.builder.timeline_builder import TimelineBuilder
+from vine.models.transition import TransitionType
 from vine.models.video_spec import VideoSpec
 
 
 class TestTimelineBuilderEdgeCases:
     """Test edge cases and error scenarios for TimelineBuilder."""
 
-    def test_negative_start_time_validation(self):
+    def test_negative_start_time_validation(self) -> None:
         """Test that negative start times are rejected by the models."""
         builder = TimelineBuilder()
 
@@ -25,7 +26,7 @@ class TestTimelineBuilderEdgeCases:
         with pytest.raises(ValueError):
             builder.add_voice_at("voice1.mp3", start_time=-0.5, duration=4.0)
 
-    def test_negative_duration_validation(self):
+    def test_negative_duration_validation(self) -> None:
         """Test that negative durations are rejected by the models."""
         builder = TimelineBuilder()
 
@@ -38,7 +39,7 @@ class TestTimelineBuilderEdgeCases:
         with pytest.raises(ValueError):
             builder.add_voice_at("voice1.mp3", start_time=0.0, duration=-4.0)
 
-    def test_end_time_before_start_time_validation(self):
+    def test_end_time_before_start_time_validation(self) -> None:
         """Test that end_time before start_time is rejected."""
         builder = TimelineBuilder()
 
@@ -51,7 +52,7 @@ class TestTimelineBuilderEdgeCases:
         with pytest.raises(ValueError):
             builder.add_voice_at("voice1.mp3", start_time=12.0, end_time=6.0)
 
-    def test_end_time_equal_to_start_time_validation(self):
+    def test_end_time_equal_to_start_time_validation(self) -> None:
         """Test that end_time equal to start_time is allowed (creates zero-duration clip)."""
         builder = TimelineBuilder()
 
@@ -65,23 +66,27 @@ class TestTimelineBuilderEdgeCases:
         assert builder.text_tracks[0].clips[0].duration == 0.0
         assert builder.voice_tracks[0].clips[0].duration == 0.0
 
-    def test_transition_validation(self):
+    def test_transition_validation(self) -> None:
         """Test transition validation."""
         builder = TimelineBuilder()
 
         # Test invalid transition type
         with pytest.raises(ValueError):
-            builder.add_transition_at("invalid_type", start_time=0.0, duration=1.0)
+            builder.add_transition_at("invalid_type", start_time=0.0, duration=1.0)  # type: ignore[arg-type]  # intentional invalid input for testing
 
         # Test negative transition duration
         with pytest.raises(ValueError):
-            builder.add_transition_at("fade", start_time=0.0, duration=-1.0)
+            builder.add_transition_at(
+                TransitionType.FADE, start_time=0.0, duration=-1.0
+            )
 
         # Test negative transition start time
         with pytest.raises(ValueError):
-            builder.add_transition_at("fade", start_time=-1.0, duration=1.0)
+            builder.add_transition_at(
+                TransitionType.FADE, start_time=-1.0, duration=1.0
+            )
 
-    def test_empty_string_content(self):
+    def test_empty_string_content(self) -> None:
         """Test handling of empty string content."""
         builder = TimelineBuilder()
 
@@ -91,7 +96,7 @@ class TestTimelineBuilderEdgeCases:
         assert len(builder.text_tracks[0].clips) == 1
         assert builder.text_tracks[0].clips[0].content == ""
 
-    def test_whitespace_only_content(self):
+    def test_whitespace_only_content(self) -> None:
         """Test handling of whitespace-only content."""
         builder = TimelineBuilder()
 
@@ -100,7 +105,7 @@ class TestTimelineBuilderEdgeCases:
         assert len(builder.text_tracks[0].clips) == 1
         assert builder.text_tracks[0].clips[0].content == "   \n\t  "
 
-    def test_very_large_numbers(self):
+    def test_very_large_numbers(self) -> None:
         """Test handling of very large numbers."""
         builder = TimelineBuilder()
 
@@ -124,7 +129,7 @@ class TestTimelineBuilderEdgeCases:
         assert builder.voice_tracks[0].clips[0].start_time == large_time
         assert builder.voice_tracks[0].clips[0].duration == large_duration
 
-    def test_floating_point_precision(self):
+    def test_floating_point_precision(self) -> None:
         """Test handling of floating point precision."""
         builder = TimelineBuilder()
 
@@ -140,7 +145,7 @@ class TestTimelineBuilderEdgeCases:
         assert builder.video_tracks[0].clips[0].start_time == small_time
         assert builder.video_tracks[0].clips[0].duration == small_duration
 
-    def test_concurrent_access_simulation(self):
+    def test_concurrent_access_simulation(self) -> None:
         """Test that the builder can handle rapid successive calls."""
         builder = TimelineBuilder()
 
@@ -155,7 +160,7 @@ class TestTimelineBuilderEdgeCases:
         assert len(builder.text_tracks[0].clips) == 100
         assert len(builder.voice_tracks[0].clips) == 100
 
-    def test_mixed_path_types(self):
+    def test_mixed_path_types(self) -> None:
         """Test mixing string and Path objects for file paths."""
         builder = TimelineBuilder()
 
@@ -172,7 +177,7 @@ class TestTimelineBuilderEdgeCases:
         assert builder.voice_tracks[0].clips[0].path == "string_voice.mp3"
         assert builder.voice_tracks[0].clips[1].path == "pathlib_voice.mp3"
 
-    def test_unicode_content(self):
+    def test_unicode_content(self) -> None:
         """Test handling of unicode content in text clips."""
         builder = TimelineBuilder()
 
@@ -195,7 +200,7 @@ class TestTimelineBuilderEdgeCases:
         for i, text in enumerate(unicode_texts):
             assert builder.text_tracks[0].clips[i].content == text
 
-    def test_special_characters_in_paths(self):
+    def test_special_characters_in_paths(self) -> None:
         """Test handling of special characters in file paths."""
         builder = TimelineBuilder()
 
@@ -218,7 +223,7 @@ class TestTimelineBuilderEdgeCases:
         for i, path in enumerate(special_paths):
             assert builder.video_tracks[0].clips[i].path == path
 
-    def test_extreme_clip_properties(self):
+    def test_extreme_clip_properties(self) -> None:
         """Test extreme values for clip properties."""
         builder = TimelineBuilder()
 
@@ -272,7 +277,7 @@ class TestTimelineBuilderEdgeCases:
         assert voice_clip.fade_in == 0.0
         assert voice_clip.fade_out == 0.0
 
-    def test_invalid_property_values(self):
+    def test_invalid_property_values(self) -> None:
         """Test that invalid property values are rejected."""
         builder = TimelineBuilder()
 
@@ -307,7 +312,7 @@ class TestTimelineBuilderEdgeCases:
         with pytest.raises(ValueError):
             builder.add_image_at("image1.jpg", start_time=0.0, duration=5.0, height=0)
 
-    def test_clear_preserves_custom_parameters(self):
+    def test_clear_preserves_custom_parameters(self) -> None:
         """Test that clear preserves custom initialization parameters."""
         builder = TimelineBuilder(width=1280, height=720, fps=60)
 
@@ -332,7 +337,7 @@ class TestTimelineBuilderEdgeCases:
         assert builder.voice_tracks[0].name == "voice_0"
         assert builder.text_tracks[0].name == "text_0"
 
-    def test_get_duration_with_infinite_clips(self):
+    def test_get_duration_with_infinite_clips(self) -> None:
         """Test get_duration when clips have no end time (infinite duration)."""
         builder = TimelineBuilder()
 
@@ -345,7 +350,7 @@ class TestTimelineBuilderEdgeCases:
         duration = builder.get_duration()
         assert duration == 0.0
 
-    def test_get_duration_with_mixed_infinite_and_finite_clips(self):
+    def test_get_duration_with_mixed_infinite_and_finite_clips(self) -> None:
         """Test get_duration with mix of infinite and finite duration clips."""
         builder = TimelineBuilder()
 
@@ -360,7 +365,7 @@ class TestTimelineBuilderEdgeCases:
         duration = builder.get_duration()
         assert duration == 23.0  # 15.0 + 8.0
 
-    def test_track_creation_under_high_load(self):
+    def test_track_creation_under_high_load(self) -> None:
         """Test track creation behavior under high load."""
         builder = TimelineBuilder()
 
@@ -377,14 +382,14 @@ class TestTimelineBuilderEdgeCases:
         assert len(builder.text_tracks) > 1
 
         # Check track naming
-        for i, track in enumerate(builder.video_tracks):
-            assert track.name == f"video_{i}"
+        for i, video_track in enumerate(builder.video_tracks):
+            assert video_track.name == f"video_{i}"
 
-        for i, track in enumerate(builder.voice_tracks):
-            assert track.name == f"voice_{i}"
+        for i, voice_track in enumerate(builder.voice_tracks):
+            assert voice_track.name == f"voice_{i}"
 
-        for i, track in enumerate(builder.text_tracks):
-            assert track.name == f"text_{i}"
+        for i, text_track in enumerate(builder.text_tracks):
+            assert text_track.name == f"text_{i}"
 
         # Check that clips are distributed across tracks
         total_video_clips = sum(len(track.clips) for track in builder.video_tracks)
@@ -395,7 +400,7 @@ class TestTimelineBuilderEdgeCases:
         assert total_text_clips == 50
         assert total_voice_clips == 50
 
-    def test_method_chaining_with_clear(self):
+    def test_method_chaining_with_clear(self) -> None:
         """Test method chaining with clear operation."""
         builder = TimelineBuilder()
 
@@ -416,7 +421,7 @@ class TestTimelineBuilderEdgeCases:
         assert builder.video_tracks[0].clips[0].path == "image2.jpg"
         assert builder.text_tracks[0].clips[0].content == "text2"
 
-    def test_build_with_empty_builder(self):
+    def test_build_with_empty_builder(self) -> None:
         """Test building VideoSpec with completely empty builder."""
         builder = TimelineBuilder()
 

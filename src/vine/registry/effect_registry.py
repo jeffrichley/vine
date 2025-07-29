@@ -1,8 +1,8 @@
 """Effect registry for managing effect configurations."""
 
-from typing import Optional
+from typing import Any, Optional
 
-from vine.models.effects import EffectConfig, KenBurnsConfig, SlideConfig, StaticConfig
+from vine.models.effects import KenBurnsConfig, SlideConfig, StaticConfig
 from vine.registry.base_registry import BaseRegistry
 
 
@@ -14,12 +14,12 @@ class EffectRegistry(BaseRegistry):
     with consistent parameters and validation.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize with default effects."""
         super().__init__()
         self._register_defaults()
 
-    def _register_defaults(self):
+    def _register_defaults(self) -> None:
         """Register default effect configurations."""
         # Ken Burns effects
         self.register(
@@ -77,8 +77,8 @@ class EffectRegistry(BaseRegistry):
         return "static"
 
     def create_effect(
-        self, name: str, duration: Optional[float] = None, **kwargs
-    ) -> EffectConfig:
+        self, name: str, duration: Optional[float] = None, **kwargs: Any
+    ) -> KenBurnsConfig | SlideConfig | StaticConfig:
         """
         Create an effect configuration from a registered template.
 
@@ -104,13 +104,12 @@ class EffectRegistry(BaseRegistry):
             if key in template_data:
                 template_data[key] = value
 
+        # Create the appropriate config based on template type
         if isinstance(template, KenBurnsConfig):
-            config = KenBurnsConfig(**template_data)
+            return KenBurnsConfig(**template_data)
         elif isinstance(template, SlideConfig):
-            config = SlideConfig(**template_data)
+            return SlideConfig(**template_data)
         elif isinstance(template, StaticConfig):
-            config = StaticConfig(**template_data)
+            return StaticConfig(**template_data)
         else:
             raise ValueError(f"Unknown effect type: {type(template)}")
-
-        return config

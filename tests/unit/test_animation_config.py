@@ -8,7 +8,7 @@ from vine.models import AnimationConfig, KenBurnsConfig
 class TestAnimationConfig:
     """Test AnimationConfig model."""
 
-    def test_create_ken_burns_animation(self):
+    def test_create_ken_burns_animation(self) -> None:
         """Test creating a Ken Burns animation."""
         ken_burns = KenBurnsConfig(zoom_factor=1.5, pan_x=0.2, pan_y=-0.1)
 
@@ -20,7 +20,7 @@ class TestAnimationConfig:
         assert animation.duration == 3.0
         assert animation.get_end_time() == 3.0
 
-    def test_animation_validation(self):
+    def test_animation_validation(self) -> None:
         """Test animation validation."""
         ken_burns = KenBurnsConfig()
 
@@ -34,7 +34,7 @@ class TestAnimationConfig:
         with pytest.raises(ValueError, match="Unsupported easing function"):
             AnimationConfig(effect=ken_burns, easing="invalid_easing")
 
-    def test_validate_easing_success(self):
+    def test_validate_easing_success(self) -> None:
         """Test validate_easing method returns valid easing values unchanged."""
         ken_burns = KenBurnsConfig()
 
@@ -56,7 +56,7 @@ class TestAnimationConfig:
             animation = AnimationConfig(effect=ken_burns, easing=easing)
             assert animation.easing == easing
 
-    def test_animation_methods(self):
+    def test_animation_methods(self) -> None:
         """Test AnimationConfig methods."""
         ken_burns = KenBurnsConfig()
         animation = AnimationConfig(effect=ken_burns, start_time=1.0, duration=2.0)
@@ -73,7 +73,7 @@ class TestAnimationConfig:
         )
         assert animation.overlaps_with(non_overlapping) is False
 
-    def test_animation_without_duration(self):
+    def test_animation_without_duration(self) -> None:
         """Test animation without duration."""
         ken_burns = KenBurnsConfig()
         animation = AnimationConfig(effect=ken_burns, start_time=1.0)
@@ -83,7 +83,7 @@ class TestAnimationConfig:
             animation.overlaps_with(animation) is False
         )  # Can't overlap without duration
 
-    def test_animation_overlap_without_duration(self):
+    def test_animation_overlap_without_duration(self) -> None:
         """Test animation overlap when one or both animations have no duration."""
         ken_burns = KenBurnsConfig()
         anim1 = AnimationConfig(effect=ken_burns, start_time=0.0, duration=2.0)

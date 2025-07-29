@@ -1,7 +1,9 @@
 """TimelineBuilder for Project Vine video composition framework."""
 
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
+
+from moviepy import VideoClip
 
 from vine.defaults.defaults_manager import DefaultsManager
 from vine.models.tracks import (
@@ -12,14 +14,8 @@ from vine.models.tracks import (
     TextTrack,
     VideoTrack,
 )
-from vine.models.transition import Transition
+from vine.models.transition import Transition, TransitionType
 from vine.models.video_spec import VideoSpec
-
-# Type hint for MoviePy CompositeVideoClip
-try:
-    from moviepy import CompositeVideoClip
-except ImportError:
-    CompositeVideoClip = None  # type: ignore
 
 
 class TimelineBuilder:
@@ -158,7 +154,10 @@ class TimelineBuilder:
     # ============================================================================
 
     def add_image(
-        self, image_path: Union[str, Path], duration: Optional[float] = None, **kwargs
+        self,
+        image_path: Union[str, Path],
+        duration: Optional[float] = None,
+        **kwargs: Any,
     ) -> "TimelineBuilder":
         """
         Add an image in sequential mode (auto-appended to video track).
@@ -182,7 +181,7 @@ class TimelineBuilder:
         return self
 
     def add_text(
-        self, text: str, duration: Optional[float] = None, **kwargs
+        self, text: str, duration: Optional[float] = None, **kwargs: Any
     ) -> "TimelineBuilder":
         """
         Add text in sequential mode (auto-appended to text track).
@@ -206,7 +205,10 @@ class TimelineBuilder:
         return self
 
     def add_voice(
-        self, voice_path: Union[str, Path], duration: Optional[float] = None, **kwargs
+        self,
+        voice_path: Union[str, Path],
+        duration: Optional[float] = None,
+        **kwargs: Any,
     ) -> "TimelineBuilder":
         """
         Add voice in sequential mode (auto-appended to audio track).
@@ -230,7 +232,10 @@ class TimelineBuilder:
         return self
 
     def add_music(
-        self, music_path: Union[str, Path], duration: Optional[float] = None, **kwargs
+        self,
+        music_path: Union[str, Path],
+        duration: Optional[float] = None,
+        **kwargs: Any,
     ) -> "TimelineBuilder":
         """
         Add music in sequential mode (auto-appended to music track).
@@ -254,7 +259,10 @@ class TimelineBuilder:
         return self
 
     def add_sfx(
-        self, sfx_path: Union[str, Path], duration: Optional[float] = None, **kwargs
+        self,
+        sfx_path: Union[str, Path],
+        duration: Optional[float] = None,
+        **kwargs: Any,
     ) -> "TimelineBuilder":
         """
         Add SFX in sequential mode (auto-appended to SFX track).
@@ -278,7 +286,10 @@ class TimelineBuilder:
         return self
 
     def add_transition(
-        self, transition_type: str = "fade", duration: float = 1.0, **kwargs
+        self,
+        transition_type: TransitionType = TransitionType.FADE,
+        duration: float = 1.0,
+        **kwargs: Any,
     ) -> "TimelineBuilder":
         """
         Add transition in sequential mode (auto-inserted).
@@ -304,7 +315,7 @@ class TimelineBuilder:
         return self
 
     # ============================================================================
-    # EXPLICIT TIMING METHODS (mode inferred from method calls)
+    # EXPLICIT TIMING METHODS
     # ============================================================================
 
     def add_image_at(
@@ -313,7 +324,7 @@ class TimelineBuilder:
         start_time: float,
         duration: Optional[float] = None,
         end_time: Optional[float] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "TimelineBuilder":
         """
         Add image at specific time (auto-detected to video track).
@@ -356,7 +367,7 @@ class TimelineBuilder:
         start_time: float,
         duration: Optional[float] = None,
         end_time: Optional[float] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "TimelineBuilder":
         """
         Add text at specific time (auto-detected to text track).
@@ -405,7 +416,7 @@ class TimelineBuilder:
         crossfade_duration: float = 0.5,
         auto_crossfade: bool = True,
         volume_curve: Optional[List[Tuple[float, float]]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "TimelineBuilder":
         """
         Add voice at specific time with professional controls.
@@ -481,7 +492,7 @@ class TimelineBuilder:
         crossfade_duration: float = 0.5,
         auto_crossfade: bool = True,
         volume_curve: Optional[List[Tuple[float, float]]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "TimelineBuilder":
         """
         Add music at specific time with professional controls.
@@ -557,7 +568,7 @@ class TimelineBuilder:
         crossfade_duration: float = 0.5,
         auto_crossfade: bool = True,
         volume_curve: Optional[List[Tuple[float, float]]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "TimelineBuilder":
         """
         Add SFX at specific time with professional controls.
@@ -620,7 +631,11 @@ class TimelineBuilder:
         return self
 
     def add_transition_at(
-        self, transition_type: str, start_time: float, duration: float, **kwargs
+        self,
+        transition_type: TransitionType,
+        start_time: float,
+        duration: float,
+        **kwargs: Any,
     ) -> "TimelineBuilder":
         """
         Add transition at specific time.
@@ -767,12 +782,12 @@ class TimelineBuilder:
             transitions=self.transitions,
         )
 
-    def render(self) -> CompositeVideoClip:
+    def render(self) -> VideoClip:
         """
-        Render the timeline to a MoviePy CompositeVideoClip.
+        Render the timeline to a MoviePy VideoClip.
 
         Returns:
-            MoviePy CompositeVideoClip object
+            MoviePy VideoClip object
         """
         from vine.rendering.video_renderer import VideoRenderer
 
@@ -780,7 +795,7 @@ class TimelineBuilder:
         renderer = VideoRenderer()
         return renderer.render(video_spec)
 
-    def export(self, path: str, **kwargs) -> None:
+    def export(self, path: str, **kwargs: Any) -> None:
         """
         Export the timeline to a video file.
 
@@ -796,12 +811,14 @@ class TimelineBuilder:
 
         # Set audio if available
         if audio_clip is not None:
-            video_clip = video_clip.with_audio(audio_clip)
+            final_video_clip: VideoClip = video_clip.with_audio(audio_clip)
+        else:
+            final_video_clip = video_clip
 
         # Write video file
-        video_clip.write_videofile(path, **kwargs)
+        final_video_clip.write_videofile(path, **kwargs)
 
         # Clean up
-        video_clip.close()
+        final_video_clip.close()
         if audio_clip is not None:
             audio_clip.close()

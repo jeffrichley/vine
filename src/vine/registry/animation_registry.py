@@ -1,9 +1,13 @@
 """Animation registry for managing animation configurations."""
 
-from typing import Optional
+from typing import Any, Optional
 
-from vine.models.animation_config import AnimationConfig
-from vine.models.effects import KenBurnsConfig, SlideConfig, StaticConfig
+from vine.models.effects import (
+    EffectType,
+    KenBurnsConfig,
+    SlideConfig,
+    StaticConfig,
+)
 from vine.registry.base_registry import BaseRegistry
 
 
@@ -15,12 +19,12 @@ class AnimationRegistry(BaseRegistry):
     timeline blocks with consistent parameters.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize with default animations."""
         super().__init__()
         self._register_defaults()
 
-    def _register_defaults(self):
+    def _register_defaults(self) -> None:
         """Register default animation configurations."""
         # Ken Burns effects
         self.register(
@@ -78,8 +82,8 @@ class AnimationRegistry(BaseRegistry):
         return "static"
 
     def create_animation(
-        self, name: str, duration: Optional[float] = None, **kwargs
-    ) -> AnimationConfig:
+        self, name: str, duration: Optional[float] = None, **kwargs: Any
+    ) -> EffectType:
         """
         Create an animation configuration from a registered template.
 
@@ -105,13 +109,12 @@ class AnimationRegistry(BaseRegistry):
             if key in template_data:
                 template_data[key] = value
 
+        # Create the appropriate config based on template type
         if isinstance(template, KenBurnsConfig):
-            config = KenBurnsConfig(**template_data)
+            return KenBurnsConfig(**template_data)
         elif isinstance(template, SlideConfig):
-            config = SlideConfig(**template_data)
+            return SlideConfig(**template_data)
         elif isinstance(template, StaticConfig):
-            config = StaticConfig(**template_data)
+            return StaticConfig(**template_data)
         else:
             raise ValueError(f"Unknown animation type: {type(template)}")
-
-        return config

@@ -1,18 +1,47 @@
 """Global transition model for Project Vine."""
 
-from typing import List, Literal
+from enum import Enum
+from typing import List
 
 from pydantic import Field
 
 from vine.models.base import BaseModel
 
 
+class TransitionType(str, Enum):
+    """Enumeration of supported transition types."""
+
+    FADE = "fade"
+    CROSSFADE = "crossfade"
+    SLIDE = "slide"
+    WIPE = "wipe"
+    DISSOLVE = "dissolve"
+
+
+class TransitionDirection(str, Enum):
+    """Enumeration of transition directions."""
+
+    LEFT = "left"
+    RIGHT = "right"
+    UP = "up"
+    DOWN = "down"
+    IN = "in"
+    OUT = "out"
+
+
+class TransitionEasing(str, Enum):
+    """Enumeration of transition easing functions."""
+
+    LINEAR = "linear"
+    EASE_IN = "ease_in"
+    EASE_OUT = "ease_out"
+    EASE_IN_OUT = "ease_in_out"
+
+
 class Transition(BaseModel):
     """A global transition that affects multiple tracks."""
 
-    transition_type: Literal["fade", "crossfade", "slide", "wipe", "dissolve"] = Field(
-        ..., description="Type of transition"
-    )
+    transition_type: TransitionType = Field(..., description="Type of transition")
     start_time: float = Field(
         0.0, ge=0.0, description="Start time in timeline in seconds"
     )
@@ -25,11 +54,11 @@ class Transition(BaseModel):
     to_tracks: List[str] = Field(default_factory=list, description="Target track names")
 
     # Transition parameters
-    direction: Literal["left", "right", "up", "down", "in", "out"] = Field(
-        "in", description="Transition direction"
+    direction: TransitionDirection = Field(
+        TransitionDirection.IN, description="Transition direction"
     )
-    easing: Literal["linear", "ease_in", "ease_out", "ease_in_out"] = Field(
-        "linear", description="Easing function"
+    easing: TransitionEasing = Field(
+        TransitionEasing.LINEAR, description="Easing function"
     )
 
     # Metadata

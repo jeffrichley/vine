@@ -1,13 +1,24 @@
 """Track-based data models for Project Vine."""
 
+from enum import Enum
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
-from pydantic import Field, field_validator
+from pydantic import Field, ValidationInfo, field_validator
 
 from vine.models.animation_config import AnimationConfig
 from vine.models.audio_config import MusicConfig, VoiceConfig
 from vine.models.base import BaseModel
+
+
+class TrackType(str, Enum):
+    """Enumeration of supported track types."""
+
+    VIDEO = "video"
+    MUSIC = "music"
+    VOICE = "voice"
+    SFX = "sfx"
+    TEXT = "text"
 
 
 class VideoClip(BaseModel):
@@ -41,7 +52,9 @@ class VideoClip(BaseModel):
 
     @field_validator("end_time")
     @classmethod
-    def validate_end_time(cls, v: Optional[float], info) -> Optional[float]:
+    def validate_end_time(
+        cls, v: Optional[float], info: ValidationInfo
+    ) -> Optional[float]:
         """Validate end_time is after start_time and not both duration and end_time are set."""
         if v is not None:
             start_time = info.data.get("start_time", 0.0)
@@ -99,7 +112,9 @@ class ImageClip(BaseModel):
 
     @field_validator("end_time")
     @classmethod
-    def validate_end_time(cls, v: Optional[float], info) -> Optional[float]:
+    def validate_end_time(
+        cls, v: Optional[float], info: ValidationInfo
+    ) -> Optional[float]:
         """Validate end_time is after start_time and not both duration and end_time are set."""
         if v is not None:
             start_time = info.data.get("start_time", 0.0)
@@ -162,7 +177,9 @@ class TextClip(BaseModel):
 
     @field_validator("end_time")
     @classmethod
-    def validate_end_time(cls, v: Optional[float], info) -> Optional[float]:
+    def validate_end_time(
+        cls, v: Optional[float], info: ValidationInfo
+    ) -> Optional[float]:
         """Validate end_time is after start_time and not both duration and end_time are set."""
         if v is not None:
             start_time = info.data.get("start_time", 0.0)
@@ -229,7 +246,9 @@ class AudioClip(BaseModel):
 
     @field_validator("end_time")
     @classmethod
-    def validate_end_time(cls, v: Optional[float], info) -> Optional[float]:
+    def validate_end_time(
+        cls, v: Optional[float], info: ValidationInfo
+    ) -> Optional[float]:
         """Validate end_time is after start_time and not both duration and end_time are set."""
         if v is not None:
             start_time = info.data.get("start_time", 0.0)

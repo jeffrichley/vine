@@ -34,7 +34,7 @@ class ClipFactory:
     @staticmethod
     def create_image_clip(image_clip: VineImageClip) -> ImageClip:
         """Create a MoviePy ImageClip from a Project Vine ImageClip."""
-        moviepy_clip = ImageClip(str(image_clip.path))
+        moviepy_clip: ImageClip = ImageClip(str(image_clip.path))
 
         if image_clip.duration is not None:
             moviepy_clip = moviepy_clip.with_duration(image_clip.duration)
@@ -59,17 +59,19 @@ class ClipFactory:
         if audio_clip.fade_in > 0.0:
             from moviepy.audio.fx import AudioFadeIn
 
-            effects.append(AudioFadeIn(duration=audio_clip.fade_in))
+            effects.append(lambda clip: AudioFadeIn(clip, duration=audio_clip.fade_in))
 
         if audio_clip.fade_out > 0.0:
             from moviepy.audio.fx import AudioFadeOut
 
-            effects.append(AudioFadeOut(duration=audio_clip.fade_out))
+            effects.append(
+                lambda clip: AudioFadeOut(clip, duration=audio_clip.fade_out)
+            )
 
         if audio_clip.normalize_audio:
             from moviepy.audio.fx import AudioNormalize
 
-            effects.append(AudioNormalize())
+            effects.append(lambda clip: AudioNormalize(clip))
 
         if effects:
             moviepy_clip = moviepy_clip.with_effects(effects)
@@ -86,7 +88,7 @@ class ClipFactory:
 
         curve = audio_clip.volume_curve
 
-        def volume_function(t):
+        def volume_function(t: float) -> float:
             # Find the appropriate volume for the given time
             for i, (time, volume) in enumerate(curve):
                 if t <= time:
@@ -104,7 +106,7 @@ class ClipFactory:
     @staticmethod
     def create_audio_clip(audio_clip: VineAudioClip) -> AudioFileClip:
         """Create a MoviePy AudioFileClip from a Project Vine AudioClip."""
-        moviepy_clip = AudioFileClip(str(audio_clip.path))
+        moviepy_clip: AudioFileClip = AudioFileClip(str(audio_clip.path))
 
         if audio_clip.duration is not None:
             moviepy_clip = moviepy_clip.with_duration(audio_clip.duration)
@@ -120,7 +122,7 @@ class ClipFactory:
     @staticmethod
     def create_text_clip(text_clip: VineTextClip) -> TextClip:
         """Create a MoviePy TextClip from a Project Vine TextClip."""
-        moviepy_clip = TextClip(
+        moviepy_clip: TextClip = TextClip(
             text=text_clip.content,
             font_size=text_clip.font_size,
             color=text_clip.font_color,

@@ -2,7 +2,14 @@
 
 from typing import List, Optional
 
-from moviepy import AudioFileClip, CompositeVideoClip, ImageClip, TextClip
+from moviepy import (
+    AudioClip,
+    AudioFileClip,
+    CompositeVideoClip,
+    ImageClip,
+    TextClip,
+    VideoClip,
+)
 
 from vine.models.tracks import AudioClip as VineAudioClip
 from vine.models.tracks import (
@@ -29,7 +36,7 @@ class MoviePyAdapter:
     and composition logic.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the adapter with a clip factory."""
         self.clip_factory = ClipFactory()
 
@@ -69,7 +76,7 @@ class MoviePyAdapter:
         """
         return self.clip_factory.create_text_clip(text_clip)
 
-    def adapt_video_track(self, video_track: VideoTrack) -> List[ImageClip]:
+    def adapt_video_track(self, video_track: VideoTrack) -> List[VideoClip]:
         """
         Adapt a Project Vine VideoTrack to a list of MoviePy clips.
 
@@ -77,9 +84,9 @@ class MoviePyAdapter:
             video_track: Project Vine VideoTrack model
 
         Returns:
-            List of MoviePy ImageClip objects
+            List of MoviePy VideoClip objects
         """
-        moviepy_clips = []
+        moviepy_clips: List[VideoClip] = []
 
         for clip in video_track.clips:
             if isinstance(clip, VineImageClip):
@@ -92,7 +99,7 @@ class MoviePyAdapter:
 
         return moviepy_clips
 
-    def adapt_audio_track(self, audio_track: AudioTrack) -> List[AudioFileClip]:
+    def adapt_audio_track(self, audio_track: AudioTrack) -> List[AudioClip]:
         """
         Adapt a Project Vine AudioTrack to a list of MoviePy clips.
 
@@ -100,9 +107,9 @@ class MoviePyAdapter:
             audio_track: Project Vine AudioTrack model
 
         Returns:
-            List of MoviePy AudioFileClip objects
+            List of MoviePy AudioClip objects
         """
-        moviepy_clips = []
+        moviepy_clips: List[AudioClip] = []
 
         for clip in audio_track.clips:
             moviepy_clip = self.adapt_audio_clip(clip)
@@ -110,7 +117,7 @@ class MoviePyAdapter:
 
         return moviepy_clips
 
-    def adapt_text_track(self, text_track: TextTrack) -> List[TextClip]:
+    def adapt_text_track(self, text_track: TextTrack) -> List[VideoClip]:
         """
         Adapt a Project Vine TextTrack to a list of MoviePy clips.
 
@@ -118,9 +125,9 @@ class MoviePyAdapter:
             text_track: Project Vine TextTrack model
 
         Returns:
-            List of MoviePy TextClip objects
+            List of MoviePy VideoClip objects
         """
-        moviepy_clips = []
+        moviepy_clips: List[VideoClip] = []
 
         for clip in text_track.clips:
             moviepy_clip = self.adapt_text_clip(clip)
@@ -128,7 +135,7 @@ class MoviePyAdapter:
 
         return moviepy_clips
 
-    def adapt_timeline(self, video_spec: VideoSpec) -> CompositeVideoClip:
+    def adapt_timeline(self, video_spec: VideoSpec) -> VideoClip:
         """
         Adapt a Project Vine VideoSpec to a MoviePy CompositeVideoClip.
 
@@ -141,33 +148,31 @@ class MoviePyAdapter:
         all_clips = []
 
         # Convert video tracks
-        for track in video_spec.video_tracks:
-            if track.visible:
-                track_clips = self.adapt_video_track(track)
+        for video_track in video_spec.video_tracks:
+            if video_track.visible:
+                track_clips = self.adapt_video_track(video_track)
                 all_clips.extend(track_clips)
 
         # Convert text tracks (overlays)
-        for track in video_spec.text_tracks:
-            if track.visible:
-                track_clips = self.adapt_text_track(track)
+        for text_track in video_spec.text_tracks:
+            if text_track.visible:
+                track_clips = self.adapt_text_track(text_track)
                 all_clips.extend(track_clips)
 
         # Create composite video clip
         if all_clips:
-            composite = CompositeVideoClip(
+            return CompositeVideoClip(
                 all_clips, size=(video_spec.width, video_spec.height)
             )
         else:
             # Create empty clip if no video content
             from moviepy import ColorClip
 
-            composite = ColorClip(
+            return ColorClip(
                 size=(video_spec.width, video_spec.height), color=(0, 0, 0)
             )
 
-        return composite
-
-    def adapt_audio_timeline(self, video_spec: VideoSpec) -> Optional[AudioFileClip]:
+    def adapt_audio_timeline(self, video_spec: VideoSpec) -> Optional[AudioClip]:
         """
         Adapt audio tracks to a composite audio clip.
 

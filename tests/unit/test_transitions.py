@@ -3,13 +3,13 @@
 import pytest
 
 from vine.models import CrossfadeConfig, FadeConfig, SlideTransitionConfig
-from vine.models.transition import Transition
+from vine.models.transition import Transition, TransitionType
 
 
 class TestTransitionConfigs:
     """Test all transition configurations."""
 
-    def test_fade_config(self):
+    def test_fade_config(self) -> None:
         """Test fade configuration."""
         fade = FadeConfig()
         assert fade.type == "fade"
@@ -17,7 +17,7 @@ class TestTransitionConfigs:
         assert fade.fade_type == "cross"
         assert fade.easing == "ease_in_out"
 
-    def test_crossfade_config(self):
+    def test_crossfade_config(self) -> None:
         """Test crossfade configuration."""
         crossfade = CrossfadeConfig()
         assert crossfade.type == "crossfade"
@@ -25,7 +25,7 @@ class TestTransitionConfigs:
         assert crossfade.overlap == 0.5
         assert crossfade.easing == "ease_in_out"
 
-    def test_slide_transition_config(self):
+    def test_slide_transition_config(self) -> None:
         """Test slide transition configuration."""
         slide_trans = SlideTransitionConfig()
         assert slide_trans.type == "slide"
@@ -34,7 +34,7 @@ class TestTransitionConfigs:
         assert slide_trans.distance == 100.0
         assert slide_trans.easing == "ease_in_out"
 
-    def test_transition_duration_validation(self):
+    def test_transition_duration_validation(self) -> None:
         """Test transition duration validation."""
         # Test duration too short
         with pytest.raises(
@@ -52,9 +52,11 @@ class TestTransitionConfigs:
 class TestTransitionProgress:
     """Test the Transition model's get_progress_at_time method."""
 
-    def test_basic_progress_calculation(self):
+    def test_basic_progress_calculation(self) -> None:
         """Test basic progress calculation during transition."""
-        transition = Transition(transition_type="fade", start_time=5.0, duration=2.0)
+        transition = Transition(
+            transition_type=TransitionType.FADE, start_time=5.0, duration=2.0
+        )
 
         # Before transition starts
         assert transition.get_progress_at_time(4.0) == 0.0
@@ -75,9 +77,11 @@ class TestTransitionProgress:
         assert transition.get_progress_at_time(7.1) == 1.0
         assert transition.get_progress_at_time(10.0) == 1.0
 
-    def test_zero_duration_transition(self):
+    def test_zero_duration_transition(self) -> None:
         """Test transition with zero duration."""
-        transition = Transition(transition_type="fade", start_time=5.0, duration=0.0)
+        transition = Transition(
+            transition_type=TransitionType.FADE, start_time=5.0, duration=0.0
+        )
 
         # Before transition
         assert transition.get_progress_at_time(4.0) == 0.0
@@ -88,9 +92,11 @@ class TestTransitionProgress:
         # After transition
         assert transition.get_progress_at_time(6.0) == 1.0
 
-    def test_instantaneous_transition(self):
+    def test_instantaneous_transition(self) -> None:
         """Test transition with very small duration."""
-        transition = Transition(transition_type="fade", start_time=5.0, duration=0.001)
+        transition = Transition(
+            transition_type=TransitionType.FADE, start_time=5.0, duration=0.001
+        )
 
         # Before transition
         assert transition.get_progress_at_time(4.999) == 0.0
@@ -107,10 +113,10 @@ class TestTransitionProgress:
         # After transition
         assert transition.get_progress_at_time(5.002) == 1.0
 
-    def test_long_duration_transition(self):
+    def test_long_duration_transition(self) -> None:
         """Test transition with long duration."""
         transition = Transition(
-            transition_type="crossfade", start_time=10.0, duration=30.0
+            transition_type=TransitionType.CROSSFADE, start_time=10.0, duration=30.0
         )
 
         # Before transition
@@ -132,9 +138,11 @@ class TestTransitionProgress:
         # After transition
         assert transition.get_progress_at_time(50.0) == 1.0
 
-    def test_transition_at_zero_time(self):
+    def test_transition_at_zero_time(self) -> None:
         """Test transition starting at time zero."""
-        transition = Transition(transition_type="slide", start_time=0.0, duration=1.0)
+        transition = Transition(
+            transition_type=TransitionType.SLIDE, start_time=0.0, duration=1.0
+        )
 
         # At transition start
         assert transition.get_progress_at_time(0.0) == 0.0
@@ -150,19 +158,21 @@ class TestTransitionProgress:
         # After transition
         assert transition.get_progress_at_time(2.0) == 1.0
 
-    def test_negative_time_handling(self):
+    def test_negative_time_handling(self) -> None:
         """Test handling of negative time values."""
-        transition = Transition(transition_type="wipe", start_time=5.0, duration=2.0)
+        transition = Transition(
+            transition_type=TransitionType.WIPE, start_time=5.0, duration=2.0
+        )
 
         # Negative times should return 0.0
         assert transition.get_progress_at_time(-1.0) == 0.0
         assert transition.get_progress_at_time(-10.0) == 0.0
         assert transition.get_progress_at_time(-0.1) == 0.0
 
-    def test_floating_point_precision(self):
+    def test_floating_point_precision(self) -> None:
         """Test floating point precision in progress calculation."""
         transition = Transition(
-            transition_type="dissolve", start_time=1.0, duration=1.0
+            transition_type=TransitionType.DISSOLVE, start_time=1.0, duration=1.0
         )
 
         # Test with floating point precision
@@ -172,9 +182,11 @@ class TestTransitionProgress:
         assert transition.get_progress_at_time(1.9) == pytest.approx(0.9, rel=1e-10)
         assert transition.get_progress_at_time(2.0) == 1.0
 
-    def test_edge_case_timing(self):
+    def test_edge_case_timing(self) -> None:
         """Test edge cases around transition timing."""
-        transition = Transition(transition_type="fade", start_time=10.0, duration=5.0)
+        transition = Transition(
+            transition_type=TransitionType.FADE, start_time=10.0, duration=5.0
+        )
 
         # Just before transition
         assert transition.get_progress_at_time(9.999999) == 0.0
@@ -198,15 +210,19 @@ class TestTransitionProgress:
         # Just after end
         assert transition.get_progress_at_time(15.000001) == 1.0
 
-    def test_multiple_transitions_same_time(self):
+    def test_multiple_transitions_same_time(self) -> None:
         """Test multiple transitions with different configurations."""
-        transition1 = Transition(transition_type="fade", start_time=0.0, duration=1.0)
-
-        transition2 = Transition(
-            transition_type="crossfade", start_time=5.0, duration=2.0
+        transition1 = Transition(
+            transition_type=TransitionType.FADE, start_time=0.0, duration=1.0
         )
 
-        transition3 = Transition(transition_type="slide", start_time=10.0, duration=0.5)
+        transition2 = Transition(
+            transition_type=TransitionType.CROSSFADE, start_time=5.0, duration=2.0
+        )
+
+        transition3 = Transition(
+            transition_type=TransitionType.SLIDE, start_time=10.0, duration=0.5
+        )
 
         # Test transition1
         assert transition1.get_progress_at_time(0.5) == 0.5
@@ -225,10 +241,10 @@ class TestTransitionProgress:
         assert transition3.get_progress_at_time(10.5) == 1.0
         assert transition3.get_progress_at_time(11.0) == 1.0
 
-    def test_transition_with_metadata(self):
+    def test_transition_with_metadata(self) -> None:
         """Test that metadata doesn't affect progress calculation."""
         transition = Transition(
-            transition_type="fade",
+            transition_type=TransitionType.FADE,
             start_time=5.0,
             duration=2.0,
             metadata={"custom_param": "value", "intensity": 0.8},
@@ -239,10 +255,10 @@ class TestTransitionProgress:
         assert transition.get_progress_at_time(6.0) == 0.5
         assert transition.get_progress_at_time(7.0) == 1.0
 
-    def test_transition_with_track_targeting(self):
+    def test_transition_with_track_targeting(self) -> None:
         """Test that track targeting doesn't affect progress calculation."""
         transition = Transition(
-            transition_type="crossfade",
+            transition_type=TransitionType.CROSSFADE,
             start_time=3.0,
             duration=1.5,
             from_tracks=["track1", "track2"],
@@ -254,9 +270,15 @@ class TestTransitionProgress:
         assert transition.get_progress_at_time(3.75) == 0.5
         assert transition.get_progress_at_time(4.5) == 1.0
 
-    def test_all_transition_types(self):
+    def test_all_transition_types(self) -> None:
         """Test progress calculation for all transition types."""
-        transition_types = ["fade", "crossfade", "slide", "wipe", "dissolve"]
+        transition_types = [
+            TransitionType.FADE,
+            TransitionType.CROSSFADE,
+            TransitionType.SLIDE,
+            TransitionType.WIPE,
+            TransitionType.DISSOLVE,
+        ]
 
         for transition_type in transition_types:
             transition = Transition(

@@ -1,12 +1,12 @@
 """Video specification models for Project Vine."""
 
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, Sequence
 
 from pydantic import Field, model_validator
 
 from vine.models.audio_config import MusicConfig, VoiceConfig
 from vine.models.base import BaseModel
-from vine.models.tracks import AudioTrack, TextTrack, VideoTrack
+from vine.models.tracks import AudioTrack, TextTrack, TrackType, VideoTrack
 from vine.models.transition import Transition
 
 
@@ -67,8 +67,6 @@ class VideoSpec(BaseModel):
     background_color: str = Field(
         "#000000", pattern=r"^#[0-9A-Fa-f]{6}$", description="Background color (hex)"
     )
-    enable_audio: bool = Field(True, description="Enable audio processing")
-    enable_video: bool = Field(True, description="Enable video processing")
 
     @model_validator(mode="after")
     def validate_video_configuration(self) -> "VideoSpec":
@@ -160,25 +158,49 @@ class VideoSpec(BaseModel):
         """Get transitions active at the given time."""
         return [trans for trans in self.transitions if trans.is_active_at_time(time)]
 
-    def _get_tracks_by_type(self, track_type: str) -> List:
+    def _get_tracks_by_type(
+        self, track_type: TrackType
+    ) -> Sequence[VideoTrack | AudioTrack | TextTrack]:
         """Get tracks list by type."""
-        track_mapping = {
-            "video": self.video_tracks,
-            "music": self.music_tracks,
-            "voice": self.voice_tracks,
-            "sfx": self.sfx_tracks,
-            "text": self.text_tracks,
-        }
-        return track_mapping.get(track_type, [])
+        if track_type == TrackType.VIDEO:
+            return self.video_tracks
+        elif track_type == TrackType.MUSIC:
+            return self.music_tracks
+        elif track_type == TrackType.VOICE:
+            return self.voice_tracks
+        elif track_type == TrackType.SFX:
+            return self.sfx_tracks
+        elif track_type == TrackType.TEXT:
+            return self.text_tracks
+        else:
+            raise ValueError(f"Unknown track type: {track_type}")
 
     def get_track_by_name(
-        self, track_name: str, track_type: str = "video"
+        self, track_name: str, track_type: TrackType = TrackType.VIDEO
     ) -> Optional[VideoTrack | AudioTrack | TextTrack]:
         """Get a track by name and type."""
-        tracks = self._get_tracks_by_type(track_type)
-        for track in tracks:
-            if track.name == track_name:
-                return track
+        if track_type == TrackType.VIDEO:
+            for video_track in self.video_tracks:
+                if video_track.name == track_name:
+                    return video_track
+        elif track_type == TrackType.MUSIC:
+            for music_track in self.music_tracks:
+                if music_track.name == track_name:
+                    return music_track
+        elif track_type == TrackType.VOICE:
+            for voice_track in self.voice_tracks:
+                if voice_track.name == track_name:
+                    return voice_track
+        elif track_type == TrackType.SFX:
+            for sfx_track in self.sfx_tracks:
+                if sfx_track.name == track_name:
+                    return sfx_track
+        elif track_type == TrackType.TEXT:
+            for text_track in self.text_tracks:
+                if text_track.name == track_name:
+                    return text_track
+        else:
+            raise ValueError(f"Unknown track type: {track_type}")
         return None
 
     def add_video_track(self, track: VideoTrack) -> None:
@@ -209,13 +231,37 @@ class VideoSpec(BaseModel):
         """Add a transition to the timeline."""
         self.transitions.append(transition)
 
-    def remove_track(self, track_name: str, track_type: str = "video") -> bool:
+    def remove_track(
+        self, track_name: str, track_type: TrackType = TrackType.VIDEO
+    ) -> bool:
         """Remove a track by name and type."""
-        tracks = self._get_tracks_by_type(track_type)
-        for i, track in enumerate(tracks):
-            if track.name == track_name:
-                tracks.pop(i)
-                return True
+        if track_type == TrackType.VIDEO:
+            for i, video_track in enumerate(self.video_tracks):
+                if video_track.name == track_name:
+                    self.video_tracks.pop(i)
+                    return True
+        elif track_type == TrackType.MUSIC:
+            for i, music_track in enumerate(self.music_tracks):
+                if music_track.name == track_name:
+                    self.music_tracks.pop(i)
+                    return True
+        elif track_type == TrackType.VOICE:
+            for i, voice_track in enumerate(self.voice_tracks):
+                if voice_track.name == track_name:
+                    self.voice_tracks.pop(i)
+                    return True
+        elif track_type == TrackType.SFX:
+            for i, sfx_track in enumerate(self.sfx_tracks):
+                if sfx_track.name == track_name:
+                    self.sfx_tracks.pop(i)
+                    return True
+        elif track_type == TrackType.TEXT:
+            for i, text_track in enumerate(self.text_tracks):
+                if text_track.name == track_name:
+                    self.text_tracks.pop(i)
+                    return True
+        else:
+            raise ValueError(f"Unknown track type: {track_type}")
         return False
 
     def remove_transition(self, transition_index: int) -> bool:

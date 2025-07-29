@@ -1,8 +1,13 @@
 """Transition registry for managing transition configurations."""
 
-from typing import Optional
+from typing import Any, Optional
 
-from vine.models.transition import Transition
+from vine.models.transition import (
+    Transition,
+    TransitionDirection,
+    TransitionEasing,
+    TransitionType,
+)
 from vine.registry.base_registry import BaseRegistry
 
 
@@ -14,44 +19,44 @@ class TransitionRegistry(BaseRegistry):
     tracks with consistent parameters.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize with default transitions."""
         super().__init__()
         self._register_defaults()
 
-    def _register_defaults(self):
+    def _register_defaults(self) -> None:
         """Register default transition configurations."""
         # Fade transitions
         self.register(
             "fade_in",
             Transition(
-                transition_type="fade",
+                transition_type=TransitionType.FADE,
                 start_time=0.0,
                 duration=1.0,
-                direction="in",
-                easing="ease_in_out",
+                direction=TransitionDirection.IN,
+                easing=TransitionEasing.EASE_IN_OUT,
             ),
         )
 
         self.register(
             "fade_out",
             Transition(
-                transition_type="fade",
+                transition_type=TransitionType.FADE,
                 start_time=0.0,
                 duration=1.0,
-                direction="out",
-                easing="ease_in_out",
+                direction=TransitionDirection.OUT,
+                easing=TransitionEasing.EASE_IN_OUT,
             ),
         )
 
         self.register(
             "fade_in_out",
             Transition(
-                transition_type="fade",
+                transition_type=TransitionType.FADE,
                 start_time=0.0,
                 duration=1.0,
-                direction="in",
-                easing="ease_in_out",
+                direction=TransitionDirection.IN,
+                easing=TransitionEasing.EASE_IN_OUT,
             ),
         )
 
@@ -59,30 +64,30 @@ class TransitionRegistry(BaseRegistry):
         self.register(
             "crossfade",
             Transition(
-                transition_type="crossfade",
+                transition_type=TransitionType.CROSSFADE,
                 start_time=0.0,
                 duration=1.0,
-                easing="ease_in_out",
+                easing=TransitionEasing.EASE_IN_OUT,
             ),
         )
 
         self.register(
             "crossfade_fast",
             Transition(
-                transition_type="crossfade",
+                transition_type=TransitionType.CROSSFADE,
                 start_time=0.0,
                 duration=0.5,
-                easing="ease_in_out",
+                easing=TransitionEasing.EASE_IN_OUT,
             ),
         )
 
         self.register(
             "crossfade_slow",
             Transition(
-                transition_type="crossfade",
+                transition_type=TransitionType.CROSSFADE,
                 start_time=0.0,
                 duration=2.0,
-                easing="ease_in_out",
+                easing=TransitionEasing.EASE_IN_OUT,
             ),
         )
 
@@ -90,44 +95,44 @@ class TransitionRegistry(BaseRegistry):
         self.register(
             "slide_left",
             Transition(
-                transition_type="slide",
+                transition_type=TransitionType.SLIDE,
                 start_time=0.0,
                 duration=1.0,
-                direction="left",
-                easing="ease_in_out",
+                direction=TransitionDirection.LEFT,
+                easing=TransitionEasing.EASE_IN_OUT,
             ),
         )
 
         self.register(
             "slide_right",
             Transition(
-                transition_type="slide",
+                transition_type=TransitionType.SLIDE,
                 start_time=0.0,
                 duration=1.0,
-                direction="right",
-                easing="ease_in_out",
+                direction=TransitionDirection.RIGHT,
+                easing=TransitionEasing.EASE_IN_OUT,
             ),
         )
 
         self.register(
             "slide_up",
             Transition(
-                transition_type="slide",
+                transition_type=TransitionType.SLIDE,
                 start_time=0.0,
                 duration=1.0,
-                direction="up",
-                easing="ease_in_out",
+                direction=TransitionDirection.UP,
+                easing=TransitionEasing.EASE_IN_OUT,
             ),
         )
 
         self.register(
             "slide_down",
             Transition(
-                transition_type="slide",
+                transition_type=TransitionType.SLIDE,
                 start_time=0.0,
                 duration=1.0,
-                direction="down",
-                easing="ease_in_out",
+                direction=TransitionDirection.DOWN,
+                easing=TransitionEasing.EASE_IN_OUT,
             ),
         )
 
@@ -147,7 +152,7 @@ class TransitionRegistry(BaseRegistry):
         duration: Optional[float] = None,
         from_tracks: Optional[list] = None,
         to_tracks: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> Transition:
         """
         Create a transition configuration from a registered template.

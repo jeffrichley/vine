@@ -12,7 +12,7 @@ from vine.rendering.video_renderer import VideoRenderer
 class TestClipFactory:
     """Test the ClipFactory functionality."""
 
-    def test_create_image_clip(self):
+    def test_create_image_clip(self) -> None:
         """Test creating a MoviePy ImageClip from a Project Vine ImageClip."""
         vine_clip = ImageClip(
             path="test_image.jpg",
@@ -42,7 +42,7 @@ class TestClipFactory:
             mock_clip.with_opacity.assert_called_once_with(0.8)
             mock_clip.resize.assert_called_once_with((800, 600))
 
-    def test_create_text_clip(self):
+    def test_create_text_clip(self) -> None:
         """Test creating a MoviePy TextClip from a Project Vine TextClip."""
         vine_clip = TextClip(
             content="Hello World",
@@ -79,7 +79,7 @@ class TestClipFactory:
             mock_clip.with_position.assert_called_once_with((50.0, 100.0))
             mock_clip.with_opacity.assert_called_once_with(0.9)
 
-    def test_create_audio_clip(self):
+    def test_create_audio_clip(self) -> None:
         """Test creating a MoviePy AudioFileClip from a Project Vine AudioClip."""
         vine_clip = AudioClip(
             path="test_audio.mp3",
@@ -112,7 +112,7 @@ class TestClipFactory:
 class TestMoviePyAdapter:
     """Test the MoviePyAdapter functionality."""
 
-    def test_adapt_image_clip(self):
+    def test_adapt_image_clip(self) -> None:
         """Test adapting a Project Vine ImageClip to MoviePy."""
         adapter = MoviePyAdapter()
 
@@ -124,7 +124,7 @@ class TestMoviePyAdapter:
 
             mock_create.assert_called_once_with(vine_clip)
 
-    def test_adapt_video_track(self):
+    def test_adapt_video_track(self) -> None:
         """Test adapting a Project Vine VideoTrack to MoviePy clips."""
         adapter = MoviePyAdapter()
 
@@ -149,7 +149,7 @@ class TestMoviePyAdapter:
 class TestVideoRenderer:
     """Test the VideoRenderer functionality."""
 
-    def test_create_clips(self):
+    def test_create_clips(self) -> None:
         """Test creating clips from a video spec."""
         renderer = VideoRenderer()
 
@@ -189,7 +189,7 @@ class TestVideoRenderer:
             mock_text_adapt.assert_called_once()
             assert len(clips) == 2
 
-    def test_compose_clips(self):
+    def test_compose_clips(self) -> None:
         """Test composing clips into a composite video."""
         renderer = VideoRenderer()
 
@@ -205,14 +205,14 @@ class TestVideoRenderer:
             "vine.rendering.video_renderer.CompositeVideoClip"
         ) as mock_composite:
             mock_composite.return_value = Mock()
-            renderer.compose_clips(mock_clips, video_spec)
+            renderer.compose_clips(mock_clips, video_spec)  # type: ignore[arg-type]
             mock_composite.assert_called_once_with(mock_clips, size=(1920, 1080))
 
 
 class TestTimelineBuilderIntegration:
     """Test the TimelineBuilder integration with rendering."""
 
-    def test_render_method(self):
+    def test_render_method(self) -> None:
         """Test the TimelineBuilder render method."""
         builder = TimelineBuilder(width=1280, height=720, fps=30)
 
@@ -232,7 +232,7 @@ class TestTimelineBuilderIntegration:
             # Should have called the renderer
             mock_renderer.render.assert_called_once()
 
-    def test_export_method(self):
+    def test_export_method(self) -> None:
         """Test the TimelineBuilder export method."""
         builder = TimelineBuilder(width=1280, height=720, fps=30)
 
