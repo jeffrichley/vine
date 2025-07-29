@@ -175,32 +175,31 @@ class VideoSpec(BaseModel):
         else:
             raise ValueError(f"Unknown track type: {track_type}")
 
+    def _get_track_list_by_type(
+        self, track_type: TrackType
+    ) -> List[VideoTrack | AudioTrack | TextTrack]:
+        """Get track list by type for modification."""
+        if track_type == TrackType.VIDEO:
+            return self.video_tracks  # type: ignore[return-value]
+        elif track_type == TrackType.MUSIC:
+            return self.music_tracks  # type: ignore[return-value]
+        elif track_type == TrackType.VOICE:
+            return self.voice_tracks  # type: ignore[return-value]
+        elif track_type == TrackType.SFX:
+            return self.sfx_tracks  # type: ignore[return-value]
+        elif track_type == TrackType.TEXT:
+            return self.text_tracks  # type: ignore[return-value]
+        else:
+            raise ValueError(f"Unknown track type: {track_type}")
+
     def get_track_by_name(
         self, track_name: str, track_type: TrackType = TrackType.VIDEO
     ) -> Optional[VideoTrack | AudioTrack | TextTrack]:
         """Get a track by name and type."""
-        if track_type == TrackType.VIDEO:
-            for video_track in self.video_tracks:
-                if video_track.name == track_name:
-                    return video_track
-        elif track_type == TrackType.MUSIC:
-            for music_track in self.music_tracks:
-                if music_track.name == track_name:
-                    return music_track
-        elif track_type == TrackType.VOICE:
-            for voice_track in self.voice_tracks:
-                if voice_track.name == track_name:
-                    return voice_track
-        elif track_type == TrackType.SFX:
-            for sfx_track in self.sfx_tracks:
-                if sfx_track.name == track_name:
-                    return sfx_track
-        elif track_type == TrackType.TEXT:
-            for text_track in self.text_tracks:
-                if text_track.name == track_name:
-                    return text_track
-        else:
-            raise ValueError(f"Unknown track type: {track_type}")
+        tracks = self._get_tracks_by_type(track_type)
+        for track in tracks:
+            if track.name == track_name:
+                return track
         return None
 
     def add_video_track(self, track: VideoTrack) -> None:
@@ -235,33 +234,11 @@ class VideoSpec(BaseModel):
         self, track_name: str, track_type: TrackType = TrackType.VIDEO
     ) -> bool:
         """Remove a track by name and type."""
-        if track_type == TrackType.VIDEO:
-            for i, video_track in enumerate(self.video_tracks):
-                if video_track.name == track_name:
-                    self.video_tracks.pop(i)
-                    return True
-        elif track_type == TrackType.MUSIC:
-            for i, music_track in enumerate(self.music_tracks):
-                if music_track.name == track_name:
-                    self.music_tracks.pop(i)
-                    return True
-        elif track_type == TrackType.VOICE:
-            for i, voice_track in enumerate(self.voice_tracks):
-                if voice_track.name == track_name:
-                    self.voice_tracks.pop(i)
-                    return True
-        elif track_type == TrackType.SFX:
-            for i, sfx_track in enumerate(self.sfx_tracks):
-                if sfx_track.name == track_name:
-                    self.sfx_tracks.pop(i)
-                    return True
-        elif track_type == TrackType.TEXT:
-            for i, text_track in enumerate(self.text_tracks):
-                if text_track.name == track_name:
-                    self.text_tracks.pop(i)
-                    return True
-        else:
-            raise ValueError(f"Unknown track type: {track_type}")
+        track_list = self._get_track_list_by_type(track_type)
+        for i, track in enumerate(track_list):
+            if track.name == track_name:
+                track_list.pop(i)
+                return True
         return False
 
     def remove_transition(self, transition_index: int) -> bool:
