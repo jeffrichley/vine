@@ -113,13 +113,15 @@ class CompositeAudioClip(AudioClip):
     def with_effects(self, effects: Any) -> "CompositeAudioClip": ...
 
 # Audio effects functions
-def AudioFadeIn(
+def AudioFadeIn(  # noqa: N802
     clip: AudioClip, duration: float, *args: Any, **kwargs: Any
 ) -> AudioClip: ...
-def AudioFadeOut(
+def AudioFadeOut(  # noqa: N802
     clip: AudioClip, duration: float, *args: Any, **kwargs: Any
 ) -> AudioClip: ...
-def AudioNormalize(clip: AudioClip, *args: Any, **kwargs: Any) -> AudioClip: ...
+def AudioNormalize(  # noqa: N802
+    clip: AudioClip, *args: Any, **kwargs: Any
+) -> AudioClip: ...
 
 # Main classes we use
 __all__ = [

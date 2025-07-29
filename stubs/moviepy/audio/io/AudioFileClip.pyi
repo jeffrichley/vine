@@ -1,6 +1,5 @@
 """Stub file for moviepy.audio.io.AudioFileClip module."""
 
-
 class AudioFileClip:
     def __init__(
         self,
