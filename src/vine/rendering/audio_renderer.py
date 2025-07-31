@@ -1,7 +1,6 @@
 """Audio-specific renderer implementation."""
 
 from abc import ABC, abstractmethod
-from typing import List, Optional
 
 from moviepy import AudioClip, CompositeAudioClip
 
@@ -19,12 +18,12 @@ class AudioRendererBase(ABC):
         self.adapter = MoviePyAdapter()
 
     @abstractmethod
-    def create_clips(self, video_spec: VideoSpec) -> List[AudioClip]:
+    def create_clips(self, video_spec: VideoSpec) -> list[AudioClip]:
         """Create audio clips from the video spec."""
         pass
 
     @abstractmethod
-    def compose_clips(self, clips: List[AudioClip], video_spec: VideoSpec) -> AudioClip:
+    def compose_clips(self, clips: list[AudioClip], video_spec: VideoSpec) -> AudioClip:
         """Compose audio clips into a final audio."""
         pass
 
@@ -48,7 +47,7 @@ class AudioRenderer(AudioRendererBase):
     focusing on audio clips and mixing.
     """
 
-    def create_clips(self, video_spec: VideoSpec) -> List[AudioClip]:
+    def create_clips(self, video_spec: VideoSpec) -> list[AudioClip]:
         """
         Create audio clips from the video spec.
 
@@ -80,7 +79,7 @@ class AudioRenderer(AudioRendererBase):
 
         return clips
 
-    def compose_clips(self, clips: List[AudioClip], video_spec: VideoSpec) -> AudioClip:
+    def compose_clips(self, clips: list[AudioClip], video_spec: VideoSpec) -> AudioClip:
         """
         Compose audio clips into a composite audio.
 
@@ -95,8 +94,9 @@ class AudioRenderer(AudioRendererBase):
         if clips:
             composite_result: AudioClip = CompositeAudioClip(clips)
         else:
+            # MoviePy AudioClip constructor expects a callable with Any type due to library typing
             composite_result = AudioClip(
-                lambda _: 0, duration=video_spec.get_total_duration()
+                lambda _: 0, duration=video_spec.get_total_duration()  # type: ignore[misc]
             )
 
         return composite_result
@@ -120,7 +120,7 @@ class AudioRenderer(AudioRendererBase):
 
         return final_composite
 
-    def render_audio_only(self, video_spec: VideoSpec) -> Optional[AudioClip]:
+    def render_audio_only(self, video_spec: VideoSpec) -> AudioClip | None:
         """
         Render audio only from the video spec.
 

@@ -251,3 +251,128 @@ The registry system was chosen because:
 - Complexity in effect registration and management
 - Potential for low-quality or buggy custom effects
 - Need for effect validation and testing infrastructure
+
+## 2025-07-29: TimelineBuilder Current Time Update Behavior
+
+**ID:** DEC-004
+**Status:** Accepted
+**Category:** Technical Architecture
+**Stakeholders:** Tech Lead, Development Team
+
+### Decision
+
+Project Vine's TimelineBuilder will implement **Google-style API behavior** for current time updates:
+- **Sequential methods** (`add_image()`, `add_text()`, `add_voice()`, etc.) **WILL update current times**
+- **Explicit methods** (`add_image_at()`, `add_text_at()`, `add_voice_at()`, etc.) **WILL NOT update current times**
+
+This follows the principle that method names should be self-documenting and behavior should be predictable.
+
+### Context
+
+During test fixes, we discovered an inconsistency in the original implementation where explicit methods were updating current times. After analyzing 20+ usage patterns and comparing with Google's API design principles, we determined that explicit methods should not update current times to maintain clear separation of concerns and predictable behavior.
+
+### Analysis Performed
+
+**Usage Pattern Analysis:**
+- Created comprehensive document with 20+ scenarios covering pure sequential, pure explicit, and mixed mode patterns
+- Analyzed real-world use cases from simple slideshows to complex professional video editing
+- Examined edge cases including infinite duration clips, zero duration elements, and complex overlapping scenarios
+
+**Google API Comparison:**
+- Google Slides API: Explicit positioning doesn't affect sequential state
+- Google Docs API: `insertTextAt()` doesn't move cursor position
+- Google Sheets API: `setValue()` doesn't affect next `appendRow()`
+
+**Design Principles Applied:**
+- **Method Name Clarity**: `_at` suffix clearly indicates absolute positioning
+- **Consistency**: Similar operations behave similarly across the API
+- **Predictability**: Users can predict outcomes based on method names
+- **Explicit over Implicit**: Clear, unambiguous behavior without hidden side effects
+
+### Alternatives Considered
+
+1. **Original Implementation**: Explicit methods update current times
+   - Pros: Maintains "latest position" tracking
+   - Cons: Surprising side effects, inconsistent with Google APIs, unclear method semantics
+
+2. **Hybrid Approach**: Explicit methods update current times only in certain conditions
+   - Pros: Flexible behavior
+   - Cons: Complex rules, unpredictable behavior, violates principle of least surprise
+
+3. **No Current Time Updates**: Neither sequential nor explicit methods update current times
+   - Pros: No side effects, explicit control
+   - Cons: Breaks sequential workflow, requires manual time management
+
+### Rationale
+
+The Google-style approach was chosen because:
+
+1. **Self-Documenting Method Names**:
+   - `add_image()` → Sequential, updates current time
+   - `add_image_at()` → Explicit, no current time update
+
+2. **Predictable Behavior**:
+   ```python
+   builder.add_image_at("overlay.jpg", 5.0, duration=2.0)  # Explicit positioning
+   builder.add_image("next.jpg", duration=3.0)  # Starts at current time, not 7.0
+   ```
+
+3. **Consistent with Industry Standards**: Matches Google's API patterns and professional video editing software behavior
+
+4. **Supports Mixed Mode Workflows**: Allows users to combine sequential and explicit timing without unexpected side effects
+
+### Technical Implementation
+
+**Sequential Methods (Update Current Times):**
+```python
+def add_image(self, image_path, duration=None):
+    start_time = self._video_current_time
+    context = self.add_image_at(image_path, start_time, duration)
+    if duration:
+        self._video_current_time = start_time + duration  # ✅ Updates current time
+    return context
+```
+
+**Explicit Methods (No Current Time Updates):**
+```python
+def add_image_at(self, image_path, start_time, duration=None):
+    # ... add clip at exact position
+    return ImageContext(self, clip)  # ✅ NO current time update
+```
+
+**Mixed Mode Example:**
+```python
+builder.add_image("slide1.jpg", duration=5.0)  # Sequential: video_current_time = 5.0
+builder.add_image_at("overlay.jpg", 2.0, duration=2.0)  # Explicit: no update
+builder.add_image("slide2.jpg", duration=3.0)  # Sequential: starts at 5.0, ends at 8.0
+```
+
+### Consequences
+
+**Positive:**
+- **Intuitive API**: Method names clearly indicate behavior
+- **Predictable Mixed Mode**: Sequential and explicit methods work together without conflicts
+- **Google-Compatible**: Follows established API design patterns
+- **Professional Alignment**: Matches behavior of professional video editing software
+- **Clear Separation**: Sequential vs explicit behavior is unambiguous
+
+**Negative:**
+- **Breaking Change**: Different from original implementation (though original was inconsistent)
+- **Learning Curve**: Users must understand the distinction between sequential and explicit methods
+- **Potential Confusion**: Some users might expect explicit methods to update current times
+
+### Migration Impact
+
+This decision represents a **breaking change** from the original implementation. However, the original behavior was inconsistent and violated API design principles. The new behavior is more intuitive and aligns with industry standards.
+
+**Test Updates Required:**
+- Updated `test_add_voice_at_explicit` to expect no current time updates
+- All other tests already aligned with the new behavior
+- Comprehensive test suite validates the new behavior works correctly
+
+### Future Considerations
+
+1. **Documentation**: Clear examples showing sequential vs explicit behavior
+2. **IDE Support**: Type hints and docstrings should clearly indicate behavior differences
+3. **Migration Guide**: Help users understand the change if they were relying on the old behavior
+4. **Consistency**: Ensure all future methods follow this pattern

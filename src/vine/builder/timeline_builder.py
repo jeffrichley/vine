@@ -1,11 +1,17 @@
 """TimelineBuilder for Project Vine video composition framework."""
 
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
 
-from moviepy import VideoClip
+from moviepy import VideoClip as MoviePyVideoClip
 
 from vine.defaults.defaults_manager import DefaultsManager
+from vine.models.clip_params import (
+    ExportResult,
+    VideoExportOptions,
+)
+from vine.models.contexts import ImageContext, SfxContext, TextContext, VoiceContext
+from vine.models.protocols import HasEndTime
 from vine.models.tracks import (
     AudioClip,
     AudioTrack,
@@ -29,7 +35,7 @@ class TimelineBuilder:
     Auto-detects track types and manages track creation.
     """
 
-    def __init__(self, width: int = 1920, height: int = 1080, fps: float = 30):
+    def __init__(self, width: int = 1920, height: int = 1080, fps: float = 30) -> None:
         """
         Initialize TimelineBuilder.
 
@@ -41,12 +47,12 @@ class TimelineBuilder:
         self.width = width
         self.height = height
         self.fps = fps
-        self.video_tracks: List[VideoTrack] = [VideoTrack(name="video_0")]
-        self.music_tracks: List[AudioTrack] = [AudioTrack(name="music_0")]
-        self.voice_tracks: List[AudioTrack] = [AudioTrack(name="voice_0")]
-        self.sfx_tracks: List[AudioTrack] = [AudioTrack(name="sfx_0")]
-        self.text_tracks: List[TextTrack] = [TextTrack(name="text_0")]
-        self.transitions: List[Transition] = []
+        self.video_tracks: list[VideoTrack] = [VideoTrack(name="video_0")]
+        self.music_tracks: list[AudioTrack] = [AudioTrack(name="music_0")]
+        self.voice_tracks: list[AudioTrack] = [AudioTrack(name="voice_0")]
+        self.sfx_tracks: list[AudioTrack] = [AudioTrack(name="sfx_0")]
+        self.text_tracks: list[TextTrack] = [TextTrack(name="text_0")]
+        self.transitions: list[Transition] = []
         # Track-specific current times for sequential appending
         self._video_current_time = 0.0
         self._music_current_time = 0.0
@@ -54,7 +60,8 @@ class TimelineBuilder:
         self._sfx_current_time = 0.0
         self._text_current_time = 0.0
         # Default duration for next sequential element
-        self._next_duration: Optional[float] = None
+        self._next_duration: float | None = None
+
         self.defaults = DefaultsManager()
 
     # ============================================================================
@@ -155,141 +162,133 @@ class TimelineBuilder:
 
     def add_image(
         self,
-        image_path: Union[str, Path],
-        duration: Optional[float] = None,
-        **kwargs: Any,
-    ) -> "TimelineBuilder":
+        image_path: str | Path,
+        duration: float | None = None,
+    ) -> ImageContext:
         """
         Add an image in sequential mode (auto-appended to video track).
 
         Args:
             image_path: Path to the image file
             duration: Duration in seconds (uses set_duration if not provided)
-            **kwargs: Additional clip properties
 
         Returns:
-            Self for method chaining
+            ImageContext for styling and chaining
         """
         # Use set duration if no duration provided
         if duration is None and self._next_duration is not None:
             duration = self._next_duration
 
         start_time = self._video_current_time
-        self.add_image_at(image_path, start_time, duration, **kwargs)
+        context = self.add_image_at(image_path, start_time, duration)
         if duration:
             self._video_current_time = start_time + duration
-        return self
+        return context
 
     def add_text(
-        self, text: str, duration: Optional[float] = None, **kwargs: Any
-    ) -> "TimelineBuilder":
+        self,
+        text: str,
+        duration: float | None = None,
+    ) -> TextContext:
         """
         Add text in sequential mode (auto-appended to text track).
 
         Args:
             text: Text content
             duration: Duration in seconds (uses set_duration if not provided)
-            **kwargs: Additional clip properties
 
         Returns:
-            Self for method chaining
+            TextContext for styling and chaining
         """
         # Use set duration if no duration provided
         if duration is None and self._next_duration is not None:
             duration = self._next_duration
 
         start_time = self._text_current_time
-        self.add_text_at(text, start_time, duration, **kwargs)
+        context = self.add_text_at(text, start_time, duration)
         if duration:
             self._text_current_time = start_time + duration
-        return self
+        return context
 
     def add_voice(
         self,
-        voice_path: Union[str, Path],
-        duration: Optional[float] = None,
-        **kwargs: Any,
-    ) -> "TimelineBuilder":
+        voice_path: str | Path,
+        duration: float | None = None,
+    ) -> VoiceContext:
         """
         Add voice in sequential mode (auto-appended to audio track).
 
         Args:
             voice_path: Path to the voice file
             duration: Duration in seconds (uses set_duration if not provided)
-            **kwargs: Additional clip properties
 
         Returns:
-            Self for method chaining
+            VoiceContext for styling and chaining
         """
         # Use set duration if no duration provided
         if duration is None and self._next_duration is not None:
             duration = self._next_duration
 
         start_time = self._voice_current_time
-        self.add_voice_at(voice_path, start_time, duration, **kwargs)
+        context = self.add_voice_at(voice_path, start_time, duration)
         if duration:
             self._voice_current_time = start_time + duration
-        return self
+        return context
 
     def add_music(
         self,
-        music_path: Union[str, Path],
-        duration: Optional[float] = None,
-        **kwargs: Any,
-    ) -> "TimelineBuilder":
+        music_path: str | Path,
+        duration: float | None = None,
+    ) -> VoiceContext:
         """
         Add music in sequential mode (auto-appended to music track).
 
         Args:
             music_path: Path to the music file
             duration: Duration in seconds (uses set_duration if not provided)
-            **kwargs: Additional clip properties
 
         Returns:
-            Self for method chaining
+            VoiceContext for styling and chaining
         """
         # Use set duration if no duration provided
         if duration is None and self._next_duration is not None:
             duration = self._next_duration
 
         start_time = self._music_current_time
-        self.add_music_at(music_path, start_time, duration, **kwargs)
+        context = self.add_music_at(music_path, start_time, duration)
         if duration:
             self._music_current_time = start_time + duration
-        return self
+        return context
 
     def add_sfx(
         self,
-        sfx_path: Union[str, Path],
-        duration: Optional[float] = None,
-        **kwargs: Any,
-    ) -> "TimelineBuilder":
+        sfx_path: str | Path,
+        duration: float | None = None,
+    ) -> SfxContext:
         """
         Add SFX in sequential mode (auto-appended to SFX track).
 
         Args:
             sfx_path: Path to the SFX file
             duration: Duration in seconds (uses set_duration if not provided)
-            **kwargs: Additional clip properties
 
         Returns:
-            Self for method chaining
+            SfxContext for styling and chaining
         """
         # Use set duration if no duration provided
         if duration is None and self._next_duration is not None:
             duration = self._next_duration
 
         start_time = self._sfx_current_time
-        self.add_sfx_at(sfx_path, start_time, duration, **kwargs)
+        context = self.add_sfx_at(sfx_path, start_time, duration)
         if duration:
             self._sfx_current_time = start_time + duration
-        return self
+        return context
 
     def add_transition(
         self,
         transition_type: TransitionType = TransitionType.FADE,
         duration: float = 1.0,
-        **kwargs: Any,
     ) -> "TimelineBuilder":
         """
         Add transition in sequential mode (auto-inserted).
@@ -297,7 +296,6 @@ class TimelineBuilder:
         Args:
             transition_type: Type of transition
             duration: Duration in seconds
-            **kwargs: Additional transition properties
 
         Returns:
             Self for method chaining
@@ -311,7 +309,7 @@ class TimelineBuilder:
             self._text_current_time,
         )
         start_time = current_time - duration  # Overlap with previous
-        self.add_transition_at(transition_type, start_time, duration, **kwargs)
+        self.add_transition_at(transition_type, start_time, duration)
         return self
 
     # ============================================================================
@@ -320,12 +318,11 @@ class TimelineBuilder:
 
     def add_image_at(
         self,
-        image_path: Union[str, Path],
+        image_path: str | Path,
         start_time: float,
-        duration: Optional[float] = None,
-        end_time: Optional[float] = None,
-        **kwargs: Any,
-    ) -> "TimelineBuilder":
+        duration: float | None = None,
+        end_time: float | None = None,
+    ) -> ImageContext:
         """
         Add image at specific time (auto-detected to video track).
 
@@ -334,10 +331,9 @@ class TimelineBuilder:
             start_time: Start time in seconds
             duration: Duration in seconds
             end_time: End time in seconds (alternative to duration)
-            **kwargs: Additional clip properties
 
         Returns:
-            Self for method chaining
+            ImageContext for styling and chaining
         """
         if end_time and duration:
             raise ValueError("Cannot specify both duration and end_time")
@@ -347,28 +343,21 @@ class TimelineBuilder:
 
         track = self._get_or_create_video_track()
         clip = ImageClip(
-            path=str(image_path), start_time=start_time, duration=duration, **kwargs
+            path=str(image_path),
+            start_time=start_time,
+            duration=duration,
         )
         track.add_clip(clip)
 
-        # Update track current time to reflect the end of this clip
-        if duration:
-            self._video_current_time = max(
-                self._video_current_time, start_time + duration
-            )
-        else:
-            self._video_current_time = max(self._video_current_time, start_time)
-
-        return self
+        return ImageContext(self, clip)
 
     def add_text_at(
         self,
         text: str,
         start_time: float,
-        duration: Optional[float] = None,
-        end_time: Optional[float] = None,
-        **kwargs: Any,
-    ) -> "TimelineBuilder":
+        duration: float | None = None,
+        end_time: float | None = None,
+    ) -> TextContext:
         """
         Add text at specific time (auto-detected to text track).
 
@@ -377,10 +366,9 @@ class TimelineBuilder:
             start_time: Start time in seconds
             duration: Duration in seconds
             end_time: End time in seconds (alternative to duration)
-            **kwargs: Additional clip properties
 
         Returns:
-            Self for method chaining
+            TextContext for styling and chaining
         """
         if end_time and duration:
             raise ValueError("Cannot specify both duration and end_time")
@@ -390,34 +378,21 @@ class TimelineBuilder:
 
         track = self._get_or_create_text_track()
         clip = TextClip(
-            content=text, start_time=start_time, duration=duration, **kwargs
+            content=text,
+            start_time=start_time,
+            duration=duration,
         )
         track.add_clip(clip)
 
-        # Update track current time to reflect the end of this clip
-        if duration:
-            self._text_current_time = max(
-                self._text_current_time, start_time + duration
-            )
-        else:
-            self._text_current_time = max(self._text_current_time, start_time)
-
-        return self
+        return TextContext(self, clip)
 
     def add_voice_at(
         self,
-        voice_path: Union[str, Path],
+        voice_path: str | Path,
         start_time: float,
-        duration: Optional[float] = None,
-        end_time: Optional[float] = None,
-        volume: Optional[float] = None,
-        fade_in: float = 0.0,
-        fade_out: float = 0.0,
-        crossfade_duration: float = 0.5,
-        auto_crossfade: bool = True,
-        volume_curve: Optional[List[Tuple[float, float]]] = None,
-        **kwargs: Any,
-    ) -> "TimelineBuilder":
+        duration: float | None = None,
+        end_time: float | None = None,
+    ) -> VoiceContext:
         """
         Add voice at specific time with professional controls.
 
@@ -451,49 +426,26 @@ class TimelineBuilder:
         if not self._validate_audio_file(str(voice_path)):
             raise ValueError(f"Invalid audio file: {voice_path}")
 
-        # Use default voice volume if not provided
-        if volume is None:
-            volume = self.defaults.get_voice_volume()
-
         track = self._get_or_create_voice_track()
         clip = AudioClip(
             path=str(voice_path),
             start_time=start_time,
             duration=duration,
-            volume=volume,
-            fade_in=fade_in,
-            fade_out=fade_out,
-            crossfade_duration=crossfade_duration,
-            auto_crossfade=auto_crossfade,
-            volume_curve=volume_curve,
-            **kwargs,
         )
         track.add_clip(clip)
 
-        # Update voice current time to reflect the end of this clip
-        if duration:
-            self._voice_current_time = max(
-                self._voice_current_time, start_time + duration
-            )
-        else:
-            self._voice_current_time = max(self._voice_current_time, start_time)
+        # In explicit timing mode, do NOT update current time
+        # Current time updates are only for sequential mode
 
-        return self
+        return VoiceContext(self, clip)
 
     def add_music_at(
         self,
-        music_path: Union[str, Path],
+        music_path: str | Path,
         start_time: float,
-        duration: Optional[float] = None,
-        end_time: Optional[float] = None,
-        volume: Optional[float] = None,
-        fade_in: float = 0.0,
-        fade_out: float = 0.0,
-        crossfade_duration: float = 0.5,
-        auto_crossfade: bool = True,
-        volume_curve: Optional[List[Tuple[float, float]]] = None,
-        **kwargs: Any,
-    ) -> "TimelineBuilder":
+        duration: float | None = None,
+        end_time: float | None = None,
+    ) -> VoiceContext:
         """
         Add music at specific time with professional controls.
 
@@ -502,16 +454,9 @@ class TimelineBuilder:
             start_time: Start time in seconds
             duration: Duration in seconds
             end_time: End time in seconds (alternative to duration)
-            volume: Volume level (0-2), uses default music volume if not provided
-            fade_in: Duration of fade-in effect in seconds
-            fade_out: Duration of fade-out effect in seconds
-            crossfade_duration: Duration of crossfade with adjacent clips
-            auto_crossfade: Enable automatic crossfades with adjacent clips
-            volume_curve: Custom volume envelope as list of (time, volume) tuples
-            **kwargs: Additional clip properties
 
         Returns:
-            Self for method chaining
+            VoiceContext for styling and chaining
 
         Example:
             >>> builder.add_music_at("background.mp3", 0.0, duration=10.0, volume=0.3)
@@ -527,49 +472,26 @@ class TimelineBuilder:
         if not self._validate_audio_file(str(music_path)):
             raise ValueError(f"Invalid audio file: {music_path}")
 
-        # Use default music volume if not provided
-        if volume is None:
-            volume = self.defaults.get_music_volume()
-
         track = self._get_or_create_music_track()
         clip = AudioClip(
             path=str(music_path),
             start_time=start_time,
             duration=duration,
-            volume=volume,
-            fade_in=fade_in,
-            fade_out=fade_out,
-            crossfade_duration=crossfade_duration,
-            auto_crossfade=auto_crossfade,
-            volume_curve=volume_curve,
-            **kwargs,
         )
         track.add_clip(clip)
 
-        # Update music current time
-        if duration:
-            self._music_current_time = max(
-                self._music_current_time, start_time + duration
-            )
-        else:
-            self._music_current_time = max(self._music_current_time, start_time)
+        # In explicit timing mode, do NOT update current time
+        # Current time updates are only for sequential mode
 
-        return self
+        return VoiceContext(self, clip)
 
     def add_sfx_at(
         self,
-        sfx_path: Union[str, Path],
+        sfx_path: str | Path,
         start_time: float,
-        duration: Optional[float] = None,
-        end_time: Optional[float] = None,
-        volume: Optional[float] = None,
-        fade_in: float = 0.0,
-        fade_out: float = 0.0,
-        crossfade_duration: float = 0.5,
-        auto_crossfade: bool = True,
-        volume_curve: Optional[List[Tuple[float, float]]] = None,
-        **kwargs: Any,
-    ) -> "TimelineBuilder":
+        duration: float | None = None,
+        end_time: float | None = None,
+    ) -> SfxContext:
         """
         Add SFX at specific time with professional controls.
 
@@ -578,16 +500,9 @@ class TimelineBuilder:
             start_time: Start time in seconds
             duration: Duration in seconds
             end_time: End time in seconds (alternative to duration)
-            volume: Volume level (0-2), uses default SFX volume if not provided
-            fade_in: Duration of fade-in effect in seconds
-            fade_out: Duration of fade-out effect in seconds
-            crossfade_duration: Duration of crossfade with adjacent clips
-            auto_crossfade: Enable automatic crossfades with adjacent clips
-            volume_curve: Custom volume envelope as list of (time, volume) tuples
-            **kwargs: Additional clip properties
 
         Returns:
-            Self for method chaining
+            SfxContext for styling and chaining
 
         Example:
             >>> builder.add_sfx_at("explosion.wav", 2.0, duration=1.0, volume=0.5)
@@ -603,39 +518,24 @@ class TimelineBuilder:
         if not self._validate_audio_file(str(sfx_path)):
             raise ValueError(f"Invalid audio file: {sfx_path}")
 
-        # Use default SFX volume if not provided
-        if volume is None:
-            volume = self.defaults.get_sfx_volume()
-
         track = self._get_or_create_sfx_track()
         clip = AudioClip(
             path=str(sfx_path),
             start_time=start_time,
             duration=duration,
-            volume=volume,
-            fade_in=fade_in,
-            fade_out=fade_out,
-            crossfade_duration=crossfade_duration,
-            auto_crossfade=auto_crossfade,
-            volume_curve=volume_curve,
-            **kwargs,
         )
         track.add_clip(clip)
 
-        # Update SFX current time
-        if duration:
-            self._sfx_current_time = max(self._sfx_current_time, start_time + duration)
-        else:
-            self._sfx_current_time = max(self._sfx_current_time, start_time)
+        # In explicit timing mode, do NOT update current time
+        # Current time updates are only for sequential mode
 
-        return self
+        return SfxContext(self, clip)
 
     def add_transition_at(
         self,
         transition_type: TransitionType,
         start_time: float,
         duration: float,
-        **kwargs: Any,
     ) -> "TimelineBuilder":
         """
         Add transition at specific time.
@@ -653,7 +553,6 @@ class TimelineBuilder:
             transition_type=transition_type,
             start_time=start_time,
             duration=duration,
-            **kwargs,
         )
         self.transitions.append(transition)
         return self
@@ -694,7 +593,7 @@ class TimelineBuilder:
         self._next_duration = None
         return self
 
-    def _get_max_end_time_from_clips(self, clips: List) -> float:
+    def _get_max_end_time_from_clips(self, clips: Sequence[HasEndTime]) -> float:
         """Get the maximum end time from a list of clips."""
         max_end_time = 0.0
         for clip in clips:
@@ -703,7 +602,9 @@ class TimelineBuilder:
                 max_end_time = max(max_end_time, end_time)
         return max_end_time
 
-    def _get_max_end_time_from_tracks(self, tracks: List) -> float:
+    def _get_max_end_time_from_tracks(
+        self, tracks: Sequence[VideoTrack | AudioTrack | TextTrack]
+    ) -> float:
         """Get the maximum end time from a list of tracks."""
         max_end_time = 0.0
         for track in tracks:
@@ -741,7 +642,7 @@ class TimelineBuilder:
 
         return max_end_time
 
-    def get_track_count(self) -> Dict[str, int]:
+    def get_track_count(self) -> dict[str, int]:
         """Get the count of tracks by type."""
         return {
             "video": len(self.video_tracks),
@@ -751,7 +652,7 @@ class TimelineBuilder:
             "text": len(self.text_tracks),
         }
 
-    def get_clip_count(self) -> Dict[str, int]:
+    def get_clip_count(self) -> dict[str, int]:
         """Get the count of clips by type."""
         video_clips = sum(len(track.clips) for track in self.video_tracks)
         music_clips = sum(len(track.clips) for track in self.music_tracks)
@@ -782,7 +683,7 @@ class TimelineBuilder:
             transitions=self.transitions,
         )
 
-    def render(self) -> VideoClip:
+    def render(self) -> MoviePyVideoClip:
         """
         Render the timeline to a MoviePy VideoClip.
 
@@ -795,30 +696,57 @@ class TimelineBuilder:
         renderer = VideoRenderer()
         return renderer.render(video_spec)
 
-    def export(self, path: str, **kwargs: Any) -> None:
+    def export(
+        self, path: str, options: VideoExportOptions | None = None
+    ) -> ExportResult:
         """
         Export the timeline to a video file.
 
         Args:
             path: Output file path
-            **kwargs: Additional export options (codec, bitrate, etc.)
+            options: Export options (optional)
+
+        Returns:
+            ExportResult with success status and metadata
         """
+        import os
+
         from vine.rendering.video_renderer import VideoRenderer
 
-        video_spec = self.build()
-        renderer = VideoRenderer()
-        video_clip, audio_clip = renderer.render_with_audio(video_spec)
+        try:
+            video_spec = self.build()
+            renderer = VideoRenderer()
+            video_clip, audio_clip = renderer.render_with_audio(video_spec)
 
-        # Set audio if available
-        if audio_clip is not None:
-            final_video_clip: VideoClip = video_clip.with_audio(audio_clip)
-        else:
-            final_video_clip = video_clip
+            # Set audio if available
+            if audio_clip is not None:
+                final_video_clip: MoviePyVideoClip = video_clip.with_audio(audio_clip)
+            else:
+                final_video_clip = video_clip
 
-        # Write video file
-        final_video_clip.write_videofile(path, **kwargs)
+            # Prepare export options
+            export_kwargs: dict[str, object] = {}
+            if options:
+                dump_data = options.model_dump()  # type: ignore[misc]
+                export_kwargs = {k: v for k, v in dump_data.items() if v is not None}  # type: ignore[misc]
 
-        # Clean up
-        final_video_clip.close()
-        if audio_clip is not None:
-            audio_clip.close()
+            # Write video file
+            final_video_clip.write_videofile(path, **export_kwargs)
+
+            # Get file size and duration
+            file_size = os.path.getsize(path) if os.path.exists(path) else None
+            duration = float(getattr(final_video_clip, "duration", 0.0))  # type: ignore[misc]
+
+            # Clean up
+            final_video_clip.close()
+            if audio_clip is not None:
+                audio_clip.close()
+
+            return ExportResult(
+                success=True, output_path=path, duration=duration, file_size=file_size
+            )
+
+        except Exception as e:
+            return ExportResult(
+                success=False, output_path=path, duration=0.0, error_message=str(e)
+            )

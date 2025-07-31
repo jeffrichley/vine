@@ -1,8 +1,6 @@
 """Text-specific renderer implementation."""
 
-from typing import List
-
-from moviepy import CompositeVideoClip, TextClip, VideoClip
+from moviepy import CompositeVideoClip, VideoClip
 
 from vine.models.video_spec import VideoSpec
 from vine.rendering.base_renderer import BaseRenderer
@@ -16,7 +14,7 @@ class TextRenderer(BaseRenderer[VideoClip]):
     focusing on text overlays and typography.
     """
 
-    def create_clips(self, video_spec: VideoSpec) -> List[VideoClip]:
+    def create_clips(self, video_spec: VideoSpec) -> list[VideoClip]:
         """
         Create text clips from the video spec.
 
@@ -36,7 +34,7 @@ class TextRenderer(BaseRenderer[VideoClip]):
 
         return clips
 
-    def compose_clips(self, clips: List[TextClip], video_spec: VideoSpec) -> VideoClip:
+    def compose_clips(self, clips: list[VideoClip], video_spec: VideoSpec) -> VideoClip:
         """
         Compose text clips into a composite video.
 
@@ -83,7 +81,7 @@ class TextRenderer(BaseRenderer[VideoClip]):
 
         return final_result
 
-    def render_text_overlay(self, video_spec: VideoSpec) -> List[VideoClip]:
+    def render_text_overlay(self, video_spec: VideoSpec) -> list[VideoClip]:
         """
         Render text clips as overlays (without background).
 

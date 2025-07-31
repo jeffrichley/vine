@@ -59,21 +59,32 @@ class ClipFactory:
         if audio_clip.fade_in > 0.0:
             from moviepy.audio.fx import AudioFadeIn
 
-            effects.append(lambda clip: AudioFadeIn(clip, duration=audio_clip.fade_in))
+            def apply_fade_in(clip: AudioFileClip) -> AudioFileClip:
+                # MoviePy audio effects return Any due to lack of proper typing in the library
+                return AudioFadeIn(clip, duration=audio_clip.fade_in)  # type: ignore[no-any-return,misc]
+
+            effects.append(apply_fade_in)
 
         if audio_clip.fade_out > 0.0:
             from moviepy.audio.fx import AudioFadeOut
 
-            effects.append(
-                lambda clip: AudioFadeOut(clip, duration=audio_clip.fade_out)
-            )
+            def apply_fade_out(clip: AudioFileClip) -> AudioFileClip:
+                # MoviePy audio effects return Any due to lack of proper typing in the library
+                return AudioFadeOut(clip, duration=audio_clip.fade_out)  # type: ignore[no-any-return,misc]
+
+            effects.append(apply_fade_out)
 
         if audio_clip.normalize_audio:
             from moviepy.audio.fx import AudioNormalize
 
-            effects.append(lambda clip: AudioNormalize(clip))
+            def apply_normalize(clip: AudioFileClip) -> AudioFileClip:
+                # MoviePy audio effects return Any due to lack of proper typing in the library
+                return AudioNormalize(clip)  # type: ignore[no-any-return,misc]
+
+            effects.append(apply_normalize)
 
         if effects:
+            # MoviePy with_effects expects functions that return Any due to library typing limitations
             moviepy_clip = moviepy_clip.with_effects(effects)
 
         return moviepy_clip

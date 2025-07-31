@@ -1,8 +1,8 @@
 """Audio configuration models for Project Vine."""
 
-from typing import Literal, Optional
+from typing import Literal, Self
 
-from pydantic import Field, ValidationInfo, field_validator
+from pydantic import Field, model_validator
 
 from vine.models.base import BaseModel
 
@@ -11,28 +11,27 @@ class AudioConfig(BaseModel):
     """Configuration for audio settings."""
 
     volume: float = Field(1.0, ge=0.0, le=2.0, description="Audio volume (0-2)")
-    fade_in: Optional[float] = Field(
+    fade_in: float | None = Field(
         None, ge=0.0, description="Fade in duration in seconds"
     )
-    fade_out: Optional[float] = Field(
+    fade_out: float | None = Field(
         None, ge=0.0, description="Fade out duration in seconds"
     )
-    start_time: Optional[float] = Field(
+    start_time: float | None = Field(
         None, ge=0.0, description="Start time offset in seconds"
     )
-    end_time: Optional[float] = Field(None, ge=0.0, description="End time in seconds")
+    end_time: float | None = Field(None, ge=0.0, description="End time in seconds")
 
-    @field_validator("end_time")
-    @classmethod
-    def validate_end_time(
-        cls, v: Optional[float], info: ValidationInfo
-    ) -> Optional[float]:
-        """Validate end_time is after start_time."""
-        if v is not None:
-            start_time = info.data.get("start_time")
-            if start_time is not None and v <= start_time:
-                raise ValueError("End time must be after start time")
-        return v
+    @model_validator(mode="after")
+    def validate_timing(self) -> Self:
+        """Validate timing relationships."""
+        if (
+            self.end_time is not None
+            and self.start_time is not None
+            and self.end_time <= self.start_time
+        ):
+            raise ValueError("End time must be after start time")
+        return self
 
 
 class VoiceConfig(AudioConfig):

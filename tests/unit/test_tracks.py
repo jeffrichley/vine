@@ -5,12 +5,137 @@ import pytest
 from vine.models.tracks import (
     AudioClip,
     AudioTrack,
+    BaseTrack,
     ImageClip,
     TextClip,
     TextTrack,
     VideoClip,
     VideoTrack,
 )
+
+
+class TestBaseTrack:
+    """Test BaseTrack model."""
+
+    def test_base_track_creation(self) -> None:
+        """Test basic base track creation."""
+        track = BaseTrack(name="test_track")
+        assert track.name == "test_track"
+        assert len(track.clips) == 0
+
+    def test_base_track_add_clip(self) -> None:
+        """Test adding clips to base track."""
+        track = BaseTrack(name="test_track")
+        clip = ImageClip(path="test_image.jpg", start_time=0.0, duration=5.0)
+        track.add_clip(clip)
+        assert len(track.clips) == 1
+        assert track.clips[0] == clip
+
+    def test_base_track_remove_clip_exists(self) -> None:
+        """Test removing a clip that exists in the track."""
+        track = BaseTrack(name="test_track")
+        clip = ImageClip(path="test_image.jpg", start_time=0.0, duration=5.0)
+        track.add_clip(clip)
+        assert len(track.clips) == 1
+        track.remove_clip(clip)
+        assert len(track.clips) == 0
+
+    def test_base_track_remove_clip_not_exists(self) -> None:
+        """Test removing a clip that doesn't exist in the track."""
+        track = BaseTrack(name="test_track")
+        clip1 = ImageClip(path="test_image1.jpg", start_time=0.0, duration=5.0)
+        clip2 = ImageClip(path="test_image2.jpg", start_time=5.0, duration=5.0)
+        track.add_clip(clip1)
+        assert len(track.clips) == 1
+        # Try to remove clip2 which is not in the track
+        track.remove_clip(clip2)
+        assert len(track.clips) == 1  # Should remain unchanged
+        assert track.clips[0] == clip1
+
+    def test_base_track_remove_clip_at_index_valid(self) -> None:
+        """Test removing a clip at a valid index."""
+        track = BaseTrack(name="test_track")
+        clip1 = ImageClip(path="test_image1.jpg", start_time=0.0, duration=5.0)
+        clip2 = ImageClip(path="test_image2.jpg", start_time=5.0, duration=5.0)
+        track.add_clip(clip1)
+        track.add_clip(clip2)
+        assert len(track.clips) == 2
+        track.remove_clip_at_index(0)
+        assert len(track.clips) == 1
+        assert track.clips[0] == clip2
+
+    def test_base_track_remove_clip_at_index_invalid_negative(self) -> None:
+        """Test removing a clip at a negative index."""
+        track = BaseTrack(name="test_track")
+        clip = ImageClip(path="test_image.jpg", start_time=0.0, duration=5.0)
+        track.add_clip(clip)
+        assert len(track.clips) == 1
+        # Try to remove at negative index
+        track.remove_clip_at_index(-1)
+        assert len(track.clips) == 1  # Should remain unchanged
+        assert track.clips[0] == clip
+
+    def test_base_track_remove_clip_at_index_invalid_out_of_bounds(self) -> None:
+        """Test removing a clip at an index out of bounds."""
+        track = BaseTrack(name="test_track")
+        clip = ImageClip(path="test_image.jpg", start_time=0.0, duration=5.0)
+        track.add_clip(clip)
+        assert len(track.clips) == 1
+        # Try to remove at index beyond list length
+        track.remove_clip_at_index(1)
+        assert len(track.clips) == 1  # Should remain unchanged
+        assert track.clips[0] == clip
+
+    def test_base_track_get_active_clips_at_time(self) -> None:
+        """Test getting active clips at a specific time."""
+        track = BaseTrack(name="test_track")
+        clip = ImageClip(path="test_image.jpg", start_time=5.0, duration=10.0)
+        track.add_clip(clip)
+        # Test before clip starts
+        assert len(track.get_active_clips_at_time(0.0)) == 0
+        # Test during clip
+        assert len(track.get_active_clips_at_time(10.0)) == 1
+        # Test after clip ends
+        assert len(track.get_active_clips_at_time(20.0)) == 0
+
+    def test_base_track_has_overlapping_clips_empty(self) -> None:
+        """Test overlapping clips detection with empty track."""
+        track = BaseTrack(name="test_track")
+        assert not track.has_overlapping_clips()
+
+    def test_base_track_has_overlapping_clips_single(self) -> None:
+        """Test overlapping clips detection with single clip."""
+        track = BaseTrack(name="test_track")
+        clip = ImageClip(path="test_image.jpg", start_time=0.0, duration=5.0)
+        track.add_clip(clip)
+        assert not track.has_overlapping_clips()
+
+    def test_base_track_has_overlapping_clips_non_overlapping(self) -> None:
+        """Test overlapping clips detection with non-overlapping clips."""
+        track = BaseTrack(name="test_track")
+        clip1 = ImageClip(path="test_image1.jpg", start_time=0.0, duration=5.0)
+        clip2 = ImageClip(path="test_image2.jpg", start_time=5.0, duration=5.0)
+        track.add_clip(clip1)
+        track.add_clip(clip2)
+        assert not track.has_overlapping_clips()
+
+    def test_base_track_has_overlapping_clips_overlapping(self) -> None:
+        """Test overlapping clips detection with overlapping clips."""
+        track = BaseTrack(name="test_track")
+        clip1 = ImageClip(path="test_image1.jpg", start_time=0.0, duration=10.0)
+        clip2 = ImageClip(path="test_image2.jpg", start_time=5.0, duration=5.0)
+        track.add_clip(clip1)
+        track.add_clip(clip2)
+        assert track.has_overlapping_clips()
+
+    def test_base_track_has_overlapping_clips_infinite_duration(self) -> None:
+        """Test overlapping clips detection with infinite duration clip."""
+        track = BaseTrack(name="test_track")
+        clip1 = ImageClip(path="test_image1.jpg", start_time=0.0)  # Infinite duration
+        clip2 = ImageClip(path="test_image2.jpg", start_time=5.0, duration=5.0)
+        track.add_clip(clip1)
+        track.add_clip(clip2)
+        assert track.has_overlapping_clips()
 
 
 class TestVideoClip:
@@ -63,7 +188,6 @@ class TestVideoClip:
         # End time equal to start time
         with pytest.raises(ValueError, match="End time must be after start time"):
             VideoClip(path="test_video.mp4", start_time=10.0, end_time=10.0)
-
         # End time before start time
         with pytest.raises(ValueError, match="End time must be after start time"):
             VideoClip(path="test_video.mp4", start_time=10.0, end_time=5.0)
@@ -105,13 +229,11 @@ class TestVideoClip:
         assert not clip.is_active_at_time(-1.0)  # time < start_time
         assert clip.is_active_at_time(0.0)  # time == start_time
         assert clip.is_active_at_time(1.0)  # time > start_time
-
         # Test with start_time = 5.0
         clip = VideoClip(path="test_video.mp4", start_time=5.0)
         assert not clip.is_active_at_time(4.9)  # time < start_time
         assert clip.is_active_at_time(5.0)  # time == start_time
         assert clip.is_active_at_time(5.1)  # time > start_time
-
         # Test with start_time = 10.0
         clip = VideoClip(path="test_video.mp4", start_time=10.0)
         assert not clip.is_active_at_time(9.9)  # time < start_time
@@ -125,13 +247,11 @@ class TestVideoClip:
         assert not clip.is_active_at_time(0.0)
         assert clip.is_active_at_time(0.0001)
         assert clip.is_active_at_time(0.0002)
-
         # Test with very large start_time
         clip = VideoClip(path="test_video.mp4", start_time=1000000.0)
         assert not clip.is_active_at_time(999999.9)
         assert clip.is_active_at_time(1000000.0)
         assert clip.is_active_at_time(1000000.1)
-
         # Test with zero start_time
         clip = VideoClip(path="test_video.mp4", start_time=0.0)
         assert not clip.is_active_at_time(-1.0)
@@ -177,7 +297,6 @@ class TestImageClip:
         """Test validate_end_time error when end_time is before or equal to start_time."""
         with pytest.raises(ValueError, match="End time must be after start time"):
             ImageClip(path="test_image.jpg", start_time=10.0, end_time=10.0)
-
         with pytest.raises(ValueError, match="End time must be after start time"):
             ImageClip(path="test_image.jpg", start_time=10.0, end_time=5.0)
 
@@ -206,7 +325,6 @@ class TestImageClip:
         assert not clip.is_active_at_time(-1.0)  # time < start_time
         assert clip.is_active_at_time(0.0)  # time == start_time
         assert clip.is_active_at_time(1.0)  # time > start_time
-
         # Test with start_time = 5.0
         clip = ImageClip(path="test_image.jpg", start_time=5.0)
         assert not clip.is_active_at_time(4.9)  # time < start_time
@@ -252,7 +370,6 @@ class TestTextClip:
         """Test validate_end_time error when end_time is before or equal to start_time."""
         with pytest.raises(ValueError, match="End time must be after start time"):
             TextClip(content="Test text", start_time=10.0, end_time=10.0)
-
         with pytest.raises(ValueError, match="End time must be after start time"):
             TextClip(content="Test text", start_time=10.0, end_time=5.0)
 
@@ -279,7 +396,6 @@ class TestTextClip:
         assert not clip.is_active_at_time(-1.0)  # time < start_time
         assert clip.is_active_at_time(0.0)  # time == start_time
         assert clip.is_active_at_time(1.0)  # time > start_time
-
         # Test with start_time = 5.0
         clip = TextClip(content="Test text", start_time=5.0)
         assert not clip.is_active_at_time(4.9)  # time < start_time
@@ -321,7 +437,6 @@ class TestAudioClip:
         """Test validate_end_time error when end_time is before or equal to start_time."""
         with pytest.raises(ValueError, match="End time must be after start time"):
             AudioClip(path="test_audio.mp3", start_time=10.0, end_time=10.0)
-
         with pytest.raises(ValueError, match="End time must be after start time"):
             AudioClip(path="test_audio.mp3", start_time=10.0, end_time=5.0)
 
@@ -350,7 +465,6 @@ class TestAudioClip:
         assert not clip.is_active_at_time(-1.0)  # time < start_time
         assert clip.is_active_at_time(0.0)  # time == start_time
         assert clip.is_active_at_time(1.0)  # time > start_time
-
         # Test with start_time = 5.0
         clip = AudioClip(path="test_audio.mp3", start_time=5.0)
         assert not clip.is_active_at_time(4.9)  # time < start_time
@@ -380,16 +494,13 @@ class TestVideoTrack:
     def test_video_track_get_active_clips(self) -> None:
         """Test getting active clips at a specific time."""
         track = VideoTrack(name="test_video_track")
-
         # Add clips with different timing
         clip1 = ImageClip(path="image1.jpg", start_time=0.0, duration=5.0)
         clip2 = ImageClip(path="image2.jpg", start_time=3.0, duration=5.0)
         clip3 = ImageClip(path="image3.jpg", start_time=10.0, duration=5.0)
-
         track.add_clip(clip1)
         track.add_clip(clip2)
         track.add_clip(clip3)
-
         # Test active clips at different times
         assert len(track.get_active_clips_at_time(0.0)) == 1
         assert len(track.get_active_clips_at_time(4.0)) == 2  # clip1 and clip2 overlap
@@ -400,17 +511,14 @@ class TestVideoTrack:
     def test_video_track_has_overlapping_clips(self) -> None:
         """Test detection of overlapping clips."""
         track = VideoTrack(name="test_video_track")
-
         # No overlaps initially
         assert not track.has_overlapping_clips()
-
         # Add non-overlapping clips
         clip1 = ImageClip(path="image1.jpg", start_time=0.0, duration=5.0)
         clip2 = ImageClip(path="image2.jpg", start_time=5.0, duration=5.0)
         track.add_clip(clip1)
         track.add_clip(clip2)
         assert not track.has_overlapping_clips()
-
         # Add overlapping clip
         clip3 = ImageClip(path="image3.jpg", start_time=3.0, duration=5.0)
         track.add_clip(clip3)
@@ -419,7 +527,6 @@ class TestVideoTrack:
     def test_video_track_return_true_infinite_duration_specific(self) -> None:
         """Test the specific 'return True  # Infinite duration clips overlap with everything' line."""
         track = VideoTrack(name="test_video_track")
-
         # Test with first clip having infinite duration (earlier start time)
         clip1 = ImageClip(
             path="image1.jpg", start_time=0.0
@@ -430,7 +537,6 @@ class TestVideoTrack:
         assert (
             track.has_overlapping_clips()
         )  # Should return True due to infinite duration
-
         # Test with second clip having infinite duration (later start time - won't trigger the line)
         track = VideoTrack(name="test_video_track")
         clip1 = ImageClip(path="image1.jpg", start_time=0.0, duration=5.0)
@@ -442,7 +548,6 @@ class TestVideoTrack:
         assert (
             not track.has_overlapping_clips()
         )  # Won't trigger because infinite clip is second
-
         # Test with middle clip having infinite duration (middle start time)
         track = VideoTrack(name="test_video_track")
         clip1 = ImageClip(path="image1.jpg", start_time=0.0, duration=5.0)
@@ -460,14 +565,12 @@ class TestVideoTrack:
     def test_video_track_return_true_infinite_duration_edge_cases(self) -> None:
         """Test edge cases for the 'return True  # Infinite duration clips overlap with everything' line."""
         track = VideoTrack(name="test_video_track")
-
         # Test with single infinite duration clip (should not trigger overlap check)
         clip = ImageClip(
             path="image1.jpg", start_time=0.0
         )  # No duration/end_time = infinite
         track.add_clip(clip)
         assert not track.has_overlapping_clips()  # Only one clip, no overlap possible
-
         # Test with two infinite duration clips
         track = VideoTrack(name="test_video_track")
         clip1 = ImageClip(
@@ -481,7 +584,6 @@ class TestVideoTrack:
         assert (
             track.has_overlapping_clips()
         )  # Should return True due to infinite duration
-
         # Test with all clips having infinite duration
         track = VideoTrack(name="test_video_track")
         clip1 = ImageClip(
@@ -523,7 +625,6 @@ class TestAudioTrack:
     def test_audio_track_return_true_infinite_duration_specific(self) -> None:
         """Test the specific 'return True  # Infinite duration clips overlap with everything' line."""
         track = AudioTrack(name="test_audio_track")
-
         # Test with first clip having infinite duration (earlier start time)
         clip1 = AudioClip(
             path="audio1.mp3", start_time=0.0
@@ -534,7 +635,6 @@ class TestAudioTrack:
         assert (
             track.has_overlapping_clips()
         )  # Should return True due to infinite duration
-
         # Test with second clip having infinite duration (later start time - won't trigger the line)
         track = AudioTrack(name="test_audio_track")
         clip1 = AudioClip(path="audio1.mp3", start_time=0.0, duration=5.0)
@@ -570,7 +670,6 @@ class TestTextTrack:
     def test_text_track_return_true_infinite_duration_specific(self) -> None:
         """Test the specific 'return True  # Infinite duration clips overlap with everything' line."""
         track = TextTrack(name="test_text_track")
-
         # Test with first clip having infinite duration (earlier start time)
         clip1 = TextClip(
             content="Text 1", start_time=0.0
@@ -581,7 +680,6 @@ class TestTextTrack:
         assert (
             track.has_overlapping_clips()
         )  # Should return True due to infinite duration
-
         # Test with second clip having infinite duration (later start time - won't trigger the line)
         track = TextTrack(name="test_text_track")
         clip1 = TextClip(content="Text 1", start_time=0.0, duration=5.0)

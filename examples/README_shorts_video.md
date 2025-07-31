@@ -56,6 +56,21 @@ A comprehensive demonstration of Vine framework capabilities:
 - Sound effects integration
 - Background music
 
+### 4. `google_style_api_demo.py` ⭐ NEW
+A demonstration of the Google-style API behavior for timing modes:
+
+#### Key Concepts
+- **Sequential methods** (`add_image()`, `add_text()`, etc.) UPDATE current times
+- **Explicit methods** (`add_image_at()`, `add_text_at()`, etc.) do NOT update current times
+- **Mixed mode** combines both approaches for maximum flexibility
+
+#### Demonstrations
+- Pure sequential workflow
+- Pure explicit workflow
+- Mixed mode workflow (most powerful)
+- API consistency across all track types
+- Why this behavior matters for real-world usage
+
 ## Asset Structure
 
 The `tmp/` directory contains:

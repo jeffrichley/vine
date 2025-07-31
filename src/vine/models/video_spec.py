@@ -1,12 +1,23 @@
 """Video specification models for Project Vine."""
 
-from typing import List, Literal, Optional, Sequence
+from collections.abc import Sequence
+from typing import Literal
 
 from pydantic import Field, model_validator
 
 from vine.models.audio_config import MusicConfig, VoiceConfig
 from vine.models.base import BaseModel
-from vine.models.tracks import AudioTrack, TextTrack, TrackType, VideoTrack
+from vine.models.protocols import HasEndTime
+from vine.models.tracks import (
+    AudioClip,
+    AudioTrack,
+    ImageClip,
+    TextClip,
+    TextTrack,
+    TrackType,
+    VideoClip,
+    VideoTrack,
+)
 from vine.models.transition import Transition
 
 
@@ -15,47 +26,47 @@ class VideoSpec(BaseModel):
 
     # Basic metadata
     title: str = Field(..., description="Video title")
-    description: Optional[str] = Field(None, description="Video description")
-    author: Optional[str] = Field(None, description="Video author")
+    description: str | None = Field(None, description="Video description")
+    author: str | None = Field(None, description="Video author")
 
     # Video settings
     width: int = Field(1920, ge=1, le=7680, description="Video width in pixels")
     height: int = Field(1080, ge=1, le=7680, description="Video height in pixels")
     fps: float = Field(30.0, ge=1.0, le=120.0, description="Frames per second")
-    duration: Optional[float] = Field(
+    duration: float | None = Field(
         None, ge=0.0, description="Total video duration in seconds"
     )
 
     # Track-based timeline configuration
-    video_tracks: List[VideoTrack] = Field(
+    video_tracks: list[VideoTrack] = Field(
         default_factory=lambda: [VideoTrack(name="video_0")], description="Video tracks"
     )
-    music_tracks: List[AudioTrack] = Field(
+    music_tracks: list[AudioTrack] = Field(
         default_factory=lambda: [AudioTrack(name="music_0")], description="Music tracks"
     )
-    voice_tracks: List[AudioTrack] = Field(
+    voice_tracks: list[AudioTrack] = Field(
         default_factory=lambda: [AudioTrack(name="voice_0")], description="Voice tracks"
     )
-    sfx_tracks: List[AudioTrack] = Field(
+    sfx_tracks: list[AudioTrack] = Field(
         default_factory=lambda: [AudioTrack(name="sfx_0")], description="SFX tracks"
     )
-    text_tracks: List[TextTrack] = Field(
+    text_tracks: list[TextTrack] = Field(
         default_factory=lambda: [TextTrack(name="text_0")], description="Text tracks"
     )
-    transitions: List[Transition] = Field(
+    transitions: list[Transition] = Field(
         default_factory=list, description="Global transitions"
     )
 
     # Audio configuration
-    voice_config: Optional[VoiceConfig] = Field(
+    voice_config: VoiceConfig | None = Field(
         None, description="Global voice configuration"
     )
-    music_config: Optional[MusicConfig] = Field(
+    music_config: MusicConfig | None = Field(
         None, description="Global music configuration"
     )
 
     # Export settings
-    output_path: Optional[str] = Field(None, description="Output video file path")
+    output_path: str | None = Field(None, description="Output video file path")
     output_format: Literal["mp4", "avi", "mov", "mkv"] = Field(
         "mp4", description="Output video format"
     )
@@ -71,13 +82,20 @@ class VideoSpec(BaseModel):
     @model_validator(mode="after")
     def validate_video_configuration(self) -> "VideoSpec":
         """Sort tracks by z_order for consistent rendering."""
+
         # Sort tracks by z_order for consistent rendering
-        self.video_tracks.sort(key=lambda t: t.z_order)
-        self.text_tracks.sort(key=lambda t: t.z_order)
+        def get_video_z_order(track: VideoTrack) -> int:
+            return track.z_order
+
+        def get_text_z_order(track: TextTrack) -> int:
+            return track.z_order
+
+        self.video_tracks.sort(key=get_video_z_order)
+        self.text_tracks.sort(key=get_text_z_order)
 
         return self
 
-    def _get_max_end_time_from_clips(self, clips: List) -> float:
+    def _get_max_end_time_from_clips(self, clips: Sequence[HasEndTime]) -> float:
         """Get the maximum end time from a list of clips."""
         max_end_time = 0.0
         for clip in clips:
@@ -86,7 +104,9 @@ class VideoSpec(BaseModel):
                 max_end_time = max(max_end_time, end_time)
         return max_end_time
 
-    def _get_max_end_time_from_tracks(self, tracks: List) -> float:
+    def _get_max_end_time_from_tracks(
+        self, tracks: Sequence[VideoTrack | AudioTrack | TextTrack]
+    ) -> float:
         """Get the maximum end time from a list of tracks."""
         max_end_time = 0.0
         for track in tracks:
@@ -124,37 +144,77 @@ class VideoSpec(BaseModel):
 
         return max_end_time
 
-    def get_active_clips_at_time(self, time: float) -> dict:
+    def get_active_clips_at_time(
+        self, time: float
+    ) -> dict[str, list[VideoClip | ImageClip | AudioClip | TextClip]]:
         """Get all active clips at the given time, organized by track type."""
-        return {
-            "video": [
-                clip
-                for track in self.video_tracks
-                for clip in track.get_active_clips_at_time(time)
-            ],
-            "music": [
-                clip
-                for track in self.music_tracks
-                for clip in track.get_active_clips_at_time(time)
-            ],
-            "voice": [
-                clip
-                for track in self.voice_tracks
-                for clip in track.get_active_clips_at_time(time)
-            ],
-            "sfx": [
-                clip
-                for track in self.sfx_tracks
-                for clip in track.get_active_clips_at_time(time)
-            ],
-            "text": [
-                clip
-                for track in self.text_tracks
-                for clip in track.get_active_clips_at_time(time)
-            ],
+        result: dict[str, list[VideoClip | ImageClip | AudioClip | TextClip]] = {
+            "video": [],
+            "music": [],
+            "voice": [],
+            "sfx": [],
+            "text": [],
         }
 
-    def get_transitions_at_time(self, time: float) -> List[Transition]:
+        self._collect_video_clips(time, result)
+        self._collect_music_clips(time, result)
+        self._collect_voice_clips(time, result)
+        self._collect_sfx_clips(time, result)
+        self._collect_text_clips(time, result)
+
+        return result
+
+    def _collect_video_clips(
+        self,
+        time: float,
+        result: dict[str, list[VideoClip | ImageClip | AudioClip | TextClip]],
+    ) -> None:
+        """Collect active video clips at the given time."""
+        for video_track in self.video_tracks:
+            for video_clip in video_track.get_active_clips_at_time(time):
+                result["video"].append(video_clip)
+
+    def _collect_music_clips(
+        self,
+        time: float,
+        result: dict[str, list[VideoClip | ImageClip | AudioClip | TextClip]],
+    ) -> None:
+        """Collect active music clips at the given time."""
+        for music_track in self.music_tracks:
+            for music_clip in music_track.get_active_clips_at_time(time):
+                result["music"].append(music_clip)
+
+    def _collect_voice_clips(
+        self,
+        time: float,
+        result: dict[str, list[VideoClip | ImageClip | AudioClip | TextClip]],
+    ) -> None:
+        """Collect active voice clips at the given time."""
+        for voice_track in self.voice_tracks:
+            for voice_clip in voice_track.get_active_clips_at_time(time):
+                result["voice"].append(voice_clip)
+
+    def _collect_sfx_clips(
+        self,
+        time: float,
+        result: dict[str, list[VideoClip | ImageClip | AudioClip | TextClip]],
+    ) -> None:
+        """Collect active SFX clips at the given time."""
+        for sfx_track in self.sfx_tracks:
+            for sfx_clip in sfx_track.get_active_clips_at_time(time):
+                result["sfx"].append(sfx_clip)
+
+    def _collect_text_clips(
+        self,
+        time: float,
+        result: dict[str, list[VideoClip | ImageClip | AudioClip | TextClip]],
+    ) -> None:
+        """Collect active text clips at the given time."""
+        for text_track in self.text_tracks:
+            for text_clip in text_track.get_active_clips_at_time(time):
+                result["text"].append(text_clip)
+
+    def get_transitions_at_time(self, time: float) -> list[Transition]:
         """Get transitions active at the given time."""
         return [trans for trans in self.transitions if trans.is_active_at_time(time)]
 
@@ -172,29 +232,12 @@ class VideoSpec(BaseModel):
             return self.sfx_tracks
         elif track_type == TrackType.TEXT:
             return self.text_tracks
-        else:
-            raise ValueError(f"Unknown track type: {track_type}")
-
-    def _get_track_list_by_type(
-        self, track_type: TrackType
-    ) -> List[VideoTrack | AudioTrack | TextTrack]:
-        """Get track list by type for modification."""
-        if track_type == TrackType.VIDEO:
-            return self.video_tracks  # type: ignore[return-value]
-        elif track_type == TrackType.MUSIC:
-            return self.music_tracks  # type: ignore[return-value]
-        elif track_type == TrackType.VOICE:
-            return self.voice_tracks  # type: ignore[return-value]
-        elif track_type == TrackType.SFX:
-            return self.sfx_tracks  # type: ignore[return-value]
-        elif track_type == TrackType.TEXT:
-            return self.text_tracks  # type: ignore[return-value]
-        else:
+        else:  # pragma: no cover  # we are putting this here only for when and if we are adding new track types
             raise ValueError(f"Unknown track type: {track_type}")
 
     def get_track_by_name(
         self, track_name: str, track_type: TrackType = TrackType.VIDEO
-    ) -> Optional[VideoTrack | AudioTrack | TextTrack]:
+    ) -> VideoTrack | AudioTrack | TextTrack | None:
         """Get a track by name and type."""
         tracks = self._get_tracks_by_type(track_type)
         for track in tracks:
@@ -205,8 +248,12 @@ class VideoSpec(BaseModel):
     def add_video_track(self, track: VideoTrack) -> None:
         """Add a video track to the timeline."""
         self.video_tracks.append(track)
+
         # Sort tracks by z_order for consistent rendering
-        self.video_tracks.sort(key=lambda t: t.z_order)
+        def get_video_z_order(track: VideoTrack) -> int:
+            return track.z_order
+
+        self.video_tracks.sort(key=get_video_z_order)
 
     def add_music_track(self, track: AudioTrack) -> None:
         """Add a music track to the timeline."""
@@ -223,23 +270,73 @@ class VideoSpec(BaseModel):
     def add_text_track(self, track: TextTrack) -> None:
         """Add a text track to the timeline."""
         self.text_tracks.append(track)
+
         # Sort tracks by z_order for consistent rendering
-        self.text_tracks.sort(key=lambda t: t.z_order)
+        def get_text_z_order(track: TextTrack) -> int:
+            return track.z_order
+
+        self.text_tracks.sort(key=get_text_z_order)
 
     def add_transition(self, transition: Transition) -> None:
         """Add a transition to the timeline."""
         self.transitions.append(transition)
 
+    def remove_video_track(self, track_name: str) -> bool:
+        """Remove a video track by name."""
+        for i, track in enumerate(self.video_tracks):
+            if track.name == track_name:
+                self.video_tracks.pop(i)
+                return True
+        return False
+
+    def remove_music_track(self, track_name: str) -> bool:
+        """Remove a music track by name."""
+        for i, track in enumerate(self.music_tracks):
+            if track.name == track_name:
+                self.music_tracks.pop(i)
+                return True
+        return False
+
+    def remove_voice_track(self, track_name: str) -> bool:
+        """Remove a voice track by name."""
+        for i, track in enumerate(self.voice_tracks):
+            if track.name == track_name:
+                self.voice_tracks.pop(i)
+                return True
+        return False
+
+    def remove_sfx_track(self, track_name: str) -> bool:
+        """Remove an SFX track by name."""
+        for i, track in enumerate(self.sfx_tracks):
+            if track.name == track_name:
+                self.sfx_tracks.pop(i)
+                return True
+        return False
+
+    def remove_text_track(self, track_name: str) -> bool:
+        """Remove a text track by name."""
+        for i, track in enumerate(self.text_tracks):
+            if track.name == track_name:
+                self.text_tracks.pop(i)
+                return True
+        return False
+
     def remove_track(
         self, track_name: str, track_type: TrackType = TrackType.VIDEO
     ) -> bool:
-        """Remove a track by name and type."""
-        track_list = self._get_track_list_by_type(track_type)
-        for i, track in enumerate(track_list):
-            if track.name == track_name:
-                track_list.pop(i)
-                return True
-        return False
+        """Remove a track by name and type (legacy method for backward compatibility)."""
+        if track_type == TrackType.VIDEO:
+            return self.remove_video_track(track_name)
+        elif track_type == TrackType.MUSIC:
+            return self.remove_music_track(track_name)
+        elif track_type == TrackType.VOICE:
+            return self.remove_voice_track(track_name)
+        elif track_type == TrackType.SFX:
+            return self.remove_sfx_track(track_name)
+        elif track_type == TrackType.TEXT:
+            return self.remove_text_track(track_name)
+        else:
+            raise ValueError(f"Unknown track type: {track_type}")
 
     def remove_transition(self, transition_index: int) -> bool:
         """Remove a transition by index."""

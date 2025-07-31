@@ -1,8 +1,6 @@
 """Video-specific renderer implementation."""
 
-from typing import List
-
-from moviepy import CompositeVideoClip, ImageClip, VideoClip
+from moviepy import CompositeVideoClip, VideoClip
 
 from vine.models.video_spec import VideoSpec
 from vine.rendering.base_renderer import BaseRenderer
@@ -16,7 +14,7 @@ class VideoRenderer(BaseRenderer[VideoClip]):
     focusing on image clips and text overlays.
     """
 
-    def create_clips(self, video_spec: VideoSpec) -> List[VideoClip]:
+    def create_clips(self, video_spec: VideoSpec) -> list[VideoClip]:
         """
         Create video clips from the video spec.
 
@@ -42,7 +40,7 @@ class VideoRenderer(BaseRenderer[VideoClip]):
 
         return clips
 
-    def compose_clips(self, clips: List[ImageClip], video_spec: VideoSpec) -> VideoClip:
+    def compose_clips(self, clips: list[VideoClip], video_spec: VideoSpec) -> VideoClip:
         """
         Compose video clips into a composite video.
 

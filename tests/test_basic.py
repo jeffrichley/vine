@@ -37,7 +37,10 @@ class TestDefaultsManager:
 
     def test_init_with_defaults(self) -> None:
         """Test initialization with defaults."""
-        defaults = {"width": 1920, "height": 1080}
+        defaults: dict[str, str | int | float | bool] = {
+            "width": 1920,
+            "height": 1080,
+        }
         dm = DefaultsManager(defaults)
         assert dm.all == defaults
 
@@ -74,7 +77,10 @@ class TestDefaultsManager:
 
     def test_all_property(self) -> None:
         """Test the all property returns a copy."""
-        defaults = {"width": 1920, "height": 1080}
+        defaults: dict[str, str | int | float | bool] = {
+            "width": 1920,
+            "height": 1080,
+        }
         dm = DefaultsManager(defaults)
         all_defaults = dm.all
         assert all_defaults == defaults

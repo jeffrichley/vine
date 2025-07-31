@@ -8,7 +8,7 @@ from pathlib import Path
 
 def add_return_annotations_to_file(file_path: Path) -> int:
     """Add -> None to test functions that don't have return annotations."""
-    with open(file_path, "r") as f:
+    with open(file_path) as f:
         content = f.read()
 
     # Pattern to match test function definitions without return annotations

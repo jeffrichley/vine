@@ -1,21 +1,19 @@
 """Animation configuration models for Project Vine."""
 
-from typing import Optional
-
 from pydantic import Field, field_validator
 
 from vine.models.base import BaseModel
-from vine.models.effects import EffectType
+from vine.models.effects import BaseEffect
 
 
 class AnimationConfig(BaseModel):
     """Configuration for video animations."""
 
-    effect: EffectType = Field(..., description="Animation effect configuration")
+    effect: BaseEffect = Field(..., description="Animation effect configuration")
     start_time: float = Field(
         0.0, ge=0.0, description="Animation start time in seconds"
     )
-    duration: Optional[float] = Field(
+    duration: float | None = Field(
         None, ge=0.0, description="Animation duration in seconds"
     )
     easing: str = Field("ease_in_out", description="Easing function for animation")
@@ -40,7 +38,7 @@ class AnimationConfig(BaseModel):
             raise ValueError(f"Unsupported easing function: {v}")
         return v
 
-    def get_end_time(self) -> Optional[float]:
+    def get_end_time(self) -> float | None:
         """Get the end time of the animation."""
         if self.duration is None:
             return None

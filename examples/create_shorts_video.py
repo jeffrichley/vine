@@ -8,16 +8,16 @@ from AI-generated assets including voice clips, images, music, and sound effects
 
 import json
 import os
-from typing import Any, Dict
+from typing import Any
 
 from vine.builder.timeline_builder import TimelineBuilder
 from vine.models.animation_config import AnimationConfig
-from vine.models.effects import KenBurnsConfig
+from vine.models.effects import KenBurnsEffect
 
 
-def load_test_output() -> Dict[str, Any]:
+def load_test_output() -> dict[str, Any]:
     """Load the test output JSON file."""
-    with open("tmp/test_output.json", "r") as f:
+    with open("tmp/test_output.json") as f:
         return json.load(f)
 
 
@@ -64,7 +64,7 @@ def create_shorts_video():
         # Add video track with image
         if os.path.exists(image_path):
             # Add Ken Burns effect for visual interest
-            ken_burns_effect = KenBurnsConfig(
+            ken_burns_effect = KenBurnsEffect(
                 zoom_factor=1.1,
                 pan_x=0.0,
                 pan_y=0.0,

@@ -1,20 +1,29 @@
 """Defaults manager for Project Vine."""
 
-from typing import Any, Dict, Optional
+from vine.models.yaml_models import DefaultsData
 
 
 class DefaultsManager:
     """Manages hierarchical defaults for video composition."""
 
-    def __init__(self, defaults: Optional[Dict[str, Any]] = None):
+    _defaults: dict[str, str | int | float | bool]
+
+    def __init__(
+        self, defaults: dict[str, str | int | float | bool] | DefaultsData | None = None
+    ) -> None:
         """Initialize the defaults manager.
 
         Args:
-            defaults: Initial defaults dictionary
+            defaults: Initial defaults dictionary or typed DefaultsData
         """
-        self._defaults = defaults or {}
+        if isinstance(defaults, DefaultsData):
+            self._defaults = defaults.model_dump()
+        else:
+            self._defaults = defaults or {}
 
-    def get(self, key: str, default: Any = None) -> Any:
+    def get(
+        self, key: str, default: str | int | float | bool | None = None
+    ) -> str | int | float | bool | None:
         """Get a default value.
 
         Args:
@@ -26,7 +35,7 @@ class DefaultsManager:
         """
         return self._defaults.get(key, default)
 
-    def set(self, key: str, value: Any) -> None:
+    def set(self, key: str, value: str | int | float | bool) -> None:
         """Set a default value.
 
         Args:
@@ -35,20 +44,26 @@ class DefaultsManager:
         """
         self._defaults[key] = value
 
-    def update(self, defaults: Dict[str, Any]) -> None:
+    def update(
+        self, defaults: dict[str, str | int | float | bool] | DefaultsData
+    ) -> None:
         """Update defaults with a dictionary.
 
         Args:
-            defaults: Dictionary of defaults to add/update
+            defaults: Dictionary of defaults to add/update or typed DefaultsData
         """
-        self._defaults.update(defaults)
+        if isinstance(defaults, DefaultsData):
+            # Type ignore for model_dump() which returns Dict[str, Any]
+            self._defaults.update(defaults.model_dump())  # type: ignore[misc]
+        else:
+            self._defaults.update(defaults)
 
     def clear(self) -> None:
         """Clear all defaults."""
         self._defaults.clear()
 
     @property
-    def all(self) -> Dict[str, Any]:
+    def all(self) -> dict[str, str | int | float | bool]:
         """Get all current defaults.
 
         Returns:
@@ -61,7 +76,7 @@ class DefaultsManager:
     DEFAULT_VOICE_VOLUME = 0.8  # Voice should be prominent
     DEFAULT_SFX_VOLUME = 0.5  # SFX should be noticeable but not overwhelming
 
-    def get_audio_defaults(self) -> Dict[str, float]:
+    def get_audio_defaults(self) -> dict[str, float]:
         """Get all audio default settings.
 
         Returns:

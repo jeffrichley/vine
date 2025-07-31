@@ -8,14 +8,14 @@ from AI-generated assets without complex animations.
 
 import json
 import os
-from typing import Any, Dict
+from typing import Any
 
 from vine.builder.timeline_builder import TimelineBuilder
 
 
-def load_test_output() -> Dict[str, Any]:
+def load_test_output() -> dict[str, Any]:
     """Load the test output JSON file."""
-    with open("tmp/test_output.json", "r") as f:
+    with open("tmp/test_output.json") as f:
         return json.load(f)
 
 

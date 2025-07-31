@@ -6,7 +6,7 @@ from vine.models import (
     AudioClip,
     AudioTrack,
     ImageClip,
-    KenBurnsConfig,
+    KenBurnsEffect,
     MusicConfig,
     TextClip,
     TextTrack,
@@ -24,7 +24,7 @@ def main():
     print("=" * 50)
 
     # Create a Ken Burns effect
-    ken_burns = KenBurnsConfig(zoom_factor=1.3, pan_x=0.1, pan_y=-0.05)
+    ken_burns = KenBurnsEffect(zoom_factor=1.3, pan_x=0.1, pan_y=-0.05)
 
     # Create an animation with the Ken Burns effect
     animation = AnimationConfig(

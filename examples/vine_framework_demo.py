@@ -8,15 +8,15 @@ generated assets from the tmp directory.
 
 import json
 import os
-from typing import Any, Dict
+from typing import Any
 
 from vine.builder.timeline_builder import TimelineBuilder
-from vine.models.effects import KenBurnsConfig, SlideConfig, StaticConfig
+from vine.models.effects import KenBurnsEffect, SlideEffect, StaticEffect
 
 
-def load_test_output() -> Dict[str, Any]:
+def load_test_output() -> dict[str, Any]:
     """Load the test output JSON file."""
-    with open("tmp/test_output.json", "r") as f:
+    with open("tmp/test_output.json") as f:
         return json.load(f)
 
 
@@ -142,11 +142,11 @@ def demo_effects():
 
     # Add images with different effects
     effects = [
-        ("Ken Burns", KenBurnsConfig(zoom_factor=1.2, pan_x=0.1, pan_y=0.1)),
-        ("Slide Left", SlideConfig(direction="left", distance=200)),
-        ("Static", StaticConfig()),
-        ("Ken Burns Reverse", KenBurnsConfig(zoom_factor=1.1, pan_x=-0.1, pan_y=-0.1)),
-        ("Slide Right", SlideConfig(direction="right", distance=200)),
+        ("Ken Burns", KenBurnsEffect(zoom_factor=1.2, pan_x=0.1, pan_y=0.1)),
+        ("Slide Left", SlideEffect(direction="left", distance=200)),
+        ("Static", StaticEffect()),
+        ("Ken Burns Reverse", KenBurnsEffect(zoom_factor=1.1, pan_x=-0.1, pan_y=-0.1)),
+        ("Slide Right", SlideEffect(direction="right", distance=200)),
     ]
 
     current_time = 0.0

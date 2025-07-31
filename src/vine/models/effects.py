@@ -1,24 +1,34 @@
-"""Effect configuration models for Project Vine."""
+"""Effect models for Project Vine."""
 
-from typing import Literal, Optional, Union
+from typing import Literal
 
 from pydantic import Field
 
 from vine.models.base import BaseModel
+from vine.models.transition import TransitionDirection
 
 
-class EffectConfig(BaseModel):
-    """Base configuration for video effects."""
+class BaseEffect(BaseModel):
+    """Base class for all effects."""
 
     type: str = Field(..., description="Type of effect")
-    duration: Optional[float] = Field(
+    duration: float | None = Field(
         None, ge=0.0, description="Effect duration in seconds"
     )
-    start_time: Optional[float] = Field(0.0, ge=0.0, description="Start time of effect")
+    start_time: float | None = Field(0.0, ge=0.0, description="Start time of effect")
+
+    def get_type(self) -> str:
+        return self.type
+
+    def get_duration(self) -> float | None:
+        return self.duration
+
+    def get_start_time(self) -> float:
+        return self.start_time or 0.0
 
 
-class KenBurnsConfig(EffectConfig):
-    """Configuration for Ken Burns effect."""
+class KenBurnsEffect(BaseEffect):
+    """Ken Burns effect for zooming and panning."""
 
     type: Literal["ken_burns"] = "ken_burns"
     zoom_factor: float = Field(1.2, ge=1.0, le=3.0, description="Zoom factor")
@@ -27,23 +37,19 @@ class KenBurnsConfig(EffectConfig):
     easing: str = Field("ease_in_out", description="Easing function")
 
 
-class SlideConfig(EffectConfig):
-    """Configuration for slide effect."""
+class SlideEffect(BaseEffect):
+    """Slide effect for directional movement."""
 
     type: Literal["slide"] = "slide"
-    direction: Literal["left", "right", "up", "down"] = Field(
-        "left", description="Slide direction"
+    direction: TransitionDirection = Field(
+        TransitionDirection.LEFT, description="Slide direction"
     )
     distance: float = Field(100.0, ge=0.0, description="Slide distance in pixels")
     easing: str = Field("ease_in_out", description="Easing function")
 
 
-class StaticConfig(EffectConfig):
-    """Configuration for static/no effect."""
+class StaticEffect(BaseEffect):
+    """Static/no effect."""
 
     type: Literal["static"] = "static"
     # No additional parameters needed for static effect
-
-
-# Union type for all effect configurations
-EffectType = Union[KenBurnsConfig, SlideConfig, StaticConfig]

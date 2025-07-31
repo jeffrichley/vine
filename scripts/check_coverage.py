@@ -24,6 +24,7 @@ def run_coverage_check() -> bool:
                 "--cov-fail-under=80",
                 "tests/",
             ],
+            check=False,
             capture_output=True,
             text=True,
             cwd=Path(__file__).parent.parent,

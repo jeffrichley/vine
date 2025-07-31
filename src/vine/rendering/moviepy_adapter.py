@@ -1,7 +1,5 @@
 """Adapter pattern for bridging Project Vine models with MoviePy API."""
 
-from typing import List, Optional
-
 from moviepy import (
     AudioClip,
     AudioFileClip,
@@ -76,7 +74,7 @@ class MoviePyAdapter:
         """
         return self.clip_factory.create_text_clip(text_clip)
 
-    def adapt_video_track(self, video_track: VideoTrack) -> List[VideoClip]:
+    def adapt_video_track(self, video_track: VideoTrack) -> list[VideoClip]:
         """
         Adapt a Project Vine VideoTrack to a list of MoviePy clips.
 
@@ -86,10 +84,11 @@ class MoviePyAdapter:
         Returns:
             List of MoviePy VideoClip objects
         """
-        moviepy_clips: List[VideoClip] = []
+        moviepy_clips: list[VideoClip] = []
 
         for clip in video_track.clips:
-            if isinstance(clip, VineImageClip):
+            # MoviePy types have Any in their inheritance chain, causing isinstance issues
+            if isinstance(clip, VineImageClip):  # type: ignore[misc]
                 moviepy_clip = self.adapt_image_clip(clip)
                 moviepy_clips.append(moviepy_clip)
             # Add support for VideoClip when implemented
@@ -99,7 +98,7 @@ class MoviePyAdapter:
 
         return moviepy_clips
 
-    def adapt_audio_track(self, audio_track: AudioTrack) -> List[AudioClip]:
+    def adapt_audio_track(self, audio_track: AudioTrack) -> list[AudioClip]:
         """
         Adapt a Project Vine AudioTrack to a list of MoviePy clips.
 
@@ -109,15 +108,17 @@ class MoviePyAdapter:
         Returns:
             List of MoviePy AudioClip objects
         """
-        moviepy_clips: List[AudioClip] = []
+        moviepy_clips: list[AudioClip] = []
 
         for clip in audio_track.clips:
-            moviepy_clip = self.adapt_audio_clip(clip)
-            moviepy_clips.append(moviepy_clip)
+            # MoviePy types have Any in their inheritance chain, causing isinstance issues
+            if isinstance(clip, VineAudioClip):  # type: ignore[misc]
+                moviepy_clip = self.adapt_audio_clip(clip)
+                moviepy_clips.append(moviepy_clip)
 
         return moviepy_clips
 
-    def adapt_text_track(self, text_track: TextTrack) -> List[VideoClip]:
+    def adapt_text_track(self, text_track: TextTrack) -> list[VideoClip]:
         """
         Adapt a Project Vine TextTrack to a list of MoviePy clips.
 
@@ -127,11 +128,13 @@ class MoviePyAdapter:
         Returns:
             List of MoviePy VideoClip objects
         """
-        moviepy_clips: List[VideoClip] = []
+        moviepy_clips: list[VideoClip] = []
 
         for clip in text_track.clips:
-            moviepy_clip = self.adapt_text_clip(clip)
-            moviepy_clips.append(moviepy_clip)
+            # MoviePy types have Any in their inheritance chain, causing isinstance issues
+            if isinstance(clip, VineTextClip):  # type: ignore[misc]
+                moviepy_clip = self.adapt_text_clip(clip)
+                moviepy_clips.append(moviepy_clip)
 
         return moviepy_clips
 
@@ -172,7 +175,7 @@ class MoviePyAdapter:
                 size=(video_spec.width, video_spec.height), color=(0, 0, 0)
             )
 
-    def adapt_audio_timeline(self, video_spec: VideoSpec) -> Optional[AudioClip]:
+    def adapt_audio_timeline(self, video_spec: VideoSpec) -> AudioClip | None:
         """
         Adapt audio tracks to a composite audio clip.
 

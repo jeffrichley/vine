@@ -1,7 +1,7 @@
 """Base renderer implementation."""
 
 from abc import ABC, abstractmethod
-from typing import Generic, Optional, TypeVar, cast
+from typing import Generic, TypeVar, cast
 
 from moviepy import AudioClip, VideoClip
 
@@ -51,7 +51,7 @@ class BaseRenderer(ABC, Generic[T]):
         return final_result
 
     @abstractmethod
-    def create_clips(self, video_spec: VideoSpec) -> list:
+    def create_clips(self, video_spec: VideoSpec) -> list[VideoClip]:
         """
         Create clips from the video spec.
 
@@ -61,10 +61,9 @@ class BaseRenderer(ABC, Generic[T]):
         Returns:
             List of MoviePy clip objects
         """
-        pass
 
     @abstractmethod
-    def compose_clips(self, clips: list, video_spec: VideoSpec) -> T:
+    def compose_clips(self, clips: list[VideoClip], video_spec: VideoSpec) -> T:
         """
         Compose clips into a final video.
 
@@ -75,19 +74,19 @@ class BaseRenderer(ABC, Generic[T]):
         Returns:
             MoviePy clip object
         """
-        pass
 
     def finalize(self, composite: T, video_spec: VideoSpec) -> T:
         """Finalize the composite clip with video spec settings."""
         # Set FPS if not already set
-        if not hasattr(composite, "fps") or composite.fps is None:
+        # getattr returns Any | None due to Python typing limitations with dynamic attributes
+        if not hasattr(composite, "fps") or getattr(composite, "fps", None) is None:  # type: ignore[misc]
             return cast(T, composite.with_fps(video_spec.fps))
 
         return composite
 
     def render_with_audio(
         self, video_spec: VideoSpec
-    ) -> tuple[VideoClip, Optional[AudioClip]]:
+    ) -> tuple[VideoClip, AudioClip | None]:
         """
         Render video with audio.
 

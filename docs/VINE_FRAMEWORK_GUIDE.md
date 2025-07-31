@@ -4,6 +4,39 @@
 
 The Vine framework uses a **layered architecture** with clear separation of concerns:
 
+## ⏰ Timing Modes: Sequential vs Explicit
+
+Project Vine supports two timing modes with Google-style API behavior:
+
+### 🔄 Sequential Mode (Updates Current Time)
+```python
+# Each call updates the current time for that track
+builder.add_image("slide1.jpg", duration=5.0)      # video_current_time = 5.0
+builder.add_text("Welcome", duration=3.0)          # text_current_time = 3.0
+builder.add_voice("narration.mp3", duration=8.0)   # voice_current_time = 8.0
+```
+
+### 🎯 Explicit Mode (Does NOT Update Current Time)
+```python
+# Each call places content at exact times without affecting current time
+builder.add_image_at("background.jpg", 0.0, duration=10.0)  # video_current_time unchanged
+builder.add_text_at("Title", 2.0, duration=6.0)             # text_current_time unchanged
+builder.add_voice_at("narration.mp3", 1.0, duration=8.0)    # voice_current_time unchanged
+```
+
+### 🔀 Mixed Mode (Best of Both Worlds)
+```python
+# Start with sequential for basic structure
+builder.add_image("intro.jpg", duration=3.0)       # video_current_time = 3.0
+
+# Add precise overlays with explicit timing
+builder.add_text_at("Overlay", 1.5, duration=1.0)  # text_current_time unchanged
+builder.add_sfx_at("pop.wav", 2.0, duration=0.5)   # sfx_current_time unchanged
+
+# Continue with sequential
+builder.add_image("content.jpg", duration=5.0)     # video_current_time = 8.0
+```
+
 ### 🏗️ Architecture Overview
 
 ```
@@ -60,12 +93,15 @@ video_spec.export("output.mp4")
 ### ⚡ Advanced Pattern (Explicit Timing)
 
 ```python
-# Add content at specific times
+# Add content at specific times (Google-style API behavior)
 builder.add_image_at("image1.jpg", start_time=0.0, duration=3.0)
-builder.add_voice_at("voice1.mp3", start_time=0.5, duration=2.5)
+builder.add_voice_at("voice1.mp3", start_time=0.5, duration=2.0)
 builder.add_music_at("background.mp3", start_time=0.0, duration=15.0, volume=0.3)
 builder.add_sfx_at("transition.wav", start_time=2.5, duration=0.5, volume=0.6)
 builder.add_text_at("Caption", start_time=1.0, duration=2.0)
+
+# Note: Explicit methods do NOT update current times
+# Sequential methods DO update current times
 ```
 
 ---

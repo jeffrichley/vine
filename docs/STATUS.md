@@ -1,6 +1,6 @@
 # Project Vine - Current Status
 
-> Last Updated: 2025-01-27
+> Last Updated: 2025-07-29
 > Version: 0.1.0
 > Status: Phase 1 Complete, Phase 2 In Progress
 
@@ -11,19 +11,20 @@ Project Vine has successfully completed **Phase 1: Foundation** and is now in **
 ### ⚠️ Important Distinction: Configuration vs. Implementation
 
 **✅ Fully Implemented:**
-- TimelineBuilder API with dual-mode timing
+- TimelineBuilder API with dual-mode timing (sequential and explicit)
 - Track-based data model (VideoTrack, AudioTrack, TextTrack)
 - Pydantic models and validation
 - Registry system for extensibility
 - Defaults management
-- Comprehensive testing (100% coverage)
+- Comprehensive testing (211 tests with 70% coverage)
+- Google-style API behavior for current time updates
 
 **⚠️ Configuration Only (Not Actually Functional):**
 - Animation system (Ken Burns, slide, static effects) - models exist but no rendering
 - Transition system (fade, crossfade, slide) - models exist but no rendering
-- Export functionality - no actual video output
-- Audio processing - no actual audio mixing
-- MoviePy integration - no actual MoviePy code
+- Export functionality - basic structure exists but no actual video output
+- Audio processing - basic structure exists but no actual audio mixing
+- MoviePy integration - basic structure exists but no actual MoviePy code
 
 ## ✅ Phase 1: Foundation - COMPLETED
 
@@ -35,19 +36,21 @@ Project Vine has successfully completed **Phase 1: Foundation** and is now in **
 - **TimelineBuilder API** - Fluent API with dual-mode timing
 
 ### Key Features Implemented ✅
-- **Dual-mode timing** - Sequential append and explicit timing modes
+- **Dual-mode timing** - Sequential append and explicit timing modes with Google-style API behavior
 - **Track auto-detection** - Automatic track creation and management
 - **Global transitions** - Transition system working across tracks
 - **Animation system** - Ken Burns, slide, static effects (configuration only)
 - **Transition system** - Fade, crossfade, slide transitions (configuration only)
-- **Comprehensive testing** - 222 tests with 100% coverage
+- **Comprehensive testing** - 211 tests with 70% coverage
+- **Architectural decisions** - Documented timing behavior and API design patterns
 
 ### Technical Achievements ✅
-- **100% test coverage** - All core functionality thoroughly tested
+- **70% test coverage** - Core functionality thoroughly tested
 - **Type safety** - Full Pydantic validation throughout
 - **Extensible architecture** - Registry-based system for custom effects
-- **Fluent API** - Intuitive method chaining
-- **Documentation** - Complete API documentation and examples
+- **Fluent API** - Intuitive method chaining with Google-style behavior
+- **Documentation** - Complete API documentation and architectural decisions
+- **Architectural clarity** - Clear separation between sequential and explicit timing modes
 
 ## 🔄 Phase 2: Advanced Features - IN PROGRESS
 
@@ -96,6 +99,28 @@ Project Vine has successfully completed **Phase 1: Foundation** and is now in **
 - **Custom animations** - Plugin system for custom effects
 - **Advanced transitions** - Complex transition effects
 - **Batch processing** - Multiple video generation
+
+## 🏗️ Recent Architectural Decisions
+
+### DEC-004: TimelineBuilder Current Time Update Behavior (2025-07-29)
+
+**Decision:** Implement Google-style API behavior for current time updates:
+- **Sequential methods** (`add_image()`, `add_text()`, `add_voice()`, etc.) **WILL update current times**
+- **Explicit methods** (`add_image_at()`, `add_text_at()`, `add_voice_at()`, etc.) **WILL NOT update current times**
+
+**Rationale:**
+- Method names should be self-documenting
+- Follows Google's API design patterns
+- Provides predictable behavior for mixed mode workflows
+- Maintains clear separation of concerns
+
+**Impact:**
+- ✅ More intuitive API design
+- ✅ Consistent with industry standards
+- ✅ Better support for mixed mode workflows
+- ⚠️ Breaking change from original implementation
+
+**Documentation:** See `.agent-os/product/decisions.md` for complete details.
 
 ## 🚨 Known Issues & Challenges
 

@@ -11,7 +11,6 @@ class TestAudioConfig:
     def test_create_voice_config(self) -> None:
         """Test creating a voice configuration."""
         voice = VoiceConfig(volume=0.8, speed=1.2, pitch=1.1, fade_in=0.5)
-
         assert voice.audio_type == "voice"
         assert voice.volume == 0.8
         assert voice.speed == 1.2
@@ -21,7 +20,6 @@ class TestAudioConfig:
     def test_create_music_config(self) -> None:
         """Test creating a music configuration."""
         music = MusicConfig(volume=0.6, loop=True, duck_voice=True, duck_level=0.4)
-
         assert music.audio_type == "music"
         assert music.volume == 0.6
         assert music.loop is True
@@ -35,13 +33,11 @@ class TestAudioConfig:
             ValueError, match="Input should be greater than or equal to 0"
         ):
             VoiceConfig(volume=-0.5)
-
         # Test invalid speed
         with pytest.raises(
             ValueError, match="Input should be greater than or equal to 0.5"
         ):
             VoiceConfig(speed=0.3)
-
         # Test invalid duck level
         with pytest.raises(ValueError, match="Input should be less than or equal to 1"):
             MusicConfig(duck_level=1.5)
@@ -59,7 +55,6 @@ class TestAudioConfig:
             ValueError, match="Input should be greater than or equal to 0"
         ):
             VoiceConfig(fade_in=-0.5)
-
         # Test negative fade_out
         with pytest.raises(
             ValueError, match="Input should be greater than or equal to 0"

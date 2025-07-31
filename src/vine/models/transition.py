@@ -1,7 +1,7 @@
 """Global transition model for Project Vine."""
 
 from enum import Enum
-from typing import List
+from typing import Any
 
 from pydantic import Field
 
@@ -48,10 +48,10 @@ class Transition(BaseModel):
     duration: float = Field(1.0, ge=0.0, description="Duration in seconds")
 
     # Track targeting
-    from_tracks: List[str] = Field(
+    from_tracks: list[str] = Field(
         default_factory=list, description="Source track names"
     )
-    to_tracks: List[str] = Field(default_factory=list, description="Target track names")
+    to_tracks: list[str] = Field(default_factory=list, description="Target track names")
 
     # Transition parameters
     direction: TransitionDirection = Field(
@@ -62,7 +62,7 @@ class Transition(BaseModel):
     )
 
     # Metadata
-    metadata: dict = Field(
+    metadata: dict[str, Any] = Field(
         default_factory=dict, description="Additional metadata for the transition"
     )
 

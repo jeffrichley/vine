@@ -49,3 +49,8 @@ repos:
         pass_filenames: false
         types: [python]
         files: ^(src/|tests/|examples/|scripts/)
+      - id: radon-complexity
+        name: Check Cyclomatic Complexity
+        entry: uv run radon cc -s -a -nc src/
+        language: system
+        pass_filenames: false
