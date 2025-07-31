@@ -78,6 +78,8 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         slug: jeffrichley/vine
+        # Upload from both Python versions with flags
+        flags: python-${{ matrix.python-version }}
 
     # Quality Gate Summary
     - name: Quality Gate Summary
