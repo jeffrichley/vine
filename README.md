@@ -11,7 +11,7 @@
 ![pyproject validated](https://img.shields.io/badge/pyproject%20schema-valid-brightgreen?style=flat-square)
 
 
-**Project Vine** is a modular, agent-compatible, track-based video composition framework built on top of MoviePy. It provides an expressive and extensible API for AI-driven and human-assisted short-form video generation, supporting both sequential append and explicit timing modes.
+**Project Vine** is a modular, agent-compatible, track-based video composition framework built on top of MoviePy. It provides an expressive and extensible API for AI-driven and human-assisted short-form video generation, supporting both sequential append and explicit timing modes. The framework is designed for high-performance video processing with a focus on developer experience and AI agent integration.
 
 ## 🚀 Key Features
 
