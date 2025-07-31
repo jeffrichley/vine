@@ -33,23 +33,23 @@ test-cov-check:  ## Run tests with coverage and fail if below 80%
 ## 📚 Documentation
 
 docs:  ## Build documentation
-	cd docs && make html
+	cd docs && uv run make html
 
 docs-build: docs  ## Alias for docs
 
 docs-clean:  ## Clean documentation build
-	cd docs && make clean
+	cd docs && uv run make clean
 
 docs-linkcheck:  ## Check documentation links
-	cd docs && make linkcheck
+	cd docs && uv run make linkcheck
 
 docs-serve:  ## Serve documentation locally
-	cd docs && python -m http.server 8000 --directory build/html
+	cd docs && uv run python -m http.server 8000 --directory build/html
 
 docs-view: docs-serve  ## Alias for docs-serve
 
 docs-watch:  ## Watch for changes and rebuild documentation
-	cd docs && sphinx-autobuild source build/html --port 8001 --open-browser
+	cd docs && uv run sphinx-autobuild source build/html --port 8001 --open-browser
 
 ## 📦 Build & Install
 
