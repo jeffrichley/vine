@@ -2,43 +2,7 @@
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[dependency-groups]
-dev = [
-  "black>=24.3.0",
-  "ruff>=0.4.0",
-  "pre-commit>=3.6",
-  "mkdocs-material>=9.5",
-  "pip-audit>=2.6",
-  "ipython>=8.10",
-  "types-requests",
-  "vulture>=2.14",
-  "hypothesis>=6.136.6",
-  "monkeytype>=23.3.0",
-  "mypy>=1.17.0",
-  "pytest>=8.4.1",
-  "pytest-asyncio>=1.1.0",
-  "pytest-cov>=6.2.1",
-  "pytest-html>=4.1.1",
-  "pytest-mock>=3.14.1",
-  "pytest-randomly>=3.16.0",
-  "pytest-repeat>=0.9.4",
-  "pytest-timeout>=2.4.0",
-  "pytest-xdist>=3.8.0",
-  "radon>=6.0",
-  "types-pyyaml>=6.0.12.20250516",
-  "xenon>=0.9",
-  "validate-pyproject>=0.24.1",
-  "toml-sort>=0.24.2",
-  "psutil>=7.0.0",
-  "types-pillow>=10.2.0.20240822",
-  "types-setuptools>=80.9.0.20250529",
-  "types-urllib3>=1.26.25.14",
-]
-test = [
-  "hypothesis>=6.136.6",
-  "pytest-benchmark>=4.0.0",
-  "psutil>=5.9.0"
-]
+
 
 [project]
 name = "vine"
@@ -86,6 +50,42 @@ version = {attr = "vine._version.__version__"}
 readme = {file = "README.md"}
 
 [project.optional-dependencies]
+dev = [
+  "black>=24.3.0",
+  "ruff>=0.4.0",
+  "pre-commit>=3.6",
+  "mkdocs-material>=9.5",
+  "pip-audit>=2.6",
+  "ipython>=8.10",
+  "types-requests",
+  "vulture>=2.14",
+  "hypothesis>=6.136.6",
+  "monkeytype>=23.3.0",
+  "mypy>=1.17.0",
+  "pytest>=8.4.1",
+  "pytest-asyncio>=1.1.0",
+  "pytest-cov>=6.2.1",
+  "pytest-html>=4.1.1",
+  "pytest-mock>=3.14.1",
+  "pytest-randomly>=3.16.0",
+  "pytest-repeat>=0.9.4",
+  "pytest-timeout>=2.4.0",
+  "pytest-xdist>=3.8.0",
+  "radon>=6.0",
+  "types-pyyaml>=6.0.12.20250516",
+  "xenon>=0.9",
+  "validate-pyproject>=0.24.1",
+  "toml-sort>=0.24.2",
+  "psutil>=7.0.0",
+  "types-pillow>=10.2.0.20240822",
+  "types-setuptools>=80.9.0.20250529",
+  "types-urllib3>=1.26.25.14",
+]
+test = [
+  "hypothesis>=6.136.6",
+  "pytest-benchmark>=4.0.0",
+  "psutil>=5.9.0"
+]
 docs = [
   "sphinx>=7.0.0",
   "sphinx-rtd-theme>=1.3.0",
