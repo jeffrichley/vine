@@ -12,7 +12,13 @@ BUILDDIR      = build
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-.PHONY: help Makefile
+# Serve the built HTML documentation locally
+serve:
+	@echo "Serving documentation at http://localhost:8000"
+	@echo "Press Ctrl+C to stop"
+	@python -m http.server 8000 --directory build/html
+
+.PHONY: help serve Makefile
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
