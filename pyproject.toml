@@ -199,10 +199,10 @@ python_functions = ["test_*"]
 norecursedirs = ["debug_*.py", "test_*_debug.py", ".hypothesis"]
 # Coverage reporting
 addopts = [
-  "--cov",
+  "--cov=src/vine",
   "--cov-report=term-missing",
-  "--cov-report=html",
-  "--cov-report=xml"
+  "--cov-report=xml",
+  "--cov-fail-under=80"
 ]
 filterwarnings = [
   "ignore::pydantic.PydanticDeprecatedSince20:vine.*"
