@@ -61,7 +61,7 @@ jobs:
     # Quality Gate 4: Test Coverage
     - name: Quality Gate - Test Coverage
       run: |
-        uv run pytest tests/ --cov=src/vine --cov-report=term-missing --cov-report=xml --cov-fail-under=80
+        uv run pytest
       continue-on-error: false
 
     # Quality Gate 5: Code Complexity

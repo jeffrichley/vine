@@ -179,31 +179,7 @@ max_time = 10.0
 warmup = true
 warmup_iterations = 3
 
-[tool.pytest.ini_options]
-markers = [
-  "unit: unit tests",
-  "integration: integration tests",
-  "data: schema/data parsing tests",
-  "functional: cross-module logic",
-  "e2e: end-to-end test",
-  "slow: long-running test"
-]
-pythonpath = ["src"]
-testpaths = ["tests"]
-python_files = ["test_*.py", "*_test.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-norecursedirs = ["debug_*.py", "test_*_debug.py", ".hypothesis"]
-# Coverage reporting
-addopts = [
-  "--cov=src/vine",
-  "--cov-report=term-missing",
-  "--cov-report=xml",
-  "--cov-fail-under=80"
-]
-filterwarnings = [
-  "ignore::pydantic.PydanticDeprecatedSince20:vine.*"
-]
+# Pytest configuration moved to pytest.ini for consistency
 
 [tool.ruff]
 line-length = 88
