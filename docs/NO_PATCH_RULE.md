@@ -120,18 +120,17 @@ This project uses pytest-randomly to run tests in random order, which helps dete
 ### Reproducible Seeds
 - **For debugging**: Use `make test-seed SEED=12345` to run tests with a specific seed
 - **For CI failures**: Use the displayed seed to reproduce failures locally
-- **Script usage**: `python scripts/run_tests_with_seed.py --seed 12345`
+- **Direct usage**: `uv run pytest --randomly-seed=12345`
 
 ### Commands
 ```bash
 # Run tests with auto-generated random seed (new seed each time)
 make test-random
+uv run pytest
 
 # Run tests with specific seed for reproducibility
 make test-seed SEED=12345
-
-# Show last seed used
-make test-seed-show
+uv run pytest --randomly-seed=12345
 ```
 
 ## Examples of Successful Refactoring
