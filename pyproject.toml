@@ -27,7 +27,6 @@ dev = [
   "radon>=6.0",
   "types-pyyaml>=6.0.12.20250516",
   "xenon>=0.9",
-  "interrogate>=1.7.0",
   "validate-pyproject>=0.24.1",
   "toml-sort>=0.24.2",
   "psutil>=7.0.0",
@@ -233,7 +232,8 @@ extend-select = [
   "TID",
   "UP",
   "PL",
-  "PERF"
+  "PERF",
+  "D"
 ]
 ignore = [
   "E501", # Line too long (we use Black's wrapping)
@@ -247,6 +247,27 @@ ban-relative-imports = "all"
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "yaml" = {msg = "Use `vine.utils.yaml_utils` instead of importing `yaml` directly."}
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+# Test files - relax some rules for test code
+"tests/**/*.py" = [
+    "D100",  # Missing docstring in public module
+    "D101",  # Missing docstring in public class
+    "D102",  # Missing docstring in public method
+    "D103",  # Missing docstring in public function
+    "D104",  # Missing docstring in public package
+    "D105",  # Missing docstring in magic method
+    "D106",  # Missing docstring in public nested class
+    "D107",  # Missing docstring in __init__
+    "D200",  # One-line docstring should fit on one line
+    "D205",  # 1 blank line required between summary line and description
+    "D400",  # First line should end with a period
+    "D401",  # First line should be in imperative mood
+    "D415",  # First line should end with a period, question mark, or exclamation point
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]

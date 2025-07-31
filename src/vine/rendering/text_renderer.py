@@ -1,22 +1,20 @@
 """Text-specific renderer implementation."""
 
-from moviepy import CompositeVideoClip, VideoClip
+from moviepy import ColorClip, CompositeVideoClip, VideoClip
 
 from vine.models.video_spec import VideoSpec
 from vine.rendering.base_renderer import BaseRenderer
 
 
 class TextRenderer(BaseRenderer[VideoClip]):
-    """
-    Text-specific renderer implementation.
+    """Text-specific renderer implementation.
 
     Implements the BaseRenderer template method for text rendering,
     focusing on text overlays and typography.
     """
 
     def create_clips(self, video_spec: VideoSpec) -> list[VideoClip]:
-        """
-        Create text clips from the video spec.
+        """Create text clips from the video spec.
 
         Args:
             video_spec: Project Vine VideoSpec model
@@ -35,8 +33,7 @@ class TextRenderer(BaseRenderer[VideoClip]):
         return clips
 
     def compose_clips(self, clips: list[VideoClip], video_spec: VideoSpec) -> VideoClip:
-        """
-        Compose text clips into a composite video.
+        """Compose text clips into a composite video.
 
         Args:
             clips: List of MoviePy TextClip objects
@@ -51,8 +48,6 @@ class TextRenderer(BaseRenderer[VideoClip]):
                 clips, size=(video_spec.width, video_spec.height)
             )
         else:
-            from moviepy import ColorClip
-
             result = ColorClip(
                 size=(video_spec.width, video_spec.height), color=(0, 0, 0)
             )
@@ -60,8 +55,7 @@ class TextRenderer(BaseRenderer[VideoClip]):
         return result
 
     def finalize(self, composite: VideoClip, video_spec: VideoSpec) -> VideoClip:
-        """
-        Finalize the text video with additional processing.
+        """Finalize the text video with additional processing.
 
         Args:
             composite: MoviePy VideoClip object
@@ -82,8 +76,7 @@ class TextRenderer(BaseRenderer[VideoClip]):
         return final_result
 
     def render_text_overlay(self, video_spec: VideoSpec) -> list[VideoClip]:
-        """
-        Render text clips as overlays (without background).
+        """Render text clips as overlays (without background).
 
         Args:
             video_spec: Project Vine VideoSpec model

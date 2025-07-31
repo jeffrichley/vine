@@ -9,7 +9,7 @@
 [![Ruff](https://img.shields.io/badge/ruff-enabled-brightgreen?logo=ruff&logoColor=white)](https://github.com/astral-sh/ruff)
 [![MyPy](https://img.shields.io/badge/mypy-enabled-brightgreen?logo=mypy&logoColor=white)](https://mypy-lang.org/)
 ![pyproject validated](https://img.shields.io/badge/pyproject%20schema-valid-brightgreen?style=flat-square)
-![interrogate documentation coverage](docs/assets/interrogate_badge.svg)
+
 
 **Project Vine** is a modular, agent-compatible, track-based video composition framework built on top of MoviePy. It provides an expressive and extensible API for AI-driven and human-assisted short-form video generation, supporting both sequential append and explicit timing modes.
 
@@ -316,7 +316,7 @@ We enforce 7 quality gates that must pass before any code is merged:
 4. **📈 Complexity (Xenon)**: Maintainable code complexity levels
 5. **🧹 Dead Code (Vulture)**: Removal of unused code and imports
 6. **🔒 Security (pip-audit)**: Dependency vulnerability scanning
-7. **📚 Documentation (Interrogate)**: 50%+ docstring coverage
+
 
 ### Development Requirements
 

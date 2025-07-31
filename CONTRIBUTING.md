@@ -66,7 +66,7 @@ Project Vine maintains strict quality standards. **All contributions must pass t
 4. **📈 Complexity (Xenon)**: Maintainable code complexity
 5. **🧹 Dead Code (Vulture)**: No unused code or imports
 6. **🔒 Security (pip-audit)**: No dependency vulnerabilities
-7. **📚 Documentation (Interrogate)**: 50%+ docstring coverage
+
 
 ### Pre-commit Checks
 

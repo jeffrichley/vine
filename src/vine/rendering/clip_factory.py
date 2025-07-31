@@ -1,15 +1,18 @@
 """Factory pattern for creating MoviePy clips from Project Vine models."""
 
 from moviepy import AudioFileClip, ImageClip, TextClip, VideoFileClip
+from moviepy.audio.fx import AudioFadeIn, AudioFadeOut, AudioNormalize
 
 from vine.models.tracks import AudioClip as VineAudioClip
 from vine.models.tracks import ImageClip as VineImageClip
 from vine.models.tracks import TextClip as VineTextClip
 
+# Type alias for audio effects
+AudioEffect = AudioFadeIn | AudioFadeOut | AudioNormalize
+
 
 class ClipFactory:
-    """
-    Factory for creating MoviePy clips from Project Vine models.
+    """Factory for creating MoviePy clips from Project Vine models.
 
     Implements the Factory pattern to centralize clip creation logic
     and provide a consistent interface for converting our Pydantic models
@@ -18,8 +21,7 @@ class ClipFactory:
 
     @staticmethod
     def create_video_clip(video_clip: "VideoFileClip") -> VideoFileClip:
-        """
-        Create a MoviePy VideoFileClip from a Project Vine VideoClip.
+        """Create a MoviePy VideoFileClip from a Project Vine VideoClip.
 
         Args:
             video_clip: Project Vine VideoClip model
@@ -54,38 +56,17 @@ class ClipFactory:
         moviepy_clip: AudioFileClip, audio_clip: VineAudioClip
     ) -> AudioFileClip:
         """Apply audio effects to the MoviePy clip."""
-        effects = []
-
         if audio_clip.fade_in > 0.0:
-            from moviepy.audio.fx import AudioFadeIn
-
-            def apply_fade_in(clip: AudioFileClip) -> AudioFileClip:
-                # MoviePy audio effects return Any due to lack of proper typing in the library
-                return AudioFadeIn(clip, duration=audio_clip.fade_in)  # type: ignore[no-any-return,misc]
-
-            effects.append(apply_fade_in)
+            fade_in_effect: AudioEffect = AudioFadeIn(duration=audio_clip.fade_in)
+            moviepy_clip = moviepy_clip.with_effects([fade_in_effect])  # type: ignore[misc]
 
         if audio_clip.fade_out > 0.0:
-            from moviepy.audio.fx import AudioFadeOut
-
-            def apply_fade_out(clip: AudioFileClip) -> AudioFileClip:
-                # MoviePy audio effects return Any due to lack of proper typing in the library
-                return AudioFadeOut(clip, duration=audio_clip.fade_out)  # type: ignore[no-any-return,misc]
-
-            effects.append(apply_fade_out)
+            fade_out_effect: AudioEffect = AudioFadeOut(duration=audio_clip.fade_out)
+            moviepy_clip = moviepy_clip.with_effects([fade_out_effect])  # type: ignore[misc]
 
         if audio_clip.normalize_audio:
-            from moviepy.audio.fx import AudioNormalize
-
-            def apply_normalize(clip: AudioFileClip) -> AudioFileClip:
-                # MoviePy audio effects return Any due to lack of proper typing in the library
-                return AudioNormalize(clip)  # type: ignore[no-any-return,misc]
-
-            effects.append(apply_normalize)
-
-        if effects:
-            # MoviePy with_effects expects functions that return Any due to library typing limitations
-            moviepy_clip = moviepy_clip.with_effects(effects)
+            normalize_effect: AudioEffect = AudioNormalize()
+            moviepy_clip = moviepy_clip.with_effects([normalize_effect])  # type: ignore[misc]
 
         return moviepy_clip
 

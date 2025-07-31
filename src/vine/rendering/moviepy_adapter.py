@@ -3,6 +3,8 @@
 from moviepy import (
     AudioClip,
     AudioFileClip,
+    ColorClip,
+    CompositeAudioClip,
     CompositeVideoClip,
     ImageClip,
     TextClip,
@@ -26,8 +28,7 @@ from vine.rendering.clip_factory import ClipFactory
 
 
 class MoviePyAdapter:
-    """
-    Adapter for converting Project Vine models to MoviePy clips.
+    """Adapter for converting Project Vine models to MoviePy clips.
 
     Implements the Adapter pattern to provide a clean interface between
     our Pydantic models and MoviePy's API, handling the conversion
@@ -39,8 +40,7 @@ class MoviePyAdapter:
         self.clip_factory = ClipFactory()
 
     def adapt_image_clip(self, image_clip: VineImageClip) -> ImageClip:
-        """
-        Adapt a Project Vine ImageClip to a MoviePy ImageClip.
+        """Adapt a Project Vine ImageClip to a MoviePy ImageClip.
 
         Args:
             image_clip: Project Vine ImageClip model
@@ -51,8 +51,7 @@ class MoviePyAdapter:
         return self.clip_factory.create_image_clip(image_clip)
 
     def adapt_audio_clip(self, audio_clip: VineAudioClip) -> AudioFileClip:
-        """
-        Adapt a Project Vine AudioClip to a MoviePy AudioFileClip.
+        """Adapt a Project Vine AudioClip to a MoviePy AudioFileClip.
 
         Args:
             audio_clip: Project Vine AudioClip model
@@ -63,8 +62,7 @@ class MoviePyAdapter:
         return self.clip_factory.create_audio_clip(audio_clip)
 
     def adapt_text_clip(self, text_clip: VineTextClip) -> TextClip:
-        """
-        Adapt a Project Vine TextClip to a MoviePy TextClip.
+        """Adapt a Project Vine TextClip to a MoviePy TextClip.
 
         Args:
             text_clip: Project Vine TextClip model
@@ -75,8 +73,7 @@ class MoviePyAdapter:
         return self.clip_factory.create_text_clip(text_clip)
 
     def adapt_video_track(self, video_track: VideoTrack) -> list[VideoClip]:
-        """
-        Adapt a Project Vine VideoTrack to a list of MoviePy clips.
+        """Adapt a Project Vine VideoTrack to a list of MoviePy clips.
 
         Args:
             video_track: Project Vine VideoTrack model
@@ -99,8 +96,7 @@ class MoviePyAdapter:
         return moviepy_clips
 
     def adapt_audio_track(self, audio_track: AudioTrack) -> list[AudioClip]:
-        """
-        Adapt a Project Vine AudioTrack to a list of MoviePy clips.
+        """Adapt a Project Vine AudioTrack to a list of MoviePy clips.
 
         Args:
             audio_track: Project Vine AudioTrack model
@@ -119,8 +115,7 @@ class MoviePyAdapter:
         return moviepy_clips
 
     def adapt_text_track(self, text_track: TextTrack) -> list[VideoClip]:
-        """
-        Adapt a Project Vine TextTrack to a list of MoviePy clips.
+        """Adapt a Project Vine TextTrack to a list of MoviePy clips.
 
         Args:
             text_track: Project Vine TextTrack model
@@ -139,8 +134,7 @@ class MoviePyAdapter:
         return moviepy_clips
 
     def adapt_timeline(self, video_spec: VideoSpec) -> VideoClip:
-        """
-        Adapt a Project Vine VideoSpec to a MoviePy CompositeVideoClip.
+        """Adapt a Project Vine VideoSpec to a MoviePy CompositeVideoClip.
 
         Args:
             video_spec: Project Vine VideoSpec model
@@ -169,15 +163,12 @@ class MoviePyAdapter:
             )
         else:
             # Create empty clip if no video content
-            from moviepy import ColorClip
-
             return ColorClip(
                 size=(video_spec.width, video_spec.height), color=(0, 0, 0)
             )
 
     def adapt_audio_timeline(self, video_spec: VideoSpec) -> AudioClip | None:
-        """
-        Adapt audio tracks to a composite audio clip.
+        """Adapt audio tracks to a composite audio clip.
 
         Args:
             video_spec: Project Vine VideoSpec model
@@ -207,8 +198,6 @@ class MoviePyAdapter:
 
         # Combine audio clips if any exist
         if audio_clips:
-            from moviepy import CompositeAudioClip
-
             return CompositeAudioClip(audio_clips)
 
         return None

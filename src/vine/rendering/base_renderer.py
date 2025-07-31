@@ -12,8 +12,7 @@ T = TypeVar("T", bound=VideoClip)
 
 
 class BaseRenderer(ABC, Generic[T]):
-    """
-    Abstract base class for rendering algorithms.
+    """Abstract base class for rendering algorithms.
 
     Implements the Template Method pattern to define the skeleton
     of the rendering algorithm while allowing subclasses to
@@ -25,8 +24,7 @@ class BaseRenderer(ABC, Generic[T]):
         self.adapter = MoviePyAdapter()
 
     def render(self, video_spec: VideoSpec) -> T:
-        """
-        Template method for rendering a video spec.
+        """Template method for rendering a video spec.
 
         This method defines the algorithm structure:
         1. Create clips from the video spec
@@ -52,8 +50,7 @@ class BaseRenderer(ABC, Generic[T]):
 
     @abstractmethod
     def create_clips(self, video_spec: VideoSpec) -> list[VideoClip]:
-        """
-        Create clips from the video spec.
+        """Create clips from the video spec.
 
         Args:
             video_spec: Project Vine VideoSpec model
@@ -64,8 +61,7 @@ class BaseRenderer(ABC, Generic[T]):
 
     @abstractmethod
     def compose_clips(self, clips: list[VideoClip], video_spec: VideoSpec) -> T:
-        """
-        Compose clips into a final video.
+        """Compose clips into a final video.
 
         Args:
             clips: List of MoviePy clip objects
@@ -87,8 +83,7 @@ class BaseRenderer(ABC, Generic[T]):
     def render_with_audio(
         self, video_spec: VideoSpec
     ) -> tuple[VideoClip, AudioClip | None]:
-        """
-        Render video with audio.
+        """Render video with audio.
 
         Args:
             video_spec: Project Vine VideoSpec model

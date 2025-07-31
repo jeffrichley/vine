@@ -18,12 +18,15 @@ class BaseTransition(BaseModel):
     )
 
     def get_type(self) -> TransitionType:
+        """Get the transition type."""
         return self.type
 
     def get_duration(self) -> float:
+        """Get the transition duration."""
         return self.duration
 
     def get_easing(self) -> TransitionEasing:
+        """Get the transition easing function."""
         return self.easing
 
 

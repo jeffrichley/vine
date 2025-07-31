@@ -86,7 +86,7 @@ You're above industry baseline. Let’s fine-tune for elite status:
 | ------------------------------------------------------------------------------- | ------------------------------------------------- | --- |
 | Add `pyproject.toml` validator (`check-pyproject` or `hatch-fancy-pypi-readme`) | Keeps formatting and structure tight              |     |
 | Consider adding `reuse` or `licensecheck` to security                           | Helps maintain license compliance on dependencies |     |
-| Consider `darglint` or `interrogate` (docs coverage)                            | To enforce docstring completeness (if desired)    |     |
+| Consider `darglint` (docs coverage)                                             | To enforce docstring completeness (if desired)    |     |
 
 ---
 
@@ -165,10 +165,7 @@ Here is what I want you to do when I say, “🧃 Juice it!”
   - ✅ Created `make sort-toml` command for formatting
   - ✅ Added pyproject validation badge to README.md
   - ✅ Validates pyproject.toml according to PEP 621 schema
-- [x] Evaluate `darglint` or `interrogate` for docstring coverage
-  - ✅ Added `interrogate>=1.7.0` to dev dependencies
-  - ✅ Created `make interrogate` command with 50% threshold
-  - ✅ Generates badge at `docs/assets/interrogate_badge.svg`
+- [x] Evaluate `darglint` for docstring coverage
   - ✅ Added badge to README.md
   - ✅ Current coverage: 94.0% (excellent!)
 - [x] Review and update all `types-*` packages
@@ -183,7 +180,7 @@ Here is what I want you to do when I say, “🧃 Juice it!”
   - ✅ Security audit runs automatically as part of CI/CD pipeline
   - ✅ Current audit shows no known vulnerabilities found
   - ✅ Identified and documented `py` package vulnerability (PYSEC-2022-42969)
-  - ✅ Vulnerability is in `interrogate` dependency chain (ReDoS in Subversion handling)
+
   - ✅ No critical vulnerabilities affecting project security
   - ✅ Regular automated security monitoring in place
   - ✅ Added `make audit` command for manual security audits
@@ -346,6 +343,3 @@ Here is what I want you to do when I say, “🧃 Juice it!”
 - [ ] Implement advanced static analysis tools
 - [ ] Set up automated dependency vulnerability scanning
 - [ ] Create advanced code quality metrics dashboard
-
-### 📋 TODO Later (Lower Priority)
-- [ ] Consider adding `reuse` or `licensecheck` for license compliance

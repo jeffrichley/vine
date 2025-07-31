@@ -9,9 +9,7 @@ from vine.rendering.moviepy_adapter import MoviePyAdapter
 
 
 class AudioRendererBase(ABC):
-    """
-    Abstract base class for audio rendering algorithms.
-    """
+    """Abstract base class for audio rendering algorithms."""
 
     def __init__(self) -> None:
         """Initialize the renderer with an adapter."""
@@ -40,16 +38,14 @@ class AudioRendererBase(ABC):
 
 
 class AudioRenderer(AudioRendererBase):
-    """
-    Audio-specific renderer implementation.
+    """Audio-specific renderer implementation.
 
     Implements the BaseRenderer template method for audio rendering,
     focusing on audio clips and mixing.
     """
 
     def create_clips(self, video_spec: VideoSpec) -> list[AudioClip]:
-        """
-        Create audio clips from the video spec.
+        """Create audio clips from the video spec.
 
         Args:
             video_spec: Project Vine VideoSpec model
@@ -80,8 +76,7 @@ class AudioRenderer(AudioRendererBase):
         return clips
 
     def compose_clips(self, clips: list[AudioClip], video_spec: VideoSpec) -> AudioClip:
-        """
-        Compose audio clips into a composite audio.
+        """Compose audio clips into a composite audio.
 
         Args:
             clips: List of MoviePy AudioClip objects
@@ -102,8 +97,7 @@ class AudioRenderer(AudioRendererBase):
         return composite_result
 
     def finalize(self, composite: AudioClip, video_spec: VideoSpec) -> AudioClip:
-        """
-        Finalize the audio with additional processing.
+        """Finalize the audio with additional processing.
 
         Args:
             composite: MoviePy CompositeAudioClip object
@@ -121,8 +115,7 @@ class AudioRenderer(AudioRendererBase):
         return final_composite
 
     def render_audio_only(self, video_spec: VideoSpec) -> AudioClip | None:
-        """
-        Render audio only from the video spec.
+        """Render audio only from the video spec.
 
         Args:
             video_spec: Project Vine VideoSpec model

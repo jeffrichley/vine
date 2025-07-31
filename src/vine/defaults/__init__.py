@@ -1,6 +1,4 @@
-"""
-Defaults package for Project Vine
-"""
+"""Defaults package for Project Vine."""
 
 from vine.defaults.defaults_manager import DefaultsManager
 

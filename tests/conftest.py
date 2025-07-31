@@ -178,3 +178,58 @@ def mock_video_renderer() -> MockVideoRenderer:
 # Note: The mocker fixture below is provided by pytest-mock plugin
 # It's automatically available when pytest-mock is installed
 # We don't need to define it here, so removing the unused fixture
+
+
+# Phase 3: Optimized Test Data Generation Fixtures
+@pytest.fixture(scope="session")
+def cached_test_paths() -> list[str]:
+    """Cached test file paths for property-based tests.
+
+    Scope: session - Generated once per test session for maximum performance
+    """
+    return [
+        "test_image_1.jpg",
+        "test_image_2.jpg",
+        "test_image_3.jpg",
+        "test_voice_1.wav",
+        "test_voice_2.wav",
+        "test_music_1.mp3",
+        "test_sfx_1.wav",
+        "test_text_1.txt",
+    ]
+
+
+@pytest.fixture(scope="session")
+def cached_durations() -> list[float]:
+    """Cached duration values for property-based tests.
+
+    Scope: session - Generated once per test session for maximum performance
+    """
+    return [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]
+
+
+@pytest.fixture(scope="session")
+def cached_track_names() -> list[str]:
+    """Cached track names for property-based tests.
+
+    Scope: session - Generated once per test session for maximum performance
+    """
+    return [
+        "video_track_1",
+        "video_track_2",
+        "audio_track_1",
+        "audio_track_2",
+        "voice_track_1",
+        "music_track_1",
+        "sfx_track_1",
+        "text_track_1",
+    ]
+
+
+@pytest.fixture(scope="session")
+def cached_z_orders() -> list[int]:
+    """Cached z-order values for property-based tests.
+
+    Scope: session - Generated once per test session for maximum performance
+    """
+    return [0, 1, 2, 3, 4, 5, 10, 15, 20, 25]

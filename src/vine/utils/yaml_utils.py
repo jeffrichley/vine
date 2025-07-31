@@ -1,5 +1,4 @@
-"""
-Typed YAML utilities for safe and consistent YAML operations.
+"""Typed YAML utilities for safe and consistent YAML operations.
 
 This module provides typed wrapper functions around PyYAML to ensure
 type safety and consistent return types across the codebase.
@@ -13,8 +12,7 @@ from vine.models.yaml_models import YamlData
 
 
 def load_yaml_from_path(path: str | Path) -> YamlData:
-    """
-    Load YAML data from a file path with type safety.
+    """Load YAML data from a file path with type safety.
 
     Args:
         path: Path to the YAML file
@@ -32,8 +30,7 @@ def load_yaml_from_path(path: str | Path) -> YamlData:
 
 
 def load_yaml_from_string(content: str) -> YamlData:
-    """
-    Load YAML data from a string with type safety.
+    """Load YAML data from a string with type safety.
 
     Args:
         content: YAML content as a string
@@ -49,8 +46,7 @@ def load_yaml_from_string(content: str) -> YamlData:
 
 
 def dump_yaml_to_path(data: YamlData, path: str | Path) -> None:
-    """
-    Dump data to a YAML file with type safety.
+    """Dump data to a YAML file with type safety.
 
     Args:
         data: Typed data to serialize to YAML
@@ -66,8 +62,7 @@ def dump_yaml_to_path(data: YamlData, path: str | Path) -> None:
 
 
 def dump_yaml_to_string(data: YamlData) -> str:
-    """
-    Dump data to a YAML string with type safety.
+    """Dump data to a YAML string with type safety.
 
     Args:
         data: Typed data to serialize to YAML
@@ -83,8 +78,7 @@ def dump_yaml_to_string(data: YamlData) -> str:
 
 
 def validate_yaml_schema(data: YamlData, required_keys: list[str]) -> bool:
-    """
-    Validate that a YAML dictionary contains required keys.
+    """Validate that a YAML dictionary contains required keys.
 
     Args:
         data: Typed data loaded from YAML

@@ -1,5 +1,4 @@
-"""
-Utility modules for the Vine framework.
+"""Utility modules for the Vine framework.
 
 This package contains utility functions and helpers for common operations
 like YAML handling, file operations, and other shared functionality.

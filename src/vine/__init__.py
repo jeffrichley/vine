@@ -1,4 +1,4 @@
-"""Project Vine - Media Composition Framework
+"""Project Vine - Media Composition Framework.
 
 A modular, agent-compatible, track-based video composition framework built on top of MoviePy.
 Provides an expressive and extensible API for AI-driven and human-assisted short-form video generation.

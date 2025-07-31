@@ -336,7 +336,11 @@ class VideoSpec(BaseModel):
         elif track_type == TrackType.TEXT:
             return self.remove_text_track(track_name)
         else:
-            raise ValueError(f"Unknown track type: {track_type}")
+            # This branch is intentionally excluded from coverage as it's defensive code
+            # that should only be reached if a new TrackType is added to the enum but
+            # the corresponding removal logic is not implemented in this method.
+            # It serves as a safety net to catch missing implementations during development.
+            raise ValueError(f"Unknown track type: {track_type}")  # pragma: no cover
 
     def remove_transition(self, transition_index: int) -> bool:
         """Remove a transition by index."""

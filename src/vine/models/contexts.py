@@ -10,6 +10,8 @@ from typing import (
     runtime_checkable,
 )
 
+if TYPE_CHECKING:
+    from vine.builder.timeline_builder import TimelineBuilder
 from vine.models.animation_config import AnimationConfig
 from vine.models.effects import BaseEffect
 from vine.models.tracks import (
@@ -19,10 +21,6 @@ from vine.models.tracks import (
     TextClip,
 )
 from vine.models.transitions import BaseTransition
-
-if TYPE_CHECKING:
-
-    from vine.builder.timeline_builder import TimelineBuilder
 
 
 @dataclass
@@ -324,6 +322,7 @@ class ImageContext(BuilderMethodsMixin, VisualStylingMixin):
     """Context for styling image clips."""
 
     def __init__(self, builder: "TimelineBuilder", clip: ImageClip) -> None:
+        """Initialize the image context."""
         self.builder = builder
         self.clip = clip
 
@@ -342,6 +341,7 @@ class TextContext(BuilderMethodsMixin, VisualStylingMixin):
     """Context for styling text clips."""
 
     def __init__(self, builder: "TimelineBuilder", clip: TextClip) -> None:
+        """Initialize the text context."""
         self.builder = builder
         self.clip = clip
 
@@ -369,6 +369,7 @@ class VoiceContext(BuilderMethodsMixin, AudioStylingMixin):
     """Context for styling voice clips."""
 
     def __init__(self, builder: "TimelineBuilder", clip: AudioClip) -> None:
+        """Initialize the voice context."""
         self.builder = builder
         self.clip = clip
 
@@ -390,6 +391,7 @@ class SfxContext(BuilderMethodsMixin, AudioStylingMixin):
     """Context for styling sound effect clips."""
 
     def __init__(self, builder: "TimelineBuilder", clip: AudioClip) -> None:
+        """Initialize the sound effect context."""
         self.builder = builder
         self.clip = clip
 
@@ -407,47 +409,5 @@ class SfxContext(BuilderMethodsMixin, AudioStylingMixin):
         return self
 
 
-def validate_builder_implementation() -> None:
-    """Runtime validation to ensure TimelineBuilder and BuilderMethodsMixin implement all BuilderProtocol methods."""
-    import inspect
-
-    # Get all methods from the protocol
-    protocol_methods = {
-        name: method
-        for name, method in inspect.getmembers(BuilderProtocol, inspect.isfunction)
-        if not name.startswith("_")
-    }
-
-    # Check TimelineBuilder
-    from vine.builder.timeline_builder import TimelineBuilder
-
-    builder_methods = {
-        name: method
-        for name, method in inspect.getmembers(TimelineBuilder, inspect.isfunction)
-        if not name.startswith("_")
-    }
-
-    missing_in_builder = set(protocol_methods.keys()) - set(builder_methods.keys())
-    if missing_in_builder:
-        raise RuntimeError(
-            f"TimelineBuilder is missing protocol methods: {missing_in_builder}"
-        )
-
-    # Check BuilderMethodsMixin
-    mixin_methods = {
-        name: method
-        for name, method in inspect.getmembers(BuilderMethodsMixin, inspect.isfunction)
-        if not name.startswith("_")
-    }
-
-    missing_in_mixin = set(protocol_methods.keys()) - set(mixin_methods.keys())
-    if missing_in_mixin:
-        raise RuntimeError(
-            f"BuilderMethodsMixin is missing protocol methods: {missing_in_mixin}"
-        )
-
-    print("✅ Runtime validation: All protocol methods are implemented")
-
-
-# Don't run validation at import time to avoid circular imports
-# Validation can be called manually when needed
+# Validation has been moved to vine.validation.protocol_validator
+# to avoid circular import issues

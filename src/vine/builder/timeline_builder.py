@@ -1,5 +1,6 @@
 """TimelineBuilder for Project Vine video composition framework."""
 
+import os
 from collections.abc import Sequence
 from pathlib import Path
 
@@ -22,11 +23,11 @@ from vine.models.tracks import (
 )
 from vine.models.transition import Transition, TransitionType
 from vine.models.video_spec import VideoSpec
+from vine.rendering.video_renderer import VideoRenderer
 
 
 class TimelineBuilder:
-    """
-    Builder for creating video timelines with track-based architecture.
+    """Builder for creating video timelines with track-based architecture.
 
     Supports dual-mode timing:
     - Sequential mode: Elements are appended to the end of their respective tracks
@@ -36,8 +37,7 @@ class TimelineBuilder:
     """
 
     def __init__(self, width: int = 1920, height: int = 1080, fps: float = 30) -> None:
-        """
-        Initialize TimelineBuilder.
+        """Initialize TimelineBuilder.
 
         Args:
             width: Video width in pixels
@@ -133,28 +133,18 @@ class TimelineBuilder:
         return new_track
 
     def _validate_audio_file(self, file_path: str) -> bool:
-        """Validate that a file is a valid audio file using MoviePy.
+        """Validate if a file is a valid audio file.
 
         Args:
-            file_path: Path to the audio file to validate
+            file_path: Path to the file to validate
 
         Returns:
-            True if file can be loaded as audio, False otherwise
+            True if file has a valid audio extension, False otherwise
         """
-        # For testing purposes, accept files with common audio extensions
-        if file_path.endswith((".mp3", ".wav", ".aac", ".m4a", ".ogg", ".flac")):
-            return True
-
-        try:
-            from moviepy.audio.io.AudioFileClip import AudioFileClip
-
-            # Try to load the file as an audio clip
-            clip = AudioFileClip(file_path)
-            clip.close()  # Clean up immediately
-            return True
-        except Exception:
-            # File is not a valid audio file or doesn't exist
-            return False
+        # Check for common audio file extensions
+        return file_path.lower().endswith(
+            (".mp3", ".wav", ".aac", ".m4a", ".ogg", ".flac")
+        )
 
     # ============================================================================
     # SEQUENTIAL METHODS (mode inferred from method calls)
@@ -165,8 +155,7 @@ class TimelineBuilder:
         image_path: str | Path,
         duration: float | None = None,
     ) -> ImageContext:
-        """
-        Add an image in sequential mode (auto-appended to video track).
+        """Add an image in sequential mode (auto-appended to video track).
 
         Args:
             image_path: Path to the image file
@@ -190,8 +179,7 @@ class TimelineBuilder:
         text: str,
         duration: float | None = None,
     ) -> TextContext:
-        """
-        Add text in sequential mode (auto-appended to text track).
+        """Add text in sequential mode (auto-appended to text track).
 
         Args:
             text: Text content
@@ -215,8 +203,7 @@ class TimelineBuilder:
         voice_path: str | Path,
         duration: float | None = None,
     ) -> VoiceContext:
-        """
-        Add voice in sequential mode (auto-appended to audio track).
+        """Add voice in sequential mode (auto-appended to audio track).
 
         Args:
             voice_path: Path to the voice file
@@ -240,8 +227,7 @@ class TimelineBuilder:
         music_path: str | Path,
         duration: float | None = None,
     ) -> VoiceContext:
-        """
-        Add music in sequential mode (auto-appended to music track).
+        """Add music in sequential mode (auto-appended to music track).
 
         Args:
             music_path: Path to the music file
@@ -265,8 +251,7 @@ class TimelineBuilder:
         sfx_path: str | Path,
         duration: float | None = None,
     ) -> SfxContext:
-        """
-        Add SFX in sequential mode (auto-appended to SFX track).
+        """Add SFX in sequential mode (auto-appended to SFX track).
 
         Args:
             sfx_path: Path to the SFX file
@@ -290,8 +275,7 @@ class TimelineBuilder:
         transition_type: TransitionType = TransitionType.FADE,
         duration: float = 1.0,
     ) -> "TimelineBuilder":
-        """
-        Add transition in sequential mode (auto-inserted).
+        """Add transition in sequential mode (auto-inserted).
 
         Args:
             transition_type: Type of transition
@@ -323,8 +307,7 @@ class TimelineBuilder:
         duration: float | None = None,
         end_time: float | None = None,
     ) -> ImageContext:
-        """
-        Add image at specific time (auto-detected to video track).
+        """Add image at specific time (auto-detected to video track).
 
         Args:
             image_path: Path to the image file
@@ -358,8 +341,7 @@ class TimelineBuilder:
         duration: float | None = None,
         end_time: float | None = None,
     ) -> TextContext:
-        """
-        Add text at specific time (auto-detected to text track).
+        """Add text at specific time (auto-detected to text track).
 
         Args:
             text: Text content
@@ -393,8 +375,7 @@ class TimelineBuilder:
         duration: float | None = None,
         end_time: float | None = None,
     ) -> VoiceContext:
-        """
-        Add voice at specific time with professional controls.
+        """Add voice at specific time with professional controls.
 
         Args:
             voice_path: Path to the voice file
@@ -446,8 +427,7 @@ class TimelineBuilder:
         duration: float | None = None,
         end_time: float | None = None,
     ) -> VoiceContext:
-        """
-        Add music at specific time with professional controls.
+        """Add music at specific time with professional controls.
 
         Args:
             music_path: Path to the music file
@@ -492,8 +472,7 @@ class TimelineBuilder:
         duration: float | None = None,
         end_time: float | None = None,
     ) -> SfxContext:
-        """
-        Add SFX at specific time with professional controls.
+        """Add SFX at specific time with professional controls.
 
         Args:
             sfx_path: Path to the SFX file
@@ -537,8 +516,7 @@ class TimelineBuilder:
         start_time: float,
         duration: float,
     ) -> "TimelineBuilder":
-        """
-        Add transition at specific time.
+        """Add transition at specific time.
 
         Args:
             transition_type: Type of transition
@@ -684,14 +662,11 @@ class TimelineBuilder:
         )
 
     def render(self) -> MoviePyVideoClip:
-        """
-        Render the timeline to a MoviePy VideoClip.
+        """Render the timeline to a MoviePy VideoClip.
 
         Returns:
             MoviePy VideoClip object
         """
-        from vine.rendering.video_renderer import VideoRenderer
-
         video_spec = self.build()
         renderer = VideoRenderer()
         return renderer.render(video_spec)
@@ -699,8 +674,7 @@ class TimelineBuilder:
     def export(
         self, path: str, options: VideoExportOptions | None = None
     ) -> ExportResult:
-        """
-        Export the timeline to a video file.
+        """Export the timeline to a video file.
 
         Args:
             path: Output file path
@@ -709,10 +683,6 @@ class TimelineBuilder:
         Returns:
             ExportResult with success status and metadata
         """
-        import os
-
-        from vine.rendering.video_renderer import VideoRenderer
-
         try:
             video_spec = self.build()
             renderer = VideoRenderer()

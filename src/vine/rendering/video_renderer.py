@@ -1,22 +1,20 @@
 """Video-specific renderer implementation."""
 
-from moviepy import CompositeVideoClip, VideoClip
+from moviepy import ColorClip, CompositeVideoClip, VideoClip
 
 from vine.models.video_spec import VideoSpec
 from vine.rendering.base_renderer import BaseRenderer
 
 
 class VideoRenderer(BaseRenderer[VideoClip]):
-    """
-    Video-specific renderer implementation.
+    """Video-specific renderer implementation.
 
     Implements the BaseRenderer template method for video rendering,
     focusing on image clips and text overlays.
     """
 
     def create_clips(self, video_spec: VideoSpec) -> list[VideoClip]:
-        """
-        Create video clips from the video spec.
+        """Create video clips from the video spec.
 
         Args:
             video_spec: Project Vine VideoSpec model
@@ -41,8 +39,7 @@ class VideoRenderer(BaseRenderer[VideoClip]):
         return clips
 
     def compose_clips(self, clips: list[VideoClip], video_spec: VideoSpec) -> VideoClip:
-        """
-        Compose video clips into a composite video.
+        """Compose video clips into a composite video.
 
         Args:
             clips: List of MoviePy ImageClip objects
@@ -57,8 +54,6 @@ class VideoRenderer(BaseRenderer[VideoClip]):
                 clips, size=(video_spec.width, video_spec.height)
             )
         else:
-            from moviepy import ColorClip
-
             result = ColorClip(
                 size=(video_spec.width, video_spec.height), color=(0, 0, 0)
             )
@@ -66,8 +61,7 @@ class VideoRenderer(BaseRenderer[VideoClip]):
         return result
 
     def finalize(self, composite: VideoClip, video_spec: VideoSpec) -> VideoClip:
-        """
-        Finalize the video with additional processing.
+        """Finalize the video with additional processing.
 
         Args:
             composite: MoviePy VideoClip object

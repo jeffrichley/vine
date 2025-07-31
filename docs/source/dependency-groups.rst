@@ -55,7 +55,7 @@ This includes:
 - **vulture**: Dead code detection
 - **radon**: Code complexity analysis
 - **xenon**: Complexity monitoring
-- **interrogate**: Documentation coverage
+
 - **validate-pyproject**: Configuration validation
 - **toml-sort**: TOML file formatting
 

@@ -1,5 +1,4 @@
-"""
-Tests for YAML utilities module.
+"""Tests for YAML utilities module.
 """
 
 import tempfile

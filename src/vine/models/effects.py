@@ -18,12 +18,15 @@ class BaseEffect(BaseModel):
     start_time: float | None = Field(0.0, ge=0.0, description="Start time of effect")
 
     def get_type(self) -> str:
+        """Get the effect type."""
         return self.type
 
     def get_duration(self) -> float | None:
+        """Get the effect duration."""
         return self.duration
 
     def get_start_time(self) -> float:
+        """Get the effect start time."""
         return self.start_time or 0.0
 
 
