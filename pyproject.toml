@@ -111,9 +111,6 @@ directory = "htmlcov"
 fail_under = 80
 show_missing = true
 
-[tool.coverage.run]
-source = ["src/vine"]
-
 [tool.mypy]
 plugins = ["pydantic.mypy"]
 files = ["src", "tests"]
