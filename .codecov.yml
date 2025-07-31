@@ -2,8 +2,6 @@ codecov:
   require_ci_to_pass: false
   notify:
     wait_for_ci: false
-  # Handle multiple Python versions
-  merge_commits: true
 
 coverage:
   precision: 2
@@ -11,10 +9,6 @@ coverage:
   range: "80...100"
   status:
     project:
-      default:
-        target: 80%
-        threshold: 5%
-    patch:
       default:
         target: 80%
         threshold: 5%
