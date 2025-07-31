@@ -2087,6 +2087,7 @@ dependencies = [
 [package.optional-dependencies]
 dev = [
     { name = "black" },
+    { name = "coverage" },
     { name = "hypothesis" },
     { name = "ipython" },
     { name = "mkdocs-material" },
@@ -2138,6 +2139,7 @@ typecheck = [
 [package.metadata]
 requires-dist = [
     { name = "black", marker = "extra == 'dev'", specifier = ">=24.3.0" },
+    { name = "coverage", marker = "extra == 'dev'", specifier = ">=7.0.0" },
     { name = "hypothesis", marker = "extra == 'dev'", specifier = ">=6.136.6" },
     { name = "hypothesis", marker = "extra == 'test'", specifier = ">=6.136.6" },
     { name = "ipython", marker = "extra == 'dev'", specifier = ">=8.10" },

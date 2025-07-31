@@ -61,7 +61,7 @@ jobs:
     # Quality Gate 4: Test Coverage
     - name: Quality Gate - Test Coverage
       run: |
-        uv run pytest
+        uv run pytest --randomly-seed=12345
       continue-on-error: false
 
     # Quality Gate 5: Code Complexity
