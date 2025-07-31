@@ -55,3 +55,10 @@ repos:
         entry: uv run xenon --max-absolute B --max-average A src/
         language: system
         pass_filenames: false
+      - id: check-no-patch
+        name: Check for @patch usage in tests
+        entry: python scripts/check_no_patch.py
+        language: system
+        pass_filenames: false
+        types: [python]
+        files: ^tests/

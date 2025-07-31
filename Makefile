@@ -30,6 +30,18 @@ test-cov:  ## Run tests with coverage
 test-cov-check:  ## Run tests with coverage and fail if below 80%
 	uv run pytest tests/ --cov=src/vine --cov-report=term-missing --cov-fail-under=80
 
+test-random:  ## Run tests with random seed (generates new seed each time)
+	python scripts/run_tests_with_seed.py
+
+test-seed:  ## Run tests with specific seed (usage: make test-seed SEED=12345)
+	python scripts/run_tests_with_seed.py --seed $(SEED)
+
+test-seed-show:  ## Show the last seed used
+	python scripts/run_tests_with_seed.py --show-last-seed
+
+check-no-patch:  ## Check for @patch usage in test files
+	python scripts/check_no_patch.py
+
 ## 📚 Documentation
 
 docs:  ## Build documentation
