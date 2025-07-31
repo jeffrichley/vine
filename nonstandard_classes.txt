@@ -1,0 +1,38 @@
+tests//unit/test_timeline_builder_coverage.py:        mock_video_renderer_class = MagicMock(return_value=mock_renderer)
+tests//unit/test_timeline_builder_coverage.py:    class DummyOptions(VideoExportOptions):
+tests//unit/test_timeline_builder_coverage.py:        mock_video_renderer_class = MagicMock(return_value=mock_renderer)
+tests//unit/test_base_renderer.py:class MockRenderer(BaseRenderer[VideoClip]):
+tests//unit/test_base_renderer.py:        class EmptyRenderer(BaseRenderer[VideoClip]):
+Binary file tests//unit/__pycache__/test_edge_cases_comprehensive.cpython-311-pytest-8.4.1.pyc matches
+tests//unit/test_rendering.py:        # Mock the MoviePy ImageClip class to return our mock clip
+tests//unit/test_rendering.py:        mock_image_clip_class = MagicMock()
+tests//unit/test_rendering.py:        # Replace the MoviePy ImageClip class temporarily
+tests//unit/test_rendering.py:        # Mock the MoviePy TextClip class to return our mock clip
+tests//unit/test_rendering.py:        mock_text_clip_class = MagicMock()
+tests//unit/test_rendering.py:        # Replace the MoviePy TextClip class temporarily
+tests//unit/test_rendering.py:        # Mock the MoviePy AudioFileClip class to return our mock clip
+tests//unit/test_rendering.py:        mock_audio_file_clip_class = MagicMock()
+tests//unit/test_rendering.py:        # Replace the MoviePy AudioFileClip class temporarily
+tests//unit/test_rendering.py:        mock_composite_video_clip_class = MagicMock()
+tests//unit/test_rendering.py:        # Replace the CompositeVideoClip class temporarily
+tests//unit/htmlcov/z_76d2aac5bcef299c_tracks_py.html:    <p class="pln"><span class="n"><a id="t27" href="#t27">27</a></span><span class="t">    <span class="str">"""Base class for all clips with common timing functionality."""</span>&nbsp;</span><span class="r"></span></p>
+tests//unit/htmlcov/z_76d2aac5bcef299c_tracks_py.html:    <p class="pln"><span class="n"><a id="t79" href="#t79">79</a></span><span class="t">    <span class="str">"""Base class for all track types."""</span>&nbsp;</span><span class="r"></span></p>
+tests//unit/htmlcov/z_76d2aac5bcef299c_transitions_py.html:    <p class="pln"><span class="n"><a id="t10" href="#t10">10</a></span><span class="t">    <span class="str">"""Base class for all transitions."""</span>&nbsp;</span><span class="r"></span></p>
+tests//unit/htmlcov/z_76d2aac5bcef299c_effects_py.html:    <p class="pln"><span class="n"><a id="t11" href="#t11">11</a></span><span class="t">    <span class="str">"""Base class for all effects."""</span>&nbsp;</span><span class="r"></span></p>
+tests//unit/htmlcov/z_136b2da74c6c4c45_base_renderer_py.html:    <p class="pln"><span class="n"><a id="t16" href="#t16">16</a></span><span class="t"><span class="str">    Abstract base class for rendering algorithms.</span>&nbsp;</span><span class="r"></span></p>
+tests//unit/htmlcov/z_136b2da74c6c4c45_audio_renderer_py.html:    <p class="pln"><span class="n"><a id="t13" href="#t13">13</a></span><span class="t"><span class="str">    Abstract base class for audio rendering algorithms.</span>&nbsp;</span><span class="r"></span></p>
+tests//conftest.py:class MockVideoClip(Protocol):
+tests//conftest.py:class MockAudioClip(Protocol):
+tests//conftest.py:class MockImageClip(MockVideoClip):
+tests//conftest.py:class MockTextClip(MockVideoClip):
+tests//conftest.py:class MockAudioFileClip(MockAudioClip):
+tests//conftest.py:class MockVideoRenderer(Protocol):
+tests//conftest.py:class MockClipFactory(Protocol):
+Binary file tests//vine/models/__pycache__/test_contexts.cpython-311-pytest-8.4.1.pyc matches
+tests//vine/models/test_contexts.py:        mock_animation_config_class = MagicMock()
+tests//vine/models/test_contexts.py:            # Replace the class temporarily
+tests//vine/models/test_contexts.py:        """Create a context class that uses BuilderMethodsMixin."""
+tests//vine/models/test_contexts.py:        # Create a mock TimelineBuilder class with all required methods
+tests//vine/models/test_contexts.py:        # Create a mock TimelineBuilder class missing some methods
+tests//vine/models/test_contexts.py:        # Create a mock BuilderMethodsMixin class that's missing methods
+tests//vine/models/test_contexts.py:        class MockBuilderMethodsMixin:

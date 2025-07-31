@@ -178,7 +178,16 @@ warn_required_dynamic_aliases = true
 min_rounds = 5
 max_time = 10.0
 warmup = true
+
 warmup_iterations = 3
+
+[tool.pytest.randomly]
+# Enable random test ordering
+enabled = true
+# Show the seed used for reproducibility
+seed = "auto"
+# Randomize test collection order
+randomize_by_default = true
 
 # Pytest configuration moved to pytest.ini for consistency
 

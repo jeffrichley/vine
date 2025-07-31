@@ -1,7 +1,7 @@
 """Tests for vine.models.contexts module."""
 
 from typing import Any
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -76,15 +76,32 @@ class TestVisualStylingMixin:
         mock_image_clip.animations = []
         mock_image_clip.start_time = 0.0
         mock_image_clip.duration = 5.0
-        with patch("vine.models.contexts.AnimationConfig") as mock_animation_config:
-            mock_animation: MagicMock = MagicMock()
-            mock_animation_config.return_value = mock_animation
+
+        # Create a real AnimationConfig mock instead of patching
+        mock_animation = MagicMock()
+        mock_animation_config_class = MagicMock()
+        mock_animation_config_class.return_value = mock_animation
+
+        # Store original AnimationConfig and replace temporarily
+        from vine.models.contexts import AnimationConfig
+
+        original_animation_config = AnimationConfig
+        try:
+            # Replace the class temporarily
+            import vine.models.contexts
+
+            vine.models.contexts.AnimationConfig = mock_animation_config_class
+
             result = image_context.with_effect(mock_effect)
-            mock_animation_config.assert_called_once_with(
+
+            mock_animation_config_class.assert_called_once_with(
                 effect=mock_effect, start_time=0.0, duration=5.0, easing="ease_in_out"
             )
             assert mock_image_clip.animations == [mock_animation]
             assert result is image_context
+        finally:
+            # Restore original
+            vine.models.contexts.AnimationConfig = original_animation_config
 
     def test_with_effect_raises_on_unsupported_clip(
         self, image_context, mock_image_clip
@@ -583,51 +600,73 @@ class TestValidationFunction:
 
     def test_validation_passes_when_all_methods_implemented(self) -> None:
         """Test that validation passes when all protocol methods are implemented."""
-        # Use context manager to isolate the patch
-        with patch(
-            "vine.builder.timeline_builder.TimelineBuilder"
-        ) as mock_timeline_builder:
-            # Mock TimelineBuilder to have all required methods
-            mock_timeline_builder.add_image = MagicMock()
-            mock_timeline_builder.add_image_at = MagicMock()
-            mock_timeline_builder.add_text = MagicMock()
-            mock_timeline_builder.add_text_at = MagicMock()
-            mock_timeline_builder.add_voice = MagicMock()
-            mock_timeline_builder.add_voice_at = MagicMock()
-            mock_timeline_builder.add_music = MagicMock()
-            mock_timeline_builder.add_music_at = MagicMock()
-            mock_timeline_builder.add_sfx = MagicMock()
-            mock_timeline_builder.add_sfx_at = MagicMock()
+        # Create a mock TimelineBuilder class with all required methods
+        mock_timeline_builder = MagicMock()
+        mock_timeline_builder.add_image = MagicMock()
+        mock_timeline_builder.add_image_at = MagicMock()
+        mock_timeline_builder.add_text = MagicMock()
+        mock_timeline_builder.add_text_at = MagicMock()
+        mock_timeline_builder.add_voice = MagicMock()
+        mock_timeline_builder.add_voice_at = MagicMock()
+        mock_timeline_builder.add_music = MagicMock()
+        mock_timeline_builder.add_music_at = MagicMock()
+        mock_timeline_builder.add_sfx = MagicMock()
+        mock_timeline_builder.add_sfx_at = MagicMock()
+
+        # Store original TimelineBuilder and replace temporarily
+        import vine.builder.timeline_builder
+
+        original_timeline_builder = vine.builder.timeline_builder.TimelineBuilder
+        try:
+            vine.builder.timeline_builder.TimelineBuilder = mock_timeline_builder
+
             # Mock the inspect.getmembers to return our mocked methods
-            with patch("inspect.getmembers") as mock_getmembers:
-                mock_getmembers.return_value = [
-                    ("add_image", mock_timeline_builder.add_image),
-                    ("add_image_at", mock_timeline_builder.add_image_at),
-                    ("add_text", mock_timeline_builder.add_text),
-                    ("add_text_at", mock_timeline_builder.add_text_at),
-                    ("add_voice", mock_timeline_builder.add_voice),
-                    ("add_voice_at", mock_timeline_builder.add_voice_at),
-                    ("add_music", mock_timeline_builder.add_music),
-                    ("add_music_at", mock_timeline_builder.add_music_at),
-                    ("add_sfx", mock_timeline_builder.add_sfx),
-                    ("add_sfx_at", mock_timeline_builder.add_sfx_at),
-                ]
+            import inspect
+
+            original_getmembers = inspect.getmembers
+            try:
+                inspect.getmembers = MagicMock(
+                    return_value=[
+                        ("add_image", mock_timeline_builder.add_image),
+                        ("add_image_at", mock_timeline_builder.add_image_at),
+                        ("add_text", mock_timeline_builder.add_text),
+                        ("add_text_at", mock_timeline_builder.add_text_at),
+                        ("add_voice", mock_timeline_builder.add_voice),
+                        ("add_voice_at", mock_timeline_builder.add_voice_at),
+                        ("add_music", mock_timeline_builder.add_music),
+                        ("add_music_at", mock_timeline_builder.add_music_at),
+                        ("add_sfx", mock_timeline_builder.add_sfx),
+                        ("add_sfx_at", mock_timeline_builder.add_sfx_at),
+                    ]
+                )
+
                 # This should not raise an exception
                 validate_builder_implementation()
+            finally:
+                inspect.getmembers = original_getmembers
+        finally:
+            vine.builder.timeline_builder.TimelineBuilder = original_timeline_builder
 
     def test_validation_fails_when_timeline_builder_methods_missing(self) -> None:
         """Test that validation fails when TimelineBuilder is missing required methods."""
-        # Use context manager to isolate the patch
-        with patch(
-            "vine.builder.timeline_builder.TimelineBuilder"
-        ) as mock_timeline_builder:
-            # Mock TimelineBuilder to be missing some methods
-            mock_timeline_builder.add_image = MagicMock()
-            # Missing add_image_at, add_text, etc.
+        # Create a mock TimelineBuilder class missing some methods
+        mock_timeline_builder = MagicMock()
+        mock_timeline_builder.add_image = MagicMock()
+        # Missing add_image_at, add_text, etc.
+
+        # Store original TimelineBuilder and replace temporarily
+        import vine.builder.timeline_builder
+
+        original_timeline_builder = vine.builder.timeline_builder.TimelineBuilder
+        try:
+            vine.builder.timeline_builder.TimelineBuilder = mock_timeline_builder
+
             with pytest.raises(
                 RuntimeError, match="TimelineBuilder is missing protocol methods"
             ):
                 validate_builder_implementation()
+        finally:
+            vine.builder.timeline_builder.TimelineBuilder = original_timeline_builder
 
     def test_validation_fails_when_builder_methods_mixin_missing(self) -> None:
         """Test that validation fails when BuilderMethodsMixin is missing required methods."""
@@ -639,14 +678,19 @@ class TestValidationFunction:
 
             # Missing other methods
 
-        # Patch the actual BuilderMethodsMixin class temporarily
-        with (
-            patch("vine.models.contexts.BuilderMethodsMixin", MockBuilderMethodsMixin),
-            pytest.raises(
+        # Store original BuilderMethodsMixin and replace temporarily
+        import vine.models.contexts
+
+        original_builder_methods_mixin = vine.models.contexts.BuilderMethodsMixin
+        try:
+            vine.models.contexts.BuilderMethodsMixin = MockBuilderMethodsMixin  # type: ignore
+
+            with pytest.raises(
                 RuntimeError, match="BuilderMethodsMixin is missing protocol methods"
-            ),
-        ):
-            validate_builder_implementation()
+            ):
+                validate_builder_implementation()
+        finally:
+            vine.models.contexts.BuilderMethodsMixin = original_builder_methods_mixin
 
 
 class TestMethodChaining:
