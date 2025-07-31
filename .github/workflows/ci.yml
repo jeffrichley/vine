@@ -80,9 +80,8 @@ jobs:
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: false
-        # For public repositories, GitHub's built-in integration should work
-        # If you get token errors, uncomment the line below and add CODECOV_TOKEN to GitHub secrets
-        # token: ${{ secrets.CODECOV_TOKEN }}
+        # Token required for protected branches
+        token: ${{ secrets.CODECOV_TOKEN }}
 
     # Quality Gate Summary
     - name: Quality Gate Summary
