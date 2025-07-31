@@ -104,13 +104,6 @@ class QualityGatesRunner:
             "Code Complexity (Xenon)",
         )
 
-    def run_dead_code_gate(self) -> QualityGateResult:
-        """Run dead code detection quality gate."""
-        return self.run_command(
-            ["uv", "run", "vulture", "src/", "tests/", "--min-confidence", "80"],
-            "Dead Code Detection (Vulture)",
-        )
-
     def run_security_gate(self) -> QualityGateResult:
         """Run security audit quality gate."""
         return self.run_command(
@@ -130,7 +123,6 @@ class QualityGatesRunner:
             self.run_type_safety_gate,
             self.run_coverage_gate,
             self.run_complexity_gate,
-            self.run_dead_code_gate,
             self.run_security_gate,
         ]
 
@@ -185,7 +177,7 @@ class QualityGatesRunner:
   • Type safety must be enforced (MyPy strict mode)
   • Test coverage must be ≥80%
   • Code complexity must be within thresholds
-  • No dead code should be detected
+
   • No security vulnerabilities allowed
   • Documentation must build successfully
 

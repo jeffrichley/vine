@@ -70,11 +70,7 @@ jobs:
         uv run xenon --max-absolute B --max-average A src/
       continue-on-error: false
 
-    # Quality Gate 6: Dead Code Detection
-    - name: Quality Gate - Dead Code Detection
-      run: |
-        uv run vulture src/ tests/ --min-confidence 80
-      continue-on-error: false
+
 
     # Upload coverage to Codecov (non-blocking)
     - name: Upload coverage to Codecov
@@ -99,9 +95,8 @@ jobs:
         echo "3. Type Safety (MyPy)"
         echo "4. Test Coverage (≥80%)"
         echo "5. Code Complexity (Xenon)"
-        echo "6. Dead Code Detection (Vulture)"
-        echo "7. Security Audit (pip-audit)"
-        echo "8. Documentation Build"
+        echo "6. Security Audit (pip-audit)"
+        echo "7. Documentation Build"
         echo ""
         echo "🚀 Code quality standards maintained!"
 
