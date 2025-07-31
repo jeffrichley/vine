@@ -72,16 +72,12 @@ jobs:
 
 
 
-    # Upload coverage to Codecov (non-blocking)
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
+    # Upload coverage reports to Codecov
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
       with:
-        file: ./coverage.xml
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: false
-        # Token required for protected branches
         token: ${{ secrets.CODECOV_TOKEN }}
+        slug: jeffrichley/vine
 
     # Quality Gate Summary
     - name: Quality Gate Summary
