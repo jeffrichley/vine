@@ -108,6 +108,32 @@ pre-commit run check-no-patch --all-files
 ### CI Integration
 The check is also run in CI and will fail the build if any patch usage is found.
 
+## Random Test Ordering
+
+This project uses pytest-randomly to run tests in random order, which helps detect test interdependencies and ordering issues.
+
+### Auto-Generated Seeds
+- **Default behavior**: When running tests normally, pytest-randomly generates a new random seed each time
+- **No fixed seed**: This ensures tests are truly randomized and can catch ordering-dependent bugs
+- **Seed visibility**: The seed used is displayed in the test output for reproducibility
+
+### Reproducible Seeds
+- **For debugging**: Use `make test-seed SEED=12345` to run tests with a specific seed
+- **For CI failures**: Use the displayed seed to reproduce failures locally
+- **Script usage**: `python scripts/run_tests_with_seed.py --seed 12345`
+
+### Commands
+```bash
+# Run tests with auto-generated random seed (new seed each time)
+make test-random
+
+# Run tests with specific seed for reproducibility
+make test-seed SEED=12345
+
+# Show last seed used
+make test-seed-show
+```
+
 ## Examples of Successful Refactoring
 
 See `tests/vine/models/test_contexts.py` for examples of how to replace `@patch` usage with the temporary module replacement pattern.
