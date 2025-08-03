@@ -64,6 +64,9 @@ html_theme = "furo"  # Changed from sphinx_rtd_theme to furo
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 
+# Custom CSS file
+html_css_files = ["custom.css"]
+
 # -- Extension configuration -------------------------------------------------
 
 # Autodoc settings
