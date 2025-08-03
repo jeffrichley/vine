@@ -18,6 +18,7 @@ import nox
 nox.options.sessions = ["tests", "lint", "type_check", "docs"]
 # Re‑use existing venvs locally for speed; CI can override with --no-reuse-existing-virtualenvs
 nox.options.reuse_existing_virtualenvs = True
+
 PROJECT_ROOT = Path(__file__).parent
 
 PYTHON_VERSIONS = ["3.11", "3.12"]  # Update when a stable 3.13 lands
@@ -48,7 +49,10 @@ def install_project(session, mode: str = "minimal"):
 
 # @nox.session(python=PYTHON_VERSIONS)
 # @nox.parametrize("mode", INSTALL_MODES)
-@nox.session  # 🚫 no python=… here
+# @nox.session  # 🚫 no python=… here
+# @nox.session(python=PYTHON_VERSIONS)
+# @nox.parametrize("mode", INSTALL_MODES)
+@nox.session(python=PYTHON_VERSIONS)
 @nox.parametrize("mode", INSTALL_MODES)
 def tests(session, mode):
     """Run pytest with coverage."""
