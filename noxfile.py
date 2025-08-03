@@ -46,7 +46,9 @@ def install_project(session, mode: str = "minimal"):
 # -------- Sessions -------- #
 
 
-@nox.session(python=PYTHON_VERSIONS)
+# @nox.session(python=PYTHON_VERSIONS)
+# @nox.parametrize("mode", INSTALL_MODES)
+@nox.session  # 🚫 no python=… here
 @nox.parametrize("mode", INSTALL_MODES)
 def tests(session, mode):
     """Run pytest with coverage."""
