@@ -15,7 +15,7 @@ from pathlib import Path
 import nox
 
 # -------- Global config -------- #
-nox.options.sessions = ["tests", "lint", "type_check", "docs"]
+nox.options.sessions = ["tests", "lint", "type_check", "docs", "complexity", "security"]
 # Re‑use existing venvs locally for speed; CI can override with --no-reuse-existing-virtualenvs
 nox.options.reuse_existing_virtualenvs = True
 
