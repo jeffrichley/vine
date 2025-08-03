@@ -42,7 +42,7 @@ jobs:
       - name: Run quality gates
         if: ${{ matrix.python-version == '3.11' && matrix.mode == 'full' }}
         run: |
-          nox -s lint type_check docs complexity security
+          nox -s lint type_check docs complexity security pyproject
 
       - name: Upload coverage to Codecov
         if: ${{ matrix.python-version == '3.11' && matrix.mode == 'full' }}

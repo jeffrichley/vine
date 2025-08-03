@@ -3,7 +3,7 @@
 Key features:
 - Uses `uv` for dependency installation.
 - Supports Python 3.11 and 3.12 (matrix-ready).
-- Sessions: tests, lint, type_check, docs, precommit, coverage_html, complexity, security.
+- Sessions: tests, lint, type_check, docs, precommit, coverage_html, complexity, security, pyproject.
 - Re-uses local virtualenvs for speed; CI passes `--force-python` to isolate.
 - Parametrized "mode" for minimal vs full extras install.
 
@@ -15,7 +15,15 @@ from pathlib import Path
 import nox
 
 # -------- Global config -------- #
-nox.options.sessions = ["tests", "lint", "type_check", "docs", "complexity", "security"]
+nox.options.sessions = [
+    "tests",
+    "lint",
+    "type_check",
+    "docs",
+    "complexity",
+    "security",
+    "pyproject",
+]
 # Re‑use existing venvs locally for speed; CI can override with --no-reuse-existing-virtualenvs
 nox.options.reuse_existing_virtualenvs = True
 
@@ -123,3 +131,11 @@ def security(session):
     session.run("uv", "pip", "install", "-q", "pip-audit", external=True)
     # Audit direct + transitive deps pinned in uv.lock
     session.run("pip-audit", "--progress-spinner=off")
+
+
+@nox.session(python=PYTHON_VERSIONS[0])
+def pyproject(session):
+    """Validate pyproject.toml configuration."""
+    session.run("uv", "pip", "install", "-q", "-e", ".", external=True)
+    session.run("uv", "pip", "install", "-q", "validate-pyproject", external=True)
+    session.run("validate-pyproject", "pyproject.toml")
