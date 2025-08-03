@@ -29,6 +29,8 @@ def install_project(session, mode: str = "minimal"):
     assert mode in INSTALL_MODES
     extras = "" if mode == "minimal" else "[dev]"
     session.run("uv", "pip", "install", "-q", "-e", f".{extras}", external=True)
+    if mode == "minimal":
+        session.run("uv", "pip", "install", "-q", "pytest", "pytest-cov", external=True)
 
 
 # -------- Sessions -------- #
