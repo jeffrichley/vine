@@ -18,15 +18,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Setup Python and Nox
+        uses: wntrblm/nox@2025.05.01
         with:
-          python-version: ${{ matrix.python-version }}
+          python-versions: ${{ matrix.python-version }}
 
-      - name: Install uv + nox
-        run: |
-          pip install --quiet uv
-          uv pip install --quiet 'nox>=2024.4.15'
+      - name: Install uv
+        uses: astral-sh/setup-uv@v1
+        with:
+          version: "latest"
 
       - name: Run nox sessions
         run: |
