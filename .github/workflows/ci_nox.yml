@@ -21,7 +21,8 @@ jobs:
       - name: Setup Python and Nox
         uses: wntrblm/nox@2025.05.01
         with:
-          python-versions: ${{ matrix.python-version }}
+          # python-versions: ${{ matrix.python-version }}
+          python-versions: "3.11, 3.12"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v1
