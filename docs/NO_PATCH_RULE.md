@@ -17,7 +17,7 @@ The `@patch` decorator and `with patch()` context managers can interfere with co
 The pre-commit hook checks for:
 
 - `@patch` decorators
-- `with patch()` statements  
+- `with patch()` statements
 - `patch.object()` statements
 
 ## How to Replace @patch Usage
@@ -163,4 +163,4 @@ def test_something(self, mock_module):
     # test code
 ```
 
-However, this should be avoided and used only as a last resort. 
+However, this should be avoided and used only as a last resort.
