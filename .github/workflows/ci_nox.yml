@@ -25,17 +25,18 @@ jobs:
 
       - name: Install uv + nox
         run: |
-          pip install uv nox
+          pip install --quiet uv
+          uv pip install --quiet 'nox>=2024.4.15'
 
       - name: Run nox sessions
         run: |
           # Run the test suite for every matrix cell
           nox -s tests -- --mode=${{ matrix.mode }}
 
-          # Run the heavy quality-gate sessions only once (Py 3.11 / full extras)
-          if [ "${{ matrix.python-version }}" = "3.11" ] && [ "${{ matrix.mode }}" = "full" ]; then
-            nox -s lint type_check docs complexity security
-          fi
+      - name: Run quality gates
+        if: ${{ matrix.python-version == '3.11' && matrix.mode == 'full' }}
+        run: |
+          nox -s lint type_check docs complexity security
 
       - name: Upload coverage to Codecov
         if: ${{ matrix.python-version == '3.11' && matrix.mode == 'full' }}
