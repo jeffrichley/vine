@@ -33,7 +33,9 @@ jobs:
       - name: Run nox sessions
         run: |
           # Run the test suite for every matrix cell
-          nox -s tests -- --mode=${{ matrix.mode }}
+          # nox -s tests -- --mode=${{ matrix.mode }}
+          # run exactly one parametrised variant, e.g. tests(mode='minimal')
+          nox --sessions "tests(mode='${{ matrix.mode }}')"
 
       - name: Run quality gates
         if: ${{ matrix.python-version == '3.11' && matrix.mode == 'full' }}
