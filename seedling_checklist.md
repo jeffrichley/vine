@@ -233,19 +233,16 @@ default     := "@just --list"
 
 ---
 
-## 12. Optional Conda fallback
+## 13. Documentation polish ✅
 
-- ☐ Document activation: `uv mamba init`.
-- ☐ Add note in README.
-- ☐ When enabled, confirm that `uv pip install scipy==1.14.dev0` pulls Conda wheel.
-
----
-
-## 13. Documentation polish
-
-- ☐ Rewrite `docs/index.md` with template badges (`{{ project_slug }}` status‑shields).
-- ☐ Add **ADR 0001** explaining design philosophy (Copier + uv + Nox + Just × Sphinx × pre‑commit‑ci).
-- ☐ Ensure Sphinx `conf.py` uses `importlib.metadata.version` with Jinja tag.
+- ✅ Rewrite `docs/index.md` with template badges (`{{ project_slug }}` status‑shields).
+- ✅ Add **ADR 0001** explaining design philosophy (Copier + uv + Nox + Just × Sphinx × pre‑commit‑ci).
+- ✅ Ensure Sphinx `conf.py` uses `importlib.metadata.version` with Jinja tag.
+- ✅ Create comprehensive template guide with usage instructions
+- ✅ Add troubleshooting and configuration documentation
+- ✅ Implement dynamic badge system with Jinja templating
+- ✅ Create ADR documentation for technology decisions
+- ✅ Test documentation builds and link validation
 
 ---
 
@@ -287,10 +284,10 @@ default     := "@just --list"
 
 ### ✅ **Completed Sections**
 - **Sections 0-14**: All prerequisites, setup, pre-commit ecosystem, CI/CD workflows, and full testing ✅
+- **Section 13**: Documentation polish ✅
 
 ### ☐ **Remaining**
 - **Section 12**: Conda fallback documentation
-- **Section 13**: Documentation polish
 - **Section 15**: Publish template
 
 ### 🚀 **Key Achievements**
@@ -301,6 +298,9 @@ default     := "@just --list"
 - ✅ **Documentation automation**: Sphinx + link checking
 - ✅ **Release automation**: commitizen + PyPI publishing ready
 - ✅ **Full end-to-end testing**: Template generation, CI workflows, and failure scenarios all verified
+- ✅ **Comprehensive documentation**: ADRs, template guide, installation docs, troubleshooting
+- ✅ **Professional badge system**: Dynamic badges with Jinja templating
+- ✅ **Development tooling**: install-tools.sh script tested and working
 
 ---
 
