@@ -1,6 +1,6 @@
 # Dependency Groups
 
-Project Vine uses dependency groups for modular installation, allowing you to install only the dependencies you need for your specific use case.
+{{cookiecutter.project_name}} uses dependency groups for modular installation, allowing you to install only the dependencies you need for your specific use case.
 
 ## Overview
 
@@ -143,7 +143,7 @@ For production deployment, install only runtime dependencies:
 ```bash
 uv pip install -e .
 # or
-uv pip install vine
+uv pip install {{cookiecutter.project_slug}}
 ```
 
 This installs only the core functionality without development tools.

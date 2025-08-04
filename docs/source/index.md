@@ -1,13 +1,12 @@
-# Welcome to vine's documentation!
+# Welcome to {{cookiecutter.project_name}}'s documentation!
 
-vine is a modular, agent-compatible video composition framework built on top of MoviePy.
+{{cookiecutter.project_name}} is a modern Python project built with best practices and comprehensive tooling.
 
 ```{toctree}
 :maxdepth: 2
 :caption: Contents:
 
 api
-examples
 dependency-groups
 contributing
 ```

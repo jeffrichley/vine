@@ -1,7 +1,7 @@
-"""Sphinx configuration for Project Vine documentation.
+"""Sphinx configuration for {{cookiecutter.project_name}} documentation.
 
 This file contains the configuration settings for building the Sphinx documentation
-for the Project Vine video composition framework.
+for the {{cookiecutter.project_name}} project.
 
 This file only contains a selection of the most common options. For a full
 list see the documentation:
@@ -21,10 +21,10 @@ sys.path.insert(0, os.path.abspath("../.."))
 
 # -- Project information -----------------------------------------------------
 
-project = "vine"
-copyright = "2025, Jeff Richley"
-author = "Jeff Richley"
-release = "0.1.0"
+project = "{{cookiecutter.project_name}}"
+copyright = "{{cookiecutter.copyright_year}}, {{cookiecutter.author_name}}"
+author = "{{cookiecutter.author_name}}"
+release = "{{cookiecutter.version}}"
 
 # -- General configuration ---------------------------------------------------
 

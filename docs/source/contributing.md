@@ -1,6 +1,6 @@
-# Contributing to Project Vine
+# Contributing to {{cookiecutter.project_name}}
 
-Thank you for your interest in contributing to Project Vine! This document provides guidelines and requirements for contributing to the project.
+Thank you for your interest in contributing to {{cookiecutter.project_name}}! This document provides guidelines and requirements for contributing to the project.
 
 ```{contents} Table of Contents
 :local:
@@ -22,8 +22,8 @@ By participating in this project, you agree to maintain a respectful environment
 
 ```bash
 # Clone the repository
-git clone https://github.com/jeffrichley/vine.git
-cd vine
+git clone https://github.com/{{cookiecutter.github_username}}/{{cookiecutter.project_slug}}.git
+cd {{cookiecutter.project_slug}}
 
 # Install with uv (recommended)
 uv sync
@@ -49,7 +49,7 @@ uv run dev info
 
 ## Quality Requirements
 
-Project Vine maintains strict quality standards. **All contributions must pass these quality gates:**
+{{cookiecutter.project_name}} maintains strict quality standards. **All contributions must pass these quality gates:**
 
 ### Quality Gates
 
@@ -80,11 +80,11 @@ uv run dev quality-gates # All quality gates
 ```bash
 # Fork the repository on GitHub
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/vine.git
-cd vine
+git clone https://github.com/YOUR_USERNAME/{{cookiecutter.project_slug}}.git
+cd {{cookiecutter.project_slug}}
 
 # Add upstream remote
-git remote add upstream https://github.com/jeffrichley/vine.git
+git remote add upstream https://github.com/{{cookiecutter.github_username}}/{{cookiecutter.project_slug}}.git
 ```
 
 ### 2. Create a Feature Branch
@@ -163,8 +163,8 @@ import numpy as np
 import pydantic
 
 # Local imports
-from vine.models import VideoSpec
-from vine.rendering import VideoRenderer
+from {{cookiecutter.project_slug}}.models import ExampleModel
+from {{cookiecutter.project_slug}}.core import ExampleCore
 ```
 
 ### Type Annotations
@@ -211,7 +211,7 @@ except FileNotFoundError as e:
 ```python
 # tests/unit/test_video_spec.py
 import pytest
-from vine.models import VideoSpec
+from {{cookiecutter.project_slug}}.models import ExampleModel
 
 class TestVideoSpec:
     def test_video_spec_creation(self):
@@ -338,4 +338,4 @@ Contributors will be recognized in:
 - **CHANGELOG.md**: For all contributions
 - **GitHub Contributors**: Automatic recognition
 
-Thank you for contributing to Project Vine! 🎬
+Thank you for contributing to {{cookiecutter.project_name}}! 🚀
