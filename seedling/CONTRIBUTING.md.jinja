@@ -1,16 +1,23 @@
-# Contributing to {{ project_name }}
+# 🤝 Contributing to {{ project_name }}
 
 Thank you for your interest in contributing to {{ project_name }}! This document provides guidelines and requirements for contributing to the project.
 
-```{contents} Table of Contents
-:local:
-```
+## 📋 Table of Contents
 
-## Code of Conduct
+- [Code of Conduct](#code-of-conduct)
+- [Development Setup](#development-setup)
+- [Quality Requirements](#quality-requirements)
+- [Contribution Process](#contribution-process)
+- [Code Style Guidelines](#code-style-guidelines)
+- [Testing Requirements](#testing-requirements)
+- [Documentation Standards](#documentation-standards)
+- [Review Process](#review-process)
+
+## 📜 Code of Conduct
 
 By participating in this project, you agree to maintain a respectful environment for everyone. We are committed to providing a welcoming and inspiring community for all.
 
-## Development Setup
+## 🛠️ Development Setup
 
 ### Prerequisites
 
@@ -47,7 +54,7 @@ source .venv/bin/activate  # On Unix/macOS
 uv run dev info
 ```
 
-## Quality Requirements
+## 🎯 Quality Requirements
 
 {{ project_name }} maintains strict quality standards. **All contributions must pass these quality gates:**
 
@@ -59,6 +66,7 @@ uv run dev info
 4. **📈 Complexity (Xenon)**: Maintainable code complexity
 5. **🧹 Dead Code (Vulture)**: No unused code or imports
 6. **🔒 Security (pip-audit)**: No dependency vulnerabilities
+
 
 ### Pre-commit Checks
 
@@ -73,7 +81,7 @@ uv run dev test          # Pytest with coverage
 uv run dev quality-gates # All quality gates
 ```
 
-## Contribution Process
+## 🔄 Contribution Process
 
 ### 1. Fork and Clone
 
@@ -99,7 +107,7 @@ git checkout -b fix/your-bug-description
 
 ### 3. Make Your Changes
 
-- Follow the Code Style Guidelines
+- Follow the [Code Style Guidelines](#code-style-guidelines)
 - Write comprehensive tests
 - Update documentation as needed
 - Ensure all quality gates pass
@@ -141,7 +149,7 @@ git push origin feature/your-feature-name
 # Create a Pull Request on GitHub
 ```
 
-## Code Style Guidelines
+## 📝 Code Style Guidelines
 
 ### Python Code Style
 
@@ -164,7 +172,7 @@ import pydantic
 
 # Local imports
 from {{ project_slug }}.models import ExampleModel
-from {{ project_slug }}.core import ExampleCore
+from {{ project_slug }}.core import CoreClass
 ```
 
 ### Type Annotations
@@ -198,7 +206,7 @@ except FileNotFoundError as e:
     raise
 ```
 
-## Testing Requirements
+## 🧪 Testing Requirements
 
 ### Test Coverage
 
@@ -244,7 +252,7 @@ def test_video_width_validation(width):
     assert spec.width == width
 ```
 
-## Documentation Standards
+## 📚 Documentation Standards
 
 ### Docstring Requirements
 
@@ -289,7 +297,7 @@ def create_video_timeline(
 - Update API documentation for technical changes
 - Include examples for new features
 
-## Review Process
+## 👀 Review Process
 
 ### Pull Request Requirements
 
@@ -315,7 +323,7 @@ def create_video_timeline(
 - **Follow-up Reviews**: Within 24 hours
 - **Merge**: After approval and CI passes
 
-## Getting Help
+## 🚀 Getting Help
 
 ### Questions and Discussions
 
@@ -327,10 +335,10 @@ def create_video_timeline(
 
 - **API Documentation**: `docs/api/`
 - **Architecture Guide**: `docs/ARCHITECTURE_PATTERNS.md`
-- **Quality Gates**: `docs/QUALITY_GATES.md`
+- **Quality Checks**: Run `nox -s lint type_check complexity security` for comprehensive quality validation
 - **Project Status**: `docs/STATUS.md`
 
-## Recognition
+## 🎉 Recognition
 
 Contributors will be recognized in:
 

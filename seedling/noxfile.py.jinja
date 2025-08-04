@@ -55,6 +55,7 @@ def install_project(session, mode: str = "minimal"):
 # -------- Sessions -------- #
 
 
+
 @nox.session(python=PYTHON_VERSIONS)
 @nox.parametrize("mode", INSTALL_MODES)
 def tests(session, mode):

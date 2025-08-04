@@ -57,13 +57,14 @@ Mark each checkbox as you finish. **Don’t** tick by “eyeballing”—run the
 
 ## 3. Create template scaffold
 
-1. ☐ **Scaffold directories**
+1. ✅ **Scaffold directories**
    ```bash
-   mkdir -p seedling/{docs,tests,{{cookiecutter.project_slug}}}
-   touch seedling/{{cookiecutter.project_slug}}/__init__.py
+   mkdir -p seedling/{docs,src/{{ project_slug }},tests/{unit,integration,e2e}}
+   touch seedling/src/{{ project_slug }}/__init__.py
+   touch seedling/tests/{unit,integration,e2e}/__init__.py
    ```
-2. ☐ Copy over cleaned **noxfile.py**, **pyproject.toml**, **.pre-commit-config.yaml**—replace hard‑coded package name with Jinja tag `{{ cookiecutter.project_slug }}`.
-3. ☐ Add **LICENSE**, **CODE_OF_CONDUCT.md**, **SECURITY.md** (choose MIT license unless overwritten).
+2. ✅ Copy over cleaned **noxfile.py**, **pyproject.toml**, **.pre-commit-config.yaml**—replace hard‑coded package name with Jinja tag `{{ project_slug }}`.
+3. ✅ Add **LICENSE**, **CODE_OF_CONDUCT.md**, **SECURITY.md** (choose MIT license unless overwritten).
 
 ---
 
@@ -71,16 +72,16 @@ Mark each checkbox as you finish. **Don’t** tick by “eyeballing”—run the
 
 > Located at template root.
 
-- ☐ Define **metadata** block: `min_copier_version: "7.0.0"`, `_tasks`, `_exclude`, `_subdirectory`.
-- ☐ Add **questions**: `project_name`, `project_slug`, `author_name`, `author_email`, `license`, `python_versions`, `coverage_threshold`, `include_cli`, `enable_conda_fallback`.
-- ☐ For `python_versions`, add **validator** regex `^3\.\d{2?(,\s*3\.\d{2?})*$`.
-- ☐ Add **conditional paths** in `_templates_suffix`: e.g., `{{ _copier_answers.include_cli | ternary('.jinja', '.skip') }}`.
+- ✅ Define **metadata** block: `min_copier_version: "7.0.0"`, `_tasks`, `_exclude`, `_subdirectory`.
+- ✅ Add **questions**: `project_name`, `project_slug`, `author_name`, `author_email`, `license`, `python_versions`, `coverage_threshold`, `include_cli`, `enable_conda_fallback`.
+- ✅ For `python_versions`, add **validator** regex `^3\.\d{2?(,\s*3\.\d{2?})*$`.
+- ✅ Add **conditional paths** in `_templates_suffix`: e.g., `{{ include_cli | ternary('.jinja', '.skip') }}`.
 
 ---
 
 ## 5. Post‑generation tasks
 
-1. ☐ In `copier.yml` under `_tasks` add:
+1. ✅ In `copier.yml` under `_tasks` add:
    ```yaml
    _tasks:
      - git init
@@ -90,7 +91,7 @@ Mark each checkbox as you finish. **Don’t** tick by “eyeballing”—run the
      - uv mamba init
      {%- endif %}
    ```
-2. ☐ Verify tasks by generating a **storybook** (`copier copy . /tmp/seedling-test --trust`).
+2. ✅ Verify tasks by generating a **storybook** (`copier copy . /tmp/seedling-test --trust`).
 
 ---
 
@@ -220,7 +221,7 @@ release     := "gh pr create -f --fill"
 
 ## 13. Documentation polish
 
-- ☐ Rewrite `docs/index.md` with template badges (`{{cookiecutter.project_slug}}` status‑shields).
+- ☐ Rewrite `docs/index.md` with template badges (`{{ project_slug }}` status‑shields).
 - ☐ Add **ADR 0001** explaining design philosophy (Copier + uv + Nox + Just).
 - ☐ Ensure Sphinx `conf.py` uses `importlib.metadata.version` with Jinja tag.
 

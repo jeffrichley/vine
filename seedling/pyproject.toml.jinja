@@ -17,24 +17,17 @@ keywords = ["{{ project_keywords }}"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
-  "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: MIT License",
+  "License :: OSI Approved :: {{ license }} License",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
-  "Topic :: Multimedia :: Video",
-  "Topic :: Scientific/Engineering :: Artificial Intelligence",
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Topic :: Software Development :: Libraries",
   "Typing :: Typed"
 ]
 dependencies = [
-  "moviepy>=1.0.3",
   "pydantic>=2.0.0",
-  "pyyaml>=6.0.2",
-  "pillow>=10.0.0",
-  "numpy>=1.24.0", 
 ]
 
 [project.urls]
@@ -46,7 +39,7 @@ Changelog = "https://github.com/{{ github_username }}/{{ project_slug }}/blob/ma
 Source = "https://github.com/{{ github_username }}/{{ project_slug }}"
 
 [tool.setuptools.dynamic]
-version = {attr = "{{ project_slug }}._version.__version__"}
+version = {attr = "{{ project_slug }}.__version__"}
 readme = {file = "README.md"}
 
 [project.optional-dependencies]
@@ -159,7 +152,7 @@ disable_error_code = [
     "attr-defined",      # Attribute errors (mock objects)
     "comparison-overlap", # Comparison overlap errors
     "var-annotated",     # Variable annotation issues
-    "arg-type",
+    "arg-type",          # Argument type mismatches (common in tests)
 #    "unused-ignore",     # Type ignores that do nothing
 ]
 # Relax typing requirements for test files
@@ -175,11 +168,10 @@ init_typed = true
 warn_required_dynamic_aliases = true
 
 [tool.pytest.benchmark]
-min_rounds = 5
-max_time = 10.0
-warmup = true
-
-warmup_iterations = 3
+min_rounds = 5           # Minimum number of test rounds to run
+max_time = 10.0          # Maximum time (seconds) to spend on each benchmark
+warmup = true            # Run warmup iterations before timing
+warmup_iterations = 3    # Number of warmup iterations to run
 
 [tool.pytest.randomly]
 # Enable random test ordering
@@ -203,20 +195,20 @@ exclude = [
 
 [tool.ruff.lint]
 extend-select = [
-  "E",
-  "F",
-  "I",
-  "N",
-  "B",
-  "Q",
-  "SIM",
-  "C90",
-  "ARG",
-  "TID",
-  "UP",
-  "PL",
-  "PERF",
-  "D"
+  "E",    # pycodestyle errors (syntax, indentation, etc.)
+  "F",    # pyflakes (logical errors, unused imports)
+  "I",    # isort (import sorting)
+  "N",    # pep8-naming (naming conventions)
+  "B",    # flake8-bugbear (bug-prone patterns)
+  "Q",    # flake8-quotes (quote consistency)
+  "SIM",  # flake8-simplify (code simplification)
+  "C90",  # mccabe (cyclomatic complexity)
+  "ARG",  # flake8-unused-arguments
+  "TID",  # flake8-tidy-imports (import organization)
+  "UP",   # pyupgrade (modern Python syntax)
+  "PL",   # pylint (general linting)
+  "PERF", # perflint (performance issues)
+  "D"     # pydocstyle (docstring conventions)
 ]
 ignore = [
   "E501", # Line too long (we use Black's wrapping)
@@ -227,9 +219,6 @@ unfixable = [] # Keep empty to allow all fixes
 
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
-
-[tool.ruff.lint.flake8-tidy-imports.banned-api]
-"yaml" = {msg = "Use `{{ project_slug }}.utils.yaml_utils` instead of importing `yaml` directly."}
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -256,7 +245,7 @@ convention = "google"
 where = ["src"]
 
 [tool.xenon]
-max-absolute = "B"
-max-modules = "A"
-max-average = "A"
+max-absolute = "B"    # Maximum complexity for any single function (A=0, B=10, C=20)
+max-modules = "A"     # Maximum complexity for any single module (A=0, B=10, C=20)
+max-average = "A"     # Maximum average complexity across all modules (A=0, B=10, C=20)
 exclude = ["tests", "examples", "scripts"]

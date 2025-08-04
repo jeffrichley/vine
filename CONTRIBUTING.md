@@ -1,6 +1,6 @@
-# 🤝 Contributing to Project Vine
+# 🤝 Contributing to {{ project_name }}
 
-Thank you for your interest in contributing to Project Vine! This document provides guidelines and requirements for contributing to the project.
+Thank you for your interest in contributing to {{ project_name }}! This document provides guidelines and requirements for contributing to the project.
 
 ## 📋 Table of Contents
 
@@ -29,8 +29,8 @@ By participating in this project, you agree to maintain a respectful environment
 
 ```bash
 # Clone the repository
-git clone https://github.com/jeffrichley/vine.git
-cd vine
+git clone https://github.com/{{ github_username }}/{{ project_slug }}.git
+cd {{ project_slug }}
 
 # Install with uv (recommended)
 uv sync
@@ -56,7 +56,7 @@ uv run dev info
 
 ## 🎯 Quality Requirements
 
-Project Vine maintains strict quality standards. **All contributions must pass these quality gates:**
+{{ project_name }} maintains strict quality standards. **All contributions must pass these quality gates:**
 
 ### Quality Gates
 
@@ -88,11 +88,11 @@ uv run dev quality-gates # All quality gates
 ```bash
 # Fork the repository on GitHub
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/vine.git
-cd vine
+git clone https://github.com/YOUR_USERNAME/{{ project_slug }}.git
+cd {{ project_slug }}
 
 # Add upstream remote
-git remote add upstream https://github.com/jeffrichley/vine.git
+git remote add upstream https://github.com/{{ github_username }}/{{ project_slug }}.git
 ```
 
 ### 2. Create a Feature Branch
