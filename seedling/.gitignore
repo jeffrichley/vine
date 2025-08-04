@@ -105,7 +105,7 @@ output/benchmarks/
 *.perf
 
 # -----------------------------------------------------------------------------
-# 🎬 Video & Audio Files (Vine-specific)
+# 📁 Media Files
 # -----------------------------------------------------------------------------
 *.mp4
 *.avi
@@ -120,11 +120,11 @@ output/benchmarks/
 *.ogg
 *.flac
 *.gif
-frames/
-renders/
-exports/
-.ffmpeg/
-temp_video_*
+*.png
+*.jpg
+*.jpeg
+*.svg
+temp_media_*
 *.temp
 *.cache
 

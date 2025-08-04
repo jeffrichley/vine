@@ -35,9 +35,6 @@ updates:
         update-types:
           - "minor"
           - "patch"
-      video-processing:
-        patterns:
-          - "moviepy*"
           - "opencv*"
           - "pillow*"
         update-types:
@@ -47,7 +44,7 @@ updates:
       # Ignore major version bumps for critical dependencies
       - dependency-name: "pydantic"
         update-types: ["version-update:semver-major"]
-      - dependency-name: "moviepy"
+      - dependency-name: "pytest"
         update-types: ["version-update:semver-major"]
       # Ignore unrelated package with same name
       - dependency-name: "{{ project_slug }}"

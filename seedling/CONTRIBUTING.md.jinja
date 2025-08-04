@@ -132,7 +132,7 @@ uv run dev benchmark
 git add .
 
 # Commit with a descriptive message
-git commit -m "feat: add new video transition effect
+git commit -m "feat: add new data processing feature
 
 - Implement crossfade transition
 - Add comprehensive tests
@@ -179,12 +179,12 @@ from {{ project_slug }}.core import CoreClass
 
 ```python
 # Required for all functions
-def process_video(spec: VideoSpec, output_path: str) -> bool:
-    """Process a video specification and save to output path.
+def process_data(spec: DataSpec, output_path: str) -> bool:
+    """Process a data specification and save to output path.
 
     Args:
-        spec: The video specification to process
-        output_path: Path where the video will be saved
+        spec: The data specification to process
+        output_path: Path where the data will be saved
 
     Returns:
         True if processing was successful, False otherwise
@@ -217,26 +217,26 @@ except FileNotFoundError as e:
 ### Test Structure
 
 ```python
-# tests/unit/test_video_spec.py
+# tests/unit/test_data_spec.py
 import pytest
 from {{ project_slug }}.models import ExampleModel
 
-class TestVideoSpec:
-    def test_video_spec_creation(self):
-        """Test VideoSpec creation with valid parameters."""
-        spec = VideoSpec(
-            width=1920,
-            height=1080,
-            duration=10.0
+class TestDataSpec:
+    def test_data_spec_creation(self):
+        """Test DataSpec creation with valid parameters."""
+        spec = DataSpec(
+            format="json",
+            encoding="utf-8",
+            compression="gzip"
         )
-        assert spec.width == 1920
-        assert spec.height == 1080
-        assert spec.duration == 10.0
+        assert spec.format == "json"
+        assert spec.encoding == "utf-8"
+        assert spec.compression == "gzip"
 
-    def test_video_spec_validation(self):
-        """Test VideoSpec validation with invalid parameters."""
+    def test_data_spec_validation(self):
+        """Test DataSpec validation with invalid parameters."""
         with pytest.raises(ValueError):
-            VideoSpec(width=-1, height=1080, duration=10.0)
+            DataSpec(format="invalid", encoding="utf-8", compression="gzip")
 ```
 
 ### Property-Based Testing
@@ -245,11 +245,11 @@ class TestVideoSpec:
 # Use Hypothesis for property-based testing
 from hypothesis import given, strategies as st
 
-@given(st.integers(min_value=1, max_value=3840))
-def test_video_width_validation(width):
-    """Test that video width validation works for all valid values."""
-    spec = VideoSpec(width=width, height=1080, duration=10.0)
-    assert spec.width == width
+@given(st.sampled_from(["json", "csv", "xml", "yaml"]))
+def test_data_format_validation(format_type):
+    """Test that data format validation works for all valid values."""
+    spec = DataSpec(format=format_type, encoding="utf-8", compression="gzip")
+    assert spec.format == format_type
 ```
 
 ## 📚 Documentation Standards
@@ -264,29 +264,29 @@ def test_video_width_validation(width):
 ### Example Docstring
 
 ```python
-def create_video_timeline(
-    clips: List[VideoClip],
-    transitions: Optional[List[Transition]] = None,
-    duration: Optional[float] = None
-) -> VideoTimeline:
-    """Create a video timeline from a list of clips.
+def process_data_batch(
+    data: List[Dict[str, Any]],
+    processor: Optional[DataProcessor] = None,
+    batch_size: Optional[int] = None
+) -> ProcessedData:
+    """Process a batch of data records.
 
     Args:
-        clips: List of video clips to include in the timeline
-        transitions: Optional list of transitions between clips
-        duration: Optional total duration (auto-calculated if None)
+        data: List of data records to process
+        processor: Optional custom processor (uses default if None)
+        batch_size: Optional batch size (auto-calculated if None)
 
     Returns:
-        A VideoTimeline object representing the composed video
+        A ProcessedData object containing the processed results
 
     Raises:
-        ValueError: If clips list is empty or invalid
-        TypeError: If clips contain invalid types
+        ValueError: If data list is empty or invalid
+        TypeError: If data contains invalid types
 
     Example:
-        >>> clips = [VideoClip("video1.mp4"), VideoClip("video2.mp4")]
-        >>> timeline = create_video_timeline(clips)
-        >>> timeline.render("output.mp4")
+        >>> data = [{"id": 1, "value": "test"}, {"id": 2, "value": "example"}]
+        >>> result = process_data_batch(data)
+        >>> result.save("output.json")
     """
     pass
 ```

@@ -12,5 +12,5 @@ markers =
     functional: cross-module logic
     e2e: end-to-end test
     slow: long-running test
-addopts = --cov=src/vine --cov-report=term-missing --cov-report=xml --cov-fail-under=80
-filterwarnings = ignore::pydantic.PydanticDeprecatedSince20:vine.*
+addopts = --cov=src/{{ project_slug }} --cov-report=term-missing --cov-report=xml --cov-fail-under=80
+filterwarnings = ignore::pydantic.PydanticDeprecatedSince20:{{ project_slug }}.*

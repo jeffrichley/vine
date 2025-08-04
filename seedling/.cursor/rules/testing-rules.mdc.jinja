@@ -26,7 +26,7 @@ It's designed to:
 | `tests/unit/`          | Fast, isolated function/class tests | `@pytest.mark.unit`    |
 | `tests/integration/`   | Cross-module or DB/file system I/O  | `@pytest.mark.integration` |
 | `tests/functional/`    | High-level, multi-layer behavior    | `@pytest.mark.functional`  |
-| `tests/e2e/`           | End-to-end user flows or CLI/API    | `@pytest.mark.e2e`     |
+| `tests/e2e/`           | End-to-end user flows or API         | `@pytest.mark.e2e`     |
 | `tests/performance/`   | Load/latency testing                | `@pytest.mark.performance` |
 
 
@@ -218,7 +218,7 @@ def test_returns_403_when_user_is_unauthenticated():
 Scoped only:
 
 ```python
-warnings.filterwarnings("ignore", category=UserWarning, module="moviepy.*")
+warnings.filterwarnings("ignore", category=UserWarning, module="pytest.*")
 ```
 
 Avoid global filters like `ignore::DeprecationWarning`
@@ -230,7 +230,7 @@ Avoid global filters like `ignore::DeprecationWarning`
 ### ✅ Test happy and sad paths:
 
 ```python
-assert builder.export("good.mp4").success
+assert builder.export("good.json").success
 
 with pytest.raises(FileNotFoundError):
     builder.export("missing.png")
