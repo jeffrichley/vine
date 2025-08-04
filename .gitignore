@@ -26,6 +26,7 @@ htmlcov/
 # -----------------------------------------------------------------------------
 .venv/
 .uv/
+docs-venv/
 .env
 .env.*
 *.env
@@ -135,3 +136,44 @@ mypy_*.log
 ruff_*.log
 black_*.log
 *.lint.log
+
+# -----------------------------------------------------------------------------
+# 🌱 Template-Specific Files
+# -----------------------------------------------------------------------------
+# Generated projects (for testing)
+test-project/
+my-awesome-project/
+example-project/
+demo-project/
+
+# Template test outputs
+.copier-answers.yml
+.copier-answers.yml.bak
+
+# Documentation build artifacts
+docs/build/
+docs/source/_build/
+
+# Local development files
+*.local
+local_*
+dev_*
+
+# -----------------------------------------------------------------------------
+# 🔐 Secrets & Configuration
+# -----------------------------------------------------------------------------
+secrets/
+config.local.*
+*.key
+*.pem
+*.p12
+*.pfx
+
+# -----------------------------------------------------------------------------
+# 📝 Temporary Files
+# -----------------------------------------------------------------------------
+*.swp
+*.swo
+*~
+.#*
+\#*#

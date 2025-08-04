@@ -1,6 +1,6 @@
 # Dependency Groups
 
-{{ project_name }} uses dependency groups for modular installation, allowing you to install only the dependencies you need for your specific use case.
+Seedling uses dependency groups for modular installation, allowing you to install only the dependencies you need for your specific use case.
 
 ## Overview
 

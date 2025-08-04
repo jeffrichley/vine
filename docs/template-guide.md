@@ -1,175 +1,339 @@
-# Documentation Template Guide
+# Seedling Template Guide
 
-This guide explains how to use and customize the documentation template for your project.
+A comprehensive guide for using the Seedling template to create world-class Python projects.
 
-## Overview
+## 🌱 What is Seedling?
 
-The documentation is built using **Sphinx** with **MyST** (Markdown) support, providing a modern, maintainable documentation system.
+Seedling is a **Copier template** that generates modern Python projects with:
 
-## Structure
+- **Complete CI/CD pipeline** with GitHub Actions
+- **Quality assurance** with pre-commit-ci
+- **Modern tooling** (uv, Nox, Just, Sphinx)
+- **Professional documentation** with dark mode support
+- **Enterprise-grade standards** and best practices
 
-```
-docs/
-├── source/                    # Sphinx source files
-│   ├── conf.py               # Sphinx configuration (templated)
-│   ├── index.md              # Main documentation page (templated)
-│   ├── api.md                # API documentation template
-│   ├── contributing.md       # Contributing guidelines (templated)
-│   ├── dependency-groups.md  # Dependency explanation (templated)
-│   ├── _static/              # Static assets (CSS, images)
-│   └── _templates/           # Sphinx templates
-├── adr/                      # Architecture Decision Records
-│   └── 0001-template-design.md
-├── Makefile                  # Build commands
-└── template-guide.md         # This file
-```
+## 🚀 Quick Start
 
-## Customization
-
-### 1. Update Project Information
-
-The following files are templated with your project information:
-
-- `docs/source/conf.py` - Project name, author, version
-- `docs/source/index.md` - Project description
-- `docs/source/contributing.md` - GitHub repository URLs
-- `docs/source/dependency-groups.md` - Project name
-
-### 2. Customize API Documentation
-
-Edit `docs/source/api.md` to include your project's modules:
-
-```markdown
-### your_project.core
-
-```{automodule} your_project.core
-:members:
-:undoc-members:
-:show-inheritance:
-```
-```
-
-### 3. Add Custom Content
-
-- **New pages**: Add `.md` files to `docs/source/` and include them in the toctree
-- **Static assets**: Place images, CSS, etc. in `docs/source/_static/`
-- **Custom templates**: Add Jinja2 templates to `docs/source/_templates/`
-
-### 4. Architecture Decisions
-
-Add new ADRs to `docs/adr/` following the format:
-
-```markdown
-# ADR 0002: Your Decision
-
-## Status
-
-Proposed
-
-## Context
-
-Brief description of the problem or situation.
-
-## Decision
-
-What was decided and why.
-
-## Consequences
-
-Positive and negative consequences.
-```
-
-## Building Documentation
-
-### Local Development
+### Generate a New Project
 
 ```bash
-# Install documentation dependencies
-uv pip install -e ".[docs]"
+# Generate a new project with interactive prompts
+copier copy https://github.com/your-org/seedling my-new-project
 
-# Build documentation
-cd docs && make html
-
-# View locally
-open _build/html/index.html
+# Or use a data file for non-interactive generation
+copier copy https://github.com/your-org/seedling my-new-project --data-file project-data.yaml
 ```
 
-### Using Nox
+### Example Data File (`project-data.yaml`)
 
-```bash
-# Build documentation
-nox -s docs
-
-# Check links
-nox -s docs_linkcheck
+```yaml
+project_name: "My Awesome Project"
+project_slug: "my_awesome_project"
+project_description: "A modern Python project built with best practices"
+author_name: "Your Name"
+author_email: "your.email@example.com"
+github_username: "yourusername"
+license: "MIT"
+python_versions: "3.11,3.12"
+coverage_threshold: 80
 ```
 
-### Using Just
+## 📋 Configuration Options
+
+### Project Information
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `project_name` | str | "My Awesome Project" | Human-readable project name |
+| `project_slug` | str | "my_awesome_project" | Python package name (lowercase, underscores) |
+| `project_description` | str | "A modern Python project..." | Brief project description |
+| `project_keywords` | str | "python,modern,uv,nox,just" | Comma-separated PyPI keywords |
+| `author_name` | str | "Your Name" | Your full name |
+| `author_email` | str | "your.name@example.com" | Your email address |
+| `github_username` | str | "yourusername" | Your GitHub username |
+| `copyright_year` | str | "2024" | Copyright year |
+| `version` | str | "0.1.0" | Initial version number |
+
+### Features
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `license` | choice | "MIT" | Project license (MIT, Apache-2.0, GPL-3.0, BSD-3-Clause) |
+| `python_versions` | str | "3.11,3.12" | Supported Python versions |
+| `coverage_threshold` | int | 80 | Minimum test coverage percentage |
+
+
+
+## 🛠️ Generated Project Structure
+
+```
+my-new-project/
+├── src/
+│   └── my_awesome_project/
+│       └── __init__.py
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   └── e2e/
+├── docs/
+│   ├── source/
+│   │   ├── api.md
+│   │   ├── contributing.md
+│   │   └── index.md
+│   └── build/
+├── .github/
+│   └── workflows/
+│       ├── ci_nox.yml
+│       ├── docs.yml
+│       ├── release.yml
+│       └── codeql.yml
+├── pyproject.toml
+├── noxfile.py
+├── justfile
+├── .pre-commit-config.yaml
+└── README.md
+```
+
+## 🎯 Development Workflow
+
+### Initial Setup
 
 ```bash
+# Navigate to your new project
+cd my-new-project
+
+# Install dependencies (already done by copier)
+uv sync --all-extras
+
+# Verify installation
+just test
+```
+
+### Daily Development
+
+```bash
+# Run quality checks
+just quality
+
+# Run tests
+just test
+
+# Format code
+just format
+
 # Build documentation
 just docs
+
+# Serve documentation locally
+just docs-serve
 ```
 
-## Configuration
+### Available Commands
 
-### Sphinx Extensions
+| Command | Description |
+|---------|-------------|
+| `just test` | Run tests with coverage |
+| `just lint` | Run linting checks |
+| `just type-check` | Run type checking |
+| `just docs` | Build documentation |
+| `just docs-serve` | Serve documentation locally |
+| `just quality` | Run all quality checks |
+| `just security` | Run security checks |
+| `just complexity` | Run complexity analysis |
 
-The template includes these Sphinx extensions:
+## 📚 Documentation
 
-- `sphinx.ext.autodoc` - Auto-generate API docs from docstrings
-- `sphinx.ext.napoleon` - Google/NumPy docstring support
-- `sphinx.ext.viewcode` - Link to source code
-- `sphinx.ext.githubpages` - GitHub Pages integration
-- `myst_parser` - Markdown support
+### Built-in Documentation
 
-### Theme
+Every generated project includes:
 
-Uses **Furo** theme for modern, clean appearance.
+- **API Reference**: Automatic API documentation
+- **Contributing Guide**: Development guidelines
+- **Dependency Groups**: Package management guide
+- **Search Functionality**: Built-in search
+- **Dark Mode Support**: Automatic theme switching
 
-### MyST Extensions
+### Customizing Documentation
 
-Enabled MyST extensions for enhanced Markdown:
+1. **Add API documentation** in `docs/source/api.md`
+2. **Update contributing guide** in `docs/source/contributing.md`
+3. **Add custom pages** in `docs/source/`
+4. **Customize theme** in `docs/source/conf.py`
 
-- `colon_fence` - Code blocks with colons
-- `deflist` - Definition lists
-- `dollarmath` - LaTeX math
-- `fieldlist` - Field lists
-- `html_admonition` - HTML admonitions
-- `html_image` - HTML images
-- `replacements` - Text replacements
-- `smartquotes` - Smart quotes
-- `strikethrough` - Strikethrough text
-- `substitution` - Variable substitution
-- `tasklist` - Task lists
+## 🔧 Customization
 
-## Best Practices
+### Adding New Modules
 
-1. **Use docstrings**: All public APIs should have comprehensive docstrings
-2. **Include examples**: Add usage examples in docstrings and documentation
-3. **Keep it current**: Update documentation when APIs change
-4. **Test links**: Use `nox -s docs_linkcheck` to verify all links work
-5. **Version control**: Include documentation changes in the same PR as code changes
+1. **Create your module** in `src/your_project/`
+2. **Add docstrings** with Google or NumPy style
+3. **Include type hints** for all functions
+4. **Update API docs** in `docs/source/api.md`
 
-## CI/CD Integration
+### Example: Adding a Core Module
 
-The template includes GitHub Actions workflows that:
+```python
+# src/your_project/core.py
+"""Core functionality for the project."""
 
-- Build documentation on every PR
-- Deploy to GitHub Pages on main branch
-- Check for broken links
-- Validate documentation structure
+from typing import Any, Dict, List
 
-## Troubleshooting
+def process_data(data: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Process input data and return results.
+    
+    Args:
+        data: List of data dictionaries to process
+        
+    Returns:
+        Processed results as a dictionary
+    """
+    # Your implementation here
+    return {"processed": len(data)}
+```
+
+### Extending CI/CD
+
+The generated project includes comprehensive CI/CD:
+
+- **Multi-environment testing** (Python 3.11, 3.12)
+- **Quality gates** (linting, type checking, coverage)
+- **Security scanning** (CodeQL, pip-audit)
+- **Documentation deployment** (GitHub Pages)
+- **Automated releases** (PyPI publishing)
+
+## 🚀 Deployment
+
+### PyPI Publishing
+
+```bash
+# Build and publish to PyPI
+just release
+
+# Or manually
+python -m build
+python -m twine upload dist/*
+```
+
+### Documentation Deployment
+
+Documentation is automatically deployed to GitHub Pages when you push to main.
+
+## 🔍 Quality Standards
+
+Every generated project enforces:
+
+- **Type Safety**: Full MyPy integration
+- **Code Quality**: Ruff linting with comprehensive rules
+- **Test Coverage**: Minimum 80% coverage requirement
+- **Documentation**: Comprehensive docstrings
+- **Security**: Regular vulnerability scanning
+- **Performance**: Code complexity analysis
+
+## 🆘 Troubleshooting
 
 ### Common Issues
 
-1. **Import errors**: Ensure your package is installed in editable mode
-2. **Missing modules**: Update `docs/source/api.md` to include new modules
-3. **Build failures**: Check that all dependencies are installed with `uv pip install -e ".[docs]"`
+#### Pre-commit Hooks Failing
+
+```bash
+# Run pre-commit manually
+pre-commit run --all-files
+
+# Skip hooks temporarily (not recommended)
+git commit --no-verify
+```
+
+#### Documentation Build Errors
+
+```bash
+# Check Sphinx configuration
+just docs
+
+# Verify dependencies
+uv pip install -e ".[docs]"
+```
+
+#### Test Failures
+
+```bash
+# Run tests with verbose output
+just test -- -v
+
+# Run specific test file
+just test -- tests/unit/test_specific.py
+```
 
 ### Getting Help
 
-- [Sphinx Documentation](https://www.sphinx-doc.org/)
-- [MyST Documentation](https://myst-parser.readthedocs.io/)
-- [Furo Theme](https://pradyunsg.me/furo/)
+- **Check the logs**: Look for error messages in CI/CD runs
+- **Review documentation**: Generated projects include comprehensive docs
+- **Community support**: Open an issue on the seedling repository
+
+## 🔄 Updating Projects
+
+### Template Updates
+
+```bash
+# Update your project with latest template
+copier update
+
+# Review changes before applying
+copier update --vcs-ref HEAD~1
+```
+
+### Dependency Updates
+
+```bash
+# Update dependencies
+uv lock --upgrade
+
+# Update specific package
+uv add package-name --upgrade
+```
+
+## 📖 Best Practices
+
+### Code Organization
+
+- **Use src/ layout**: Prevents import confusion
+- **Follow naming conventions**: snake_case for modules, PascalCase for classes
+- **Add type hints**: All public APIs should have type annotations
+- **Write docstrings**: Use Google or NumPy style consistently
+
+### Testing Strategy
+
+- **Unit tests**: Fast, isolated tests for individual functions
+- **Integration tests**: Tests for component interactions
+- **End-to-end tests**: Full workflow testing
+- **Property-based testing**: Use Hypothesis for edge cases
+
+### Documentation
+
+- **Keep docs updated**: Update documentation with code changes
+- **Use examples**: Include usage examples in docstrings
+- **Link related docs**: Cross-reference related documentation
+- **Test documentation**: Ensure all code examples work
+
+## 🎉 Success Stories
+
+Projects built with Seedling include:
+
+- **Enterprise applications** with strict quality requirements
+- **Open source libraries** with comprehensive documentation
+- **Research projects** requiring reproducible environments
+- **CLI tools** with professional user experience
+
+## 🤝 Contributing to Seedling
+
+Want to improve the template?
+
+1. **Fork the repository**
+2. **Create a feature branch**
+3. **Make your changes**
+4. **Test with multiple configurations**
+5. **Submit a pull request**
+
+See the [Contributing Guide](../CONTRIBUTING.md) for detailed instructions.
+
+---
+
+**Seedling** - Growing world-class Python projects from the ground up! 🌱

@@ -78,20 +78,12 @@ coverage_threshold:
   max: 100
   default: 80
 
-include_cli:
-  type: bool
-  help: Include CLI interface for the project?
-  default: false
 
-enable_conda_fallback:
-  type: bool
-  help: Enable Conda fallback for uv (useful for packages with complex dependencies)?
-  default: false
+
+
 
 # Post-generation tasks
 _tasks:
   - git init
   - uv sync --all-extras
   - pre-commit install
-  - when: "{{ enable_conda_fallback }}"
-    command: uv mamba init

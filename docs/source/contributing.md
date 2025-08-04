@@ -1,55 +1,142 @@
-# Contributing to {{ project_name }}
+# 🤝 Contributing to Seedling
 
-Thank you for your interest in contributing to {{ project_name }}! This document provides guidelines and requirements for contributing to the project.
+Thank you for your interest in contributing to the Seedling Python project template! This document provides guidelines and requirements for contributing to the template.
 
-```{contents} Table of Contents
-:local:
-```
+## 📋 Table of Contents
 
-## Code of Conduct
+- [Code of Conduct](#code-of-conduct)
+- [Development Setup](#development-setup)
+- [Documentation](#documentation)
+- [Quality Requirements](#quality-requirements)
+- [Contribution Process](#contribution-process)
+- [Code Style Guidelines](#code-style-guidelines)
+- [Testing Requirements](#testing-requirements)
+- [Review Process](#review-process)
+
+## 📜 Code of Conduct
 
 By participating in this project, you agree to maintain a respectful environment for everyone. We are committed to providing a welcoming and inspiring community for all.
 
-## Development Setup
+## 🛠️ Development Setup
 
 ### Prerequisites
 
 - **Python 3.11+**: Required for modern type hints and features
 - **uv**: Fast Python package manager (recommended)
 - **Git**: Version control system
+- **Copier**: Template engine for testing
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/{{ github_username }}/{{ project_slug }}.git
-cd {{ project_slug }}
+git clone https://github.com/jeffrichley/seedling.git
+cd seedling
 
-# Install with uv (recommended)
+# Install dependencies
 uv sync
-
-# Or install with pip
-pip install -r requirements.txt
-
-# Install in editable mode for development
-uv pip install -e ".[dev,docs]"
 ```
 
-### Development Environment
+## 📚 Documentation
+
+### Building Documentation
+
+The Seedling template includes comprehensive documentation that can be built locally:
+
+#### Prerequisites
+
+- **uv**: Fast Python package manager
+- **Sphinx**: Documentation generator
+
+#### Quick Build
 
 ```bash
-# Activate virtual environment
-source .venv/bin/activate  # On Unix/macOS
-# or
-.venv\Scripts\activate     # On Windows
+# Navigate to docs directory
+cd docs
 
-# Verify installation
-uv run dev info
+# Build documentation (creates virtual environment automatically)
+./build-docs.sh
 ```
 
-## Quality Requirements
+#### Manual Build
 
-{{ project_name }} maintains strict quality standards. **All contributions must pass these quality gates:**
+```bash
+# Navigate to docs directory
+cd docs
+
+# Install dependencies
+uv sync
+
+# Build HTML documentation
+make html
+
+# Serve locally
+make serve
+```
+
+The documentation will be available at http://localhost:8000
+
+#### Documentation Structure
+
+```
+docs/
+├── source/                    # Source files
+│   ├── index.md              # Main documentation index
+│   ├── quickstart.md         # Quick start guide
+│   ├── installation.md       # Installation instructions
+│   ├── configuration.md      # Configuration reference
+│   ├── examples.md           # Examples and use cases
+│   ├── contributing.md       # This file
+│   ├── adr/                  # Architecture decisions
+│   ├── features/             # Feature documentation
+│   ├── advanced/             # Advanced usage
+│   └── reference/            # Reference documentation
+├── build/                    # Built documentation (generated)
+├── pyproject.toml           # Documentation dependencies
+├── Makefile                 # Build targets
+└── build-docs.sh           # Build script
+```
+
+#### Adding New Documentation
+
+1. **Create new files** in the appropriate directory under `docs/source/`
+2. **Use Markdown** (`.md`) files with MyST extensions
+3. **Update navigation** in `docs/source/index.md` if needed
+4. **Build and test** your changes locally
+5. **Follow the style** of existing documentation
+
+#### Documentation Guidelines
+
+- **Use clear headings** and structure
+- **Include code examples** where helpful
+- **Keep it concise** but comprehensive
+- **Test all links** and references
+- **Use consistent formatting**
+
+### Testing Template Generation
+
+When making changes to the template, test that it generates projects correctly:
+
+```bash
+# Test template generation
+copier copy . /tmp/test-project --trust
+
+# Navigate to generated project
+cd /tmp/test-project
+
+# Test that it builds and works
+uv sync
+uv run dev test
+uv run dev checkit
+
+# Clean up
+cd ..
+rm -rf /tmp/test-project
+```
+
+## 🎯 Quality Requirements
+
+Seedling maintains strict quality standards. **All contributions must pass these quality gates:**
 
 ### Quality Gates
 
@@ -73,18 +160,18 @@ uv run dev test          # Pytest with coverage
 uv run dev quality-gates # All quality gates
 ```
 
-## Contribution Process
+## 🔄 Contribution Process
 
 ### 1. Fork and Clone
 
 ```bash
 # Fork the repository on GitHub
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/{{ project_slug }}.git
-cd {{ project_slug }}
+git clone https://github.com/YOUR_USERNAME/seedling.git
+cd seedling
 
 # Add upstream remote
-git remote add upstream https://github.com/{{ github_username }}/{{ project_slug }}.git
+git remote add upstream https://github.com/jeffrichley/seedling.git
 ```
 
 ### 2. Create a Feature Branch
@@ -99,22 +186,29 @@ git checkout -b fix/your-bug-description
 
 ### 3. Make Your Changes
 
-- Follow the Code Style Guidelines
-- Write comprehensive tests
-- Update documentation as needed
-- Ensure all quality gates pass
+- **Follow the code style** guidelines below
+- **Add tests** for new functionality
+- **Update documentation** if needed
+- **Test template generation** with your changes
 
 ### 4. Test Your Changes
 
 ```bash
-# Run all tests
+# Run quality checks
+uv run dev checkit
+
+# Test template generation
+copier copy . /tmp/test-project --trust
+cd /tmp/test-project
+uv sync
 uv run dev test
+cd ..
+rm -rf /tmp/test-project
 
-# Run quality gates
-uv run dev quality-gates
-
-# Run benchmarks (if applicable)
-uv run dev benchmark
+# Build documentation
+cd docs
+./build-docs.sh
+cd ..
 ```
 
 ### 5. Commit Your Changes
@@ -124,218 +218,74 @@ uv run dev benchmark
 git add .
 
 # Commit with a descriptive message
-git commit -m "feat: add new video transition effect
+git commit -m "feat: add new template feature"
 
-- Implement crossfade transition
-- Add comprehensive tests
-- Update documentation
-- Fixes #123"
-```
-
-### 6. Push and Create Pull Request
-
-```bash
 # Push to your fork
 git push origin feature/your-feature-name
-
-# Create a Pull Request on GitHub
 ```
 
-## Code Style Guidelines
+### 6. Create a Pull Request
 
-### Python Code Style
+- **Describe your changes** clearly
+- **Reference any issues** that are fixed
+- **Include screenshots** if UI changes
+- **Test the template** generation works
 
-- **Black**: Automatic code formatting (line length: 88)
-- **Ruff**: Linting and import sorting
-- **Type Hints**: Required for all functions and methods
-- **Docstrings**: Google-style docstrings for all public APIs
+## 📝 Code Style Guidelines
 
-### Import Organization
+### Python Code
 
-```python
-# Standard library imports
-import os
-import sys
-from typing import List, Optional
+- **Follow PEP 8** with Black formatting
+- **Use type hints** for all functions
+- **Write docstrings** for all public functions
+- **Keep functions small** and focused
+- **Use meaningful variable names**
 
-# Third-party imports
-import numpy as np
-import pydantic
+### Template Files
 
-# Local imports
-from {{ project_slug }}.models import ExampleModel
-from {{ project_slug }}.core import ExampleCore
-```
+- **Use descriptive variable names** in Jinja2 templates
+- **Add comments** for complex template logic
+- **Test template generation** with different configurations
+- **Keep templates readable** and maintainable
 
-### Type Annotations
+### Documentation
 
-```python
-# Required for all functions
-def process_video(spec: VideoSpec, output_path: str) -> bool:
-    """Process a video specification and save to output path.
+- **Use clear, concise language**
+- **Include code examples**
+- **Test all links and references**
+- **Follow the existing style**
 
-    Args:
-        spec: The video specification to process
-        output_path: Path where the video will be saved
+## 🧪 Testing Requirements
 
-    Returns:
-        True if processing was successful, False otherwise
-    """
-    pass
-```
+### Template Testing
 
-### Error Handling
+- **Test with different configurations**
+- **Verify generated projects build**
+- **Check that all tools work**
+- **Test edge cases and error handling**
 
-```python
-# Use specific exceptions
-try:
-    result = process_data(data)
-except ValueError as e:
-    logger.error(f"Invalid data format: {e}")
-    raise
-except FileNotFoundError as e:
-    logger.error(f"Required file not found: {e}")
-    raise
-```
+### Documentation Testing
 
-## Testing Requirements
+- **Build documentation locally**
+- **Check all links work**
+- **Verify code examples run**
+- **Test search functionality**
 
-### Test Coverage
+## 👀 Review Process
 
-- **Minimum Coverage**: 80% overall
-- **New Code**: 100% coverage required
-- **Critical Paths**: 100% coverage required
+1. **Automated checks** must pass
+2. **Template generation** must work
+3. **Documentation** must be updated
+4. **Code review** by maintainers
+5. **Final testing** before merge
 
-### Test Structure
+## 🆘 Getting Help
 
-```python
-# tests/unit/test_video_spec.py
-import pytest
-from {{ project_slug }}.models import ExampleModel
+- **Check existing issues** on GitHub
+- **Read the documentation** thoroughly
+- **Ask questions** in discussions
+- **Join the community** chat
 
-class TestVideoSpec:
-    def test_video_spec_creation(self):
-        """Test VideoSpec creation with valid parameters."""
-        spec = VideoSpec(
-            width=1920,
-            height=1080,
-            duration=10.0
-        )
-        assert spec.width == 1920
-        assert spec.height == 1080
-        assert spec.duration == 10.0
+## 📄 License
 
-    def test_video_spec_validation(self):
-        """Test VideoSpec validation with invalid parameters."""
-        with pytest.raises(ValueError):
-            VideoSpec(width=-1, height=1080, duration=10.0)
-```
-
-### Property-Based Testing
-
-```python
-# Use Hypothesis for property-based testing
-from hypothesis import given, strategies as st
-
-@given(st.integers(min_value=1, max_value=3840))
-def test_video_width_validation(width):
-    """Test that video width validation works for all valid values."""
-    spec = VideoSpec(width=width, height=1080, duration=10.0)
-    assert spec.width == width
-```
-
-## Documentation Standards
-
-### Docstring Requirements
-
-- **All public APIs**: Must have Google-style docstrings
-- **Parameters**: Document all parameters with types
-- **Returns**: Document return values and types
-- **Examples**: Include usage examples for complex functions
-
-### Example Docstring
-
-```python
-def create_video_timeline(
-    clips: List[VideoClip],
-    transitions: Optional[List[Transition]] = None,
-    duration: Optional[float] = None
-) -> VideoTimeline:
-    """Create a video timeline from a list of clips.
-
-    Args:
-        clips: List of video clips to include in the timeline
-        transitions: Optional list of transitions between clips
-        duration: Optional total duration (auto-calculated if None)
-
-    Returns:
-        A VideoTimeline object representing the composed video
-
-    Raises:
-        ValueError: If clips list is empty or invalid
-        TypeError: If clips contain invalid types
-
-    Example:
-        >>> clips = [VideoClip("video1.mp4"), VideoClip("video2.mp4")]
-        >>> timeline = create_video_timeline(clips)
-        >>> timeline.render("output.mp4")
-    """
-    pass
-```
-
-### README Updates
-
-- Update README.md for user-facing changes
-- Update API documentation for technical changes
-- Include examples for new features
-
-## Review Process
-
-### Pull Request Requirements
-
-1. **Quality Gates**: All quality gates must pass
-2. **Tests**: All tests must pass
-3. **Documentation**: Updated as needed
-4. **Description**: Clear description of changes
-5. **Linked Issues**: Reference related issues
-
-### Review Checklist
-
-- [ ] Code follows style guidelines
-- [ ] Type hints are complete and correct
-- [ ] Tests are comprehensive and pass
-- [ ] Documentation is updated
-- [ ] No breaking changes (or properly documented)
-- [ ] Performance impact considered
-- [ ] Security implications reviewed
-
-### Review Timeline
-
-- **Initial Review**: Within 48 hours
-- **Follow-up Reviews**: Within 24 hours
-- **Merge**: After approval and CI passes
-
-## Getting Help
-
-### Questions and Discussions
-
-- **GitHub Issues**: For bug reports and feature requests
-- **GitHub Discussions**: For questions and general discussion
-- **Documentation**: Check the docs/ directory for detailed guides
-
-### Development Resources
-
-- **API Documentation**: `docs/api/`
-- **Architecture Guide**: `docs/ARCHITECTURE_PATTERNS.md`
-- **Quality Gates**: `docs/QUALITY_GATES.md`
-- **Project Status**: `docs/STATUS.md`
-
-## Recognition
-
-Contributors will be recognized in:
-
-- **README.md**: For significant contributions
-- **CHANGELOG.md**: For all contributions
-- **GitHub Contributors**: Automatic recognition
-
-Thank you for contributing to {{ project_name }}! 🚀
+By contributing to Seedling, you agree that your contributions will be licensed under the MIT License.

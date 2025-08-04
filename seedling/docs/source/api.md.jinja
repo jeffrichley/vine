@@ -2,8 +2,30 @@
 
 This section provides comprehensive API documentation for {{ project_name }}.
 
-## Core Modules
+## Core Package
 
+### {{ project_slug }}
+
+```{automodule} {{ project_slug }}
+:members:
+:undoc-members:
+:show-inheritance:
+```
+
+## Adding New Modules
+
+To add documentation for new modules, follow these steps:
+
+1. **Create your module** in `src/{{ project_slug }}/`
+2. **Add docstrings** with Google or NumPy style
+3. **Include type hints** for all functions and methods
+4. **Update this file** to include your new module
+
+### Example: Adding a Core Module
+
+If you create `src/{{ project_slug }}/core.py`, add this section:
+
+```markdown
 ### {{ project_slug }}.core
 
 ```{automodule} {{ project_slug }}.core
@@ -11,7 +33,13 @@ This section provides comprehensive API documentation for {{ project_name }}.
 :undoc-members:
 :show-inheritance:
 ```
+```
 
+### Example: Adding a Utils Module
+
+If you create `src/{{ project_slug }}/utils.py`, add this section:
+
+```markdown
 ### {{ project_slug }}.utils
 
 ```{automodule} {{ project_slug }}.utils
@@ -19,30 +47,11 @@ This section provides comprehensive API documentation for {{ project_name }}.
 :undoc-members:
 :show-inheritance:
 ```
-
-## Configuration
-
-### {{ project_slug }}.config
-
-```{automodule} {{ project_slug }}.config
-:members:
-:undoc-members:
-:show-inheritance:
-```
-
-## Models
-
-### {{ project_slug }}.models
-
-```{automodule} {{ project_slug }}.models
-:members:
-:undoc-members:
-:show-inheritance:
 ```
 
 ## Examples
 
-For usage examples, see the `examples/` directory in the project repository.
+For usage examples, see the project repository and test files.
 
 ## Contributing
 

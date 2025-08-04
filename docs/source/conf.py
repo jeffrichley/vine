@@ -1,7 +1,7 @@
-"""Sphinx configuration for {{ project_name }} documentation.
+"""Sphinx configuration for Seedling template documentation.
 
 This file contains the configuration settings for building the Sphinx documentation
-for the {{ project_name }} project.
+for the Seedling Python project template.
 
 This file only contains a selection of the most common options. For a full
 list see the documentation:
@@ -21,10 +21,10 @@ sys.path.insert(0, os.path.abspath("../.."))
 
 # -- Project information -----------------------------------------------------
 
-project = "{{ project_name }}"
-copyright = "{{ copyright_year }}, {{ author_name }}"
-author = "{{ author_name }}"
-release = "{{ version }}"
+project = "Seedling"
+copyright = "2024, Jeff Richley"
+author = "Jeff Richley"
+release = "0.1.0"
 
 # -- General configuration ---------------------------------------------------
 
@@ -57,7 +57,21 @@ source_suffix = {
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = "furo"  # Changed from sphinx_rtd_theme to furo
+html_theme = "furo"  # Modern, responsive theme
+
+# Theme options
+html_theme_options = {
+    "navigation_with_keys": True,
+    "announcement": "🌱 Seedling - Modern Python Project Template",
+    "light_css_variables": {
+        "color-brand-primary": "#10b981",
+        "color-brand-content": "#10b981",
+    },
+    "dark_css_variables": {
+        "color-brand-primary": "#34d399",
+        "color-brand-content": "#34d399",
+    },
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -92,3 +106,7 @@ myst_enable_extensions = [
     "substitution",
     "tasklist",
 ]
+
+# -- GitHub Pages configuration ----------------------------------------------
+
+html_baseurl = "https://jeffrichley.github.io/seedling/"

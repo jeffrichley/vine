@@ -1,0 +1,14 @@
+[project]
+name = "seedling-docs"
+version = "0.1.0"
+description = "Documentation for Seedling Python project template"
+requires-python = ">=3.11"
+
+[tool.uv]
+dev-dependencies = [
+    "sphinx>=7.0.0",
+    "furo>=2024.1.29",
+    "myst-parser>=2.0.0",
+    "sphinx-autodoc-typehints>=1.25.0",
+    "sphinx-copybutton>=0.5.0",
+] 

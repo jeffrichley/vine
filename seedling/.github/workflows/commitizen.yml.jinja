@@ -6,7 +6,13 @@ on:
 
 jobs:
   bump:
-    uses: commitizen-tools/commitizen-action@v2
-    with:
-      github_token: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
-      push: true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Python Semantic Release
+        uses: python-semantic-release/python-semantic-release@master
+        env:
+          GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}

@@ -24,7 +24,15 @@ sys.path.insert(0, os.path.abspath("../.."))
 project = "{{ project_name }}"
 copyright = "{{ copyright_year }}, {{ author_name }}"
 author = "{{ author_name }}"
-release = "{{ version }}"
+
+# Dynamic version detection
+try:
+    import importlib.metadata
+    release = importlib.metadata.version("{{ project_slug }}")
+except importlib.metadata.PackageNotFoundError:
+    release = "{{ version }}"
+
+version = ".".join(release.split(".")[:2])
 
 # -- General configuration ---------------------------------------------------
 
@@ -58,6 +66,20 @@ source_suffix = {
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 html_theme = "furo"  # Changed from sphinx_rtd_theme to furo
+
+# Furo theme options
+html_theme_options = {
+    "light_css_variables": {
+        "color-brand-primary": "#7C3AED",
+        "color-brand-content": "#7C3AED",
+    },
+    "dark_css_variables": {
+        "color-brand-primary": "#A78BFA",
+        "color-brand-content": "#A78BFA",
+    },
+    "navigation_with_keys": True,
+    "announcement": "<em>🌱 Generated with <a href='https://github.com/your-org/seedling'>Seedling</a></em>",
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

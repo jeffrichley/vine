@@ -9,7 +9,7 @@ updates:
       timezone: "America/New_York"
     open-pull-requests-limit: 10
     reviewers:
-      - "jeffrichley"
+      - "{{ github_username }}"
     commit-message:
       prefix: "deps"
       include: "scope"
@@ -50,7 +50,7 @@ updates:
       - dependency-name: "moviepy"
         update-types: ["version-update:semver-major"]
       # Ignore unrelated package with same name
-      - dependency-name: "vine"
+      - dependency-name: "{{ project_slug }}"
     # Allow auto-merge for patch updates (security fixes)
     auto-merge:
       when:

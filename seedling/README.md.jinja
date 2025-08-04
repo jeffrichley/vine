@@ -1,47 +1,22 @@
 # {{ project_name }}
 
-[![CI](https://github.com/{{ github_username }}/{{ project_slug }}/actions/workflows/ci.yml/badge.svg)](https://github.com/{{ github_username }}/{{ project_slug }}/actions/workflows/ci.yml)
+[![CI](https://github.com/{{ github_username }}/{{ project_slug }}/workflows/CI/badge.svg)](https://github.com/{{ github_username }}/{{ project_slug }}/actions)
 [![Codecov](https://codecov.io/gh/{{ github_username }}/{{ project_slug }}/branch/main/graph/badge.svg)](https://codecov.io/gh/{{ github_username }}/{{ project_slug }})
-[![Python {{ python_versions.split(',')[0] }}+](https://img.shields.io/badge/python-{{ python_versions.split(',')[0] }}+-blue.svg)](https://www.python.org/downloads/)
+[![Python {{ python_versions.split(',')[0].strip() }}+](https://img.shields.io/badge/python-{{ python_versions.split(',')[0].strip() }}+-blue.svg)](https://www.python.org/downloads/)
 [![License: {{ license }}](https://img.shields.io/badge/License-{{ license }}-yellow.svg)](https://opensource.org/licenses/{{ license }})
 [![pre-commit enabled](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-[![pip-audit](https://img.shields.io/badge/pip--audit-enabled-brightgreen?logo=security&logoColor=white)](https://pypi.org/project/pip-audit/)
 [![Ruff](https://img.shields.io/badge/ruff-enabled-brightgreen?logo=ruff&logoColor=white)](https://github.com/astral-sh/ruff)
 [![MyPy](https://img.shields.io/badge/mypy-enabled-brightgreen?logo=mypy&logoColor=white)](https://mypy-lang.org/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
+[![pip-audit](https://img.shields.io/badge/pip--audit-enabled-brightgreen?logo=security&logoColor=white)](https://pypi.org/project/pip-audit/)
 ![pyproject validated](https://img.shields.io/badge/pyproject%20schema-valid-brightgreen?style=flat-square)
 
 {{ project_description }}
 
-## 🚀 Key Features
+## 🚀 Quick Start
 
-### For Developers
-- **Modern Python**: Built with the latest Python features and best practices
-- **Type Safety**: Full type hints and MyPy integration
-- **Code Quality**: Automated linting, formatting, and quality checks
-- **Testing**: Comprehensive test suite with coverage reporting
-
-### For Contributors
-- **Pre-commit Hooks**: Automated code quality checks
-- **CI/CD Pipeline**: GitHub Actions for automated testing and deployment
-- **Documentation**: Sphinx-based documentation with automatic deployment
-- **Dependency Management**: Modern uv-based dependency management
-
-### For Users
-- **Easy Installation**: Simple pip installation
-- **Clear Documentation**: Comprehensive guides and API reference
-- **Active Maintenance**: Regular updates and security patches
-- **Community Support**: Open source with active community
-
-## 🏗️ Architecture
-
-{{ project_name }} follows modern Python project best practices:
-
-- **Package Structure**: Clean, modular package organization
-- **Configuration**: Environment-based configuration management
-- **Testing**: Comprehensive test suite with multiple testing strategies
-- **Documentation**: Automated documentation generation and deployment
-
-## 📦 Installation
+### Installation
 
 ```bash
 # Clone the repository
@@ -52,108 +27,85 @@ cd {{ project_slug }}
 uv sync
 
 # Or install with pip
-pip install -r requirements.txt
-
-# Install in editable mode for development
-uv pip install -e .
+pip install -e .
 ```
 
-## 🎯 Quick Start
-
-### Installation for Development
+### Development Setup
 
 ```bash
-# Install in editable mode to enable development CLI
-uv pip install -e .
+# Install in editable mode with development dependencies
+uv pip install -e ".[dev]"
 
-# Verify installation
-uv run dev info
+# Run quality checks
+uv run dev checkit
 
-# After installation, you can also call commands directly:
-dev info
+# Run tests
+uv run dev test
+
+# Build documentation
+uv run dev docs
 ```
 
-### Development CLI
-
-{{ project_name }} includes a professional development CLI for streamlined workflows:
-
-```bash
-# Quality checks
-uv run dev lint          # Run linting
-uv run dev typecheck     # Run type checking
-uv run dev test          # Run tests
-uv run dev checkit       # Run all quality checks
-
-# Code formatting
-uv run dev format        # Format code with black and ruff
-
-# Documentation
-uv run dev docs          # Build documentation
-uv run dev docs-serve    # Serve documentation locally
-
-# Analysis
-uv run dev vulture       # Find dead code
-uv run dev quality-gates # Run quality gates
-
-# Help and info
-uv run dev --help        # Show all commands
-uv run dev info          # Show project status
-```
-
-**Direct Commands**: After installing with `uv pip install -e .`, you can call commands directly (when virtual environment is active):
-```bash
-# Activate virtual environment first
-source .venv/bin/activate
-
-# Then use direct commands
-dev lint
-dev test
-dev checkit
-```
-
-### Basic Usage
+## 📦 Usage
 
 ```python
-from {{ project_slug }} import main_function
+from {{ project_slug }} import example
 
-# Basic usage example
-result = main_function("example input")
+# TODO: Add usage examples here
+result = example.hello_world()
 print(result)
-
-# More complex usage
-from {{ project_slug }}.core import CoreClass
-
-instance = CoreClass()
-result = instance.process_data("your data here")
 ```
 
-### Configuration
+## 🧪 Testing
 
-```python
-# Environment-based configuration
-import os
-from {{ project_slug }}.config import get_config
+```bash
+# Run all tests
+uv run dev test
 
-config = get_config()
-print(f"Using environment: {config.environment}")
+# Run with coverage
+uv run dev test --cov
+
+# Run specific test file
+uv run pytest tests/unit/test_example.py
 ```
 
-### Testing
+## 📚 Documentation
 
-```python
-# Example test usage
-from {{ project_slug }}.utils import helper_function
-
-def test_helper():
-    result = helper_function("test input")
-    assert result == "expected output"
-```
-
-
+- **[API Reference](docs/api.md)**: Complete API documentation
+- **[Contributing Guide](CONTRIBUTING.md)**: How to contribute to the project
 
 ## 🛠️ Development
 
-### Development Environment Setup
+### Quality Checks
+
+```bash
+# Run all quality checks
+uv run dev checkit
+
+# Individual checks
+uv run dev lint          # Code linting
+uv run dev typecheck     # Type checking
+uv run dev format        # Code formatting
+```
+
+### Project Structure
+
+```
+{{ project_slug }}/
+├── src/{{ project_slug }}/          # Main package source code
+├── tests/                           # Test suite
+│   ├── unit/                       # Unit tests
+│   ├── integration/                # Integration tests
+│   └── e2e/                        # End-to-end tests
+├── docs/                           # Documentation
+└── README.md                       # This file
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+
+### Quick Setup
 
 ```bash
 # Install development dependencies
@@ -162,180 +114,9 @@ uv pip install -e ".[dev,docs]"
 # Run quality checks
 uv run dev checkit
 
-# Format code
-uv run dev format
-
-# Run tests with coverage
-uv run dev test-cov
-```
-
-**Direct Commands**: After installation, you can also use (when virtual environment is active):
-```bash
-# Activate virtual environment first
-source .venv/bin/activate
-
-# Then use direct commands
-dev checkit
-dev format
-dev test-cov
-```
-
-### Available Development Commands
-
-| Command | Description |
-|---------|-------------|
-| `uv run dev lint` / `dev lint` | Run linting checks with ruff |
-| `uv run dev format` / `dev format` | Format code with black and ruff |
-| `uv run dev typecheck` / `dev typecheck` | Run type checking with mypy |
-| `uv run dev test` / `dev test` | Run tests with pytest |
-| `uv run dev test-cov` / `dev test-cov` | Run tests with coverage reporting |
-| `uv run dev test-cov-check` / `dev test-cov-check` | Run tests with coverage threshold check |
-| `uv run dev docs` / `dev docs` | Build documentation |
-| `uv run dev docs-serve` / `dev docs-serve` | Serve documentation locally |
-| `uv run dev docs-watch` / `dev docs-watch` | Watch for changes and rebuild docs |
-| `uv run dev vulture` / `dev vulture` | Find dead code |
-| `uv run dev quality-gates` / `dev quality-gates` | Run all quality gates |
-| `uv run dev checkit` / `dev checkit` | Run comprehensive quality checks |
-| `uv run dev dev` / `dev dev` | Run all quality checks (presubmit) |
-| `uv run dev build` / `dev build` | Build the package |
-| `uv run dev info` / `dev info` | Show project information and status |
-
-**Note**: After installing with `uv pip install -e .`, you can use either format. The direct commands (`dev <command>`) are more convenient for daily development when the virtual environment is active.
-
-### IDE Integration
-
-The development CLI integrates seamlessly with VS Code:
-
-- **Tasks**: Use `Ctrl+Shift+P` → "Tasks: Run Task" to access all commands
-- **Debugging**: Use the debug configurations for step-by-step debugging
-- **Terminal**: All commands work in the integrated terminal
-
-### Quality Standards
-
-{{ project_name }} maintains high quality standards:
-
-- **Type Safety**: Full MyPy type checking with strict mode
-- **Code Quality**: Ruff linting with comprehensive rules
-- **Test Coverage**: Minimum {{ coverage_threshold }}% test coverage required
-- **Documentation**: Comprehensive docstrings and examples
-- **Performance**: Xenon complexity analysis
-- **Security**: Regular dependency vulnerability scanning
-
-## 🎯 Quality Standards
-
-{{ project_name }} maintains rigorous quality standards to ensure reliability, maintainability, and professional-grade code. Our quality gates enforce these standards automatically.
-
-### Quality Gates
-
-We enforce 7 quality gates that must pass before any code is merged:
-
-1. **🔍 Linting (Ruff)**: Code style and best practices enforcement
-2. **🧠 Type Safety (MyPy)**: Strict type checking with zero errors
-3. **📊 Coverage (≥80%)**: Comprehensive test coverage requirements
-4. **📈 Complexity (Xenon)**: Maintainable code complexity levels
-5. **🧹 Dead Code (Vulture)**: Removal of unused code and imports
-6. **🔒 Security (pip-audit)**: Dependency vulnerability scanning
-
-
-### Development Requirements
-
-- **Python 3.11+**: Modern Python features and type hints
-- **Strict MyPy**: Zero type errors, comprehensive type annotations
-- **100% Test Coverage**: All new code must be fully tested
-- **Documentation**: All public APIs must be documented
-- **Code Style**: Black formatting + Ruff linting enforced
-- **Security**: Regular dependency vulnerability scanning
-
-### Quality Commands
-
-```bash
-# Run all quality checks
-uv run dev checkit
-
-# Individual quality gates
-uv run dev lint          # Ruff linting
-uv run dev typecheck     # MyPy type checking
-uv run dev test          # Pytest with coverage
-uv run dev quality-gates # All quality gates
-```
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
-
-### Quick Contribution Setup
-
-```bash
-# Install in editable mode with all development dependencies
-uv pip install -e ".[dev,docs]"
-
-# Run quality checks before contributing
-uv run dev checkit
-
-# Format your code
-uv run dev format
-
-# Run tests
+# Make your changes and test
 uv run dev test
 ```
-
-### Dependency Groups
-
-{{ project_name }} uses dependency groups for modular installation:
-
-```bash
-# Core runtime dependencies (default)
-uv pip install -e .
-
-# Development dependencies (linting, testing, type checking)
-uv pip install -e ".[dev]"
-
-# Documentation dependencies (Sphinx, themes)
-uv pip install -e ".[docs]"
-
-# Type checking dependencies (MyPy)
-uv pip install -e ".[typecheck]"
-
-# Security dependencies (pip-audit)
-uv pip install -e ".[security]"
-
-# All dependencies for full development
-uv pip install -e ".[dev,docs,typecheck,security]"
-```
-
-**Available Groups:**
-- **`dev`**: Development tools (Ruff, Black, pytest, MyPy, etc.)
-- **`docs`**: Documentation tools (Sphinx, themes, etc.)
-- **`typecheck`**: Type checking tools (MyPy)
-- **`security`**: Security tools (pip-audit)
-- **`test`**: Testing tools (pytest, hypothesis, benchmarks)
-
-**Direct Commands**: After installation, you can also use (when virtual environment is active):
-```bash
-# Activate virtual environment first
-source .venv/bin/activate
-
-# Then use direct commands
-dev checkit
-dev format
-dev test
-```
-
-### Development Workflow
-
-1. **Setup**: Install dependencies with `uv pip install -e ".[dev,docs]"`
-2. **Develop**: Use `dev lint` and `dev typecheck` during development
-3. **Test**: Run `dev test` to ensure all tests pass
-4. **Quality**: Run `dev checkit` before submitting changes
-5. **Format**: Use `dev format` to maintain code style
-
-**Note**: After installation, you can use either `uv run dev <command>` or `dev <command>` directly (when virtual environment is active).
-
-## 📚 Documentation
-
-- **[API Reference](docs/api.md)**: Complete API reference
-- **[Contributing Guide](CONTRIBUTING.md)**: How to contribute to the project
-- **[Development Guide](docs/development.md)**: Development setup and workflow
 
 ## 📄 License
 
@@ -344,9 +125,8 @@ This project is licensed under the {{ license }} License - see the [LICENSE](LIC
 ## 🎉 Acknowledgments
 
 - Built with modern Python best practices
-- Inspired by the Python community
 - Designed for maintainability and extensibility
 
 ---
 
-**{{ project_name }}** is a modern Python project template that provides a solid foundation for building high-quality, maintainable Python packages.
+**{{ project_name }}** - {{ project_description }}
