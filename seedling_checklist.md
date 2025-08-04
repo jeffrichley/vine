@@ -15,7 +15,7 @@
 | 🔁 | Repeat for each matrix element / file |
 | ⚠️ | Pay extra attention—common pitfalls |
 
-Mark each checkbox as you finish. **Don’t** tick by “eyeballing”—run the command, verify output, then mark ✅.
+Mark each checkbox as you finish. **Don't** tick by "eyeballing"—run the command, verify output, then mark ✅.
 
 ---
 
@@ -28,7 +28,7 @@ Mark each checkbox as you finish. **Don’t** tick by “eyeballing”—run the
 
 ---
 
-## 1. Snapshot & branch protection
+## 1. Snapshot & branch protection
 
 1. ✅ **Clone Vine** fresh and create migration branch
    ```bash
@@ -37,13 +37,13 @@ Mark each checkbox as you finish. **Don’t** tick by “eyeballing”—run the
    git checkout -b migrate/seedling-template
    ```
 2. ✅ Enable **branch protection** rules on `main`:
-   - Require PR reviews (≥ 1)
+   - Require PR reviews (≥ 1)
    - Require status checks (CI, pre‑commit‑ci, CodeQL)
    - Dismiss stale approvals on push
 
 ---
 
-## 2. Repo triage — prune dead weight
+## 2. Repo triage — prune dead weight
 
 | Folder / file | Action | Command |
 | --------------| ------ | ------- |
@@ -55,7 +55,7 @@ Mark each checkbox as you finish. **Don’t** tick by “eyeballing”—run the
 
 ---
 
-## 3. Create template scaffold
+## 3. Create template scaffold
 
 1. ✅ **Scaffold directories**
    ```bash
@@ -68,7 +68,7 @@ Mark each checkbox as you finish. **Don’t** tick by “eyeballing”—run the
 
 ---
 
-## 4. Draft `copier.yml`
+## 4. Draft `copier.yml`
 
 > Located at template root.
 
@@ -79,14 +79,14 @@ Mark each checkbox as you finish. **Don’t** tick by “eyeballing”—run the
 
 ---
 
-## 5. Post‑generation tasks
+## 5. Post‑generation tasks
 
 1. ✅ In `copier.yml` under `_tasks` add:
    ```yaml
    _tasks:
      - git init
+     - uv sync --all-extras
      - pre-commit install
-     - uv lock -p {{ python_versions.split(',')[0] }}
      {%- if enable_conda_fallback %}
      - uv mamba init
      {%- endif %}
@@ -95,13 +95,14 @@ Mark each checkbox as you finish. **Don’t** tick by “eyeballing”—run the
 
 ---
 
-## 6. Pre‑commit ecosystem
+## 6. Pre‑commit ecosystem
 
-1. ☐ **Update** `.pre-commit-config.yaml`
-   - Use Ruff `latest`, Black `24.1`, MyPy `1.10`, Commitizen `3.8`, pip‑audit `2024.x`, etc.
+1. ✅ **Update** `.pre-commit-config.yaml`
+   - Use Ruff `v0.12.7`, Black `25.1.0`, MyPy `1.17.1`, Commitizen `v4.8.3`, pip‑audit `2.9.0`, etc.
    - Add `repo: https://github.com/asottile/yesqa` to auto‑strip unused noqa comments.
+   - Add CI autoupdate schedule: `ci: autoupdate_schedule: weekly`
 
-2. ☐ Install and run once
+2. ✅ Install and run once
    ```bash
    pre-commit install
    pre-commit run --all-files
@@ -109,29 +110,30 @@ Mark each checkbox as you finish. **Don’t** tick by “eyeballing”—run the
 
 ---
 
-## 7. Enable **pre‑commit‑ci**
+## 7. Enable **pre‑commit‑ci**
 
 1. ☐ **Install** GitHub App to org or repo.
-2. ☐ In `.pre-commit-config.yaml` add the label hint:
+2. ✅ In `.pre-commit-config.yaml` add the label hint:
    ```yaml
    ci:
      autoupdate_schedule: weekly
    ```
+   *(Note: This only configures the schedule - GitHub App still needs to be installed)*
 3. ☐ Push branch; confirm PR gets **auto-fix** commit when deliberately pushing poorly formatted file.
 
 ---
 
-## 8. Commitizen
+## 8. Commitizen
 
-1. ☐ Add **pre-commit hook**
+1. ✅ Add **pre-commit hook**
    ```yaml
    - repo: https://github.com/commitizen-tools/commitizen
-     rev: v3.8.1
+     rev: v4.8.3
      hooks:
        - id: commitizen
          stages: [commit-msg]
    ```
-2. ☐ Install **commitizen-action** workflow:
+2. ✅ Install **commitizen-action** workflow:
    ```yaml
    name: Commitizen bump
    on:
@@ -145,35 +147,40 @@ Mark each checkbox as you finish. **Don’t** tick by “eyeballing”—run the
 
 ---
 
-## 9. GitHub Actions workflows
+## 9. GitHub Actions workflows
 
-### 9.1 CI (`ci.yml`)
+### 9.1 CI (`ci_nox.yml`)
 
 | Job | Matrix | Key steps |
 |-----|--------|-----------|
 | **tests** | `python: [3.11,3.12]`, `mode: [minimal,full]` | uv cache → `nox -s tests -- --mode=${{matrix.mode}}` |
-| **quality** | `python:3.12` only | `nox -s lint type_check docs_linkcheck` |
+| **quality** | `python:3.11` only | `nox -s lint type_check docs docs_linkcheck complexity security pyproject` |
 | **coverage** | depends on tests | Upload Codecov |
+
+✅ **Status**: Implemented with nox-based approach, preserves existing working structure
 
 ### 9.2 Docs (`docs.yml`)
 
-1. Build with `nox -s docs`.
-2. Deploy to GitHub Pages via `peaceiris/actions-gh-pages`.
+1. ✅ Build with `nox -s docs`.
+2. ✅ Deploy to GitHub Pages via `peaceiris/actions-gh-pages`.
+3. ✅ **Templated Python version**: Uses `{{ python_versions.split(',')[0].strip() }}`
 
 ### 9.3 CodeQL (`codeql.yml`)
 
-- Language: python
-- Autobuild: true
-- Queries: security‑extended
+- ✅ Language: python
+- ✅ Autobuild: true
+- ✅ Queries: security‑extended
 
 ### 9.4 Release (`release.yml`)
 
-- Trigger: merge of PR authored by `release-please[bot]`.
-- Steps: `actions/checkout`, `actions/setup-python`, `uv pip install build`, then `python -m build` and `pypa/gh-action-pypi-publish`.
+- ✅ Trigger: push to main with tags `v*`
+- ✅ Steps: `actions/checkout`, `actions/setup-python`, `uv pip install build`, then `python -m build` and `pypa/gh-action-pypi-publish`.
 
 ---
 
-## 10. Nox sessions
+## 10. Nox sessions
+
+✅ **Status**: All sessions implemented and tested
 
 ```python
 PYTHON = ["3.11", "3.12"]
@@ -196,9 +203,13 @@ def docs_linkcheck(session):
     session.run("sphinx-build", "-b", "linkcheck", "docs", "docs/_build/linkcheck")
 ```
 
+**Additional sessions**: `lint`, `type_check`, `pre-commit`, `coverage_html`, `complexity`, `security`, `pyproject`
+
 ---
 
-## 11. Justfile
+## 11. Justfile
+
+✅ **Status**: Complete development shortcuts implemented and tested
 
 ```just
 # Development shortcuts
@@ -206,12 +217,22 @@ test        := "nox -s tests"
 lint        := "nox -s lint"
 type-check  := "nox -s type_check"
 docs        := "nox -s docs"
+docs-linkcheck := "nox -s docs_linkcheck"
+quality     := "lint type-check docs-linkcheck"
+coverage    := "nox -s coverage_html"
+security    := "nox -s security"
+complexity  := "nox -s complexity"
+pyproject   := "nox -s pyproject"
+pre-commit  := "nox -s pre-commit"
 release     := "gh pr create -f --fill"
+install     := "uv sync --all-extras"
+clean       := "rm -rf .nox htmlcov docs/build .pytest_cache .mypy_cache .ruff_cache"
+default     := "@just --list"
 ```
 
 ---
 
-## 12. Optional Conda fallback
+## 12. Optional Conda fallback
 
 - ☐ Document activation: `uv mamba init`.
 - ☐ Add note in README.
@@ -219,37 +240,67 @@ release     := "gh pr create -f --fill"
 
 ---
 
-## 13. Documentation polish
+## 13. Documentation polish
 
 - ☐ Rewrite `docs/index.md` with template badges (`{{ project_slug }}` status‑shields).
-- ☐ Add **ADR 0001** explaining design philosophy (Copier + uv + Nox + Just).
+- ☐ Add **ADR 0001** explaining design philosophy (Copier + uv + Nox + Just).
 - ☐ Ensure Sphinx `conf.py` uses `importlib.metadata.version` with Jinja tag.
 
 ---
 
-## 14. Smoke‑test template
+## 14. Smoke‑test template
 
-1. ☐ Generate project into `/tmp/foo-bar` with defaults.
-2. ☐ Run `just test`; ensure all sessions pass.
-3. ☐ Simulate PR: `gh repo create tmp/foo-bar --private`, push, open PR, verify:
-   - pre-commit-ci auto-fixes
-   - CodeQL runs
-   - CI matrix green
-   - Release‑please **does not** run yet (needs Con‑Commits).
+1. ✅ Generate project into `/tmp/seedling-test` with defaults.
+2. ✅ Run `just test`; ensure all sessions pass.
+3. ✅ Test pre-commit hooks - all pass after auto-fixes.
+4. ✅ Test nox sessions - lint, type_check, tests, docs_linkcheck all work.
+5. ✅ Verify GitHub Actions workflows generated correctly.
+6. ☐ Test CI workflows in generated project:
+   - Create GitHub repo: `gh repo create test-ci-project --private`
+   - Test pre-commit-ci auto-fixes (add poorly formatted code)
+   - Test CI failure scenarios (add type errors)
+   - Verify GitHub Actions matrix runs correctly
+   - Test CodeQL security scanning
+   - Clean up: `gh repo delete test-ci-project --yes`
 
 ---
 
-## 15. Publish Seedling
+## 15. Publish Seedling
 
 - ☐ Create new repo `seedling-template`.
 - ☐ Push template content.
 - ☐ Tag `v0.1.0`.
-- ☐ Add GitHub description: “🌱 Copier template for world‑class Python projects (uv × Nox × Just × Sphinx × pre‑commit‑ci).”
+- ☐ Add GitHub description: "🌱 Copier template for world‑class Python projects (uv × Nox × Just × Sphinx × pre‑commit‑ci)."
 
 ---
 
-*Created 2025‑08‑03 by Iris.*
+## 🎯 **Current Status Summary**
 
+### ✅ **Completed Sections**
+- **Sections 0-6**: All prerequisites, setup, and pre-commit ecosystem ✅
+- **Section 8**: Commitizen setup (pre-commit hook + GitHub Action) ✅
+- **Section 9**: All GitHub Actions workflows implemented ✅
+- **Section 10**: All Nox sessions implemented and tested ✅
+- **Section 11**: Justfile with complete development shortcuts ✅
+- **Section 14**: Template smoke testing (partial) ✅
 
+### 🛠 **In Progress**
+- **Section 7**: pre-commit-ci (GitHub App installation pending)
+- **Section 14**: Full CI workflow testing in generated projects
 
-make a setup for the git repos as a target or docs in readme
+### ☐ **Remaining**
+- **Section 12**: Conda fallback documentation
+- **Section 13**: Documentation polish
+- **Section 15**: Publish template
+
+### 🚀 **Key Achievements**
+- ✅ **Perfect greenfield experience**: Generated projects work immediately
+- ✅ **Complete CI/CD pipeline**: All GitHub Actions workflows implemented
+- ✅ **Comprehensive tooling**: pre-commit, nox, just, uv all integrated
+- ✅ **Security scanning**: CodeQL workflow implemented
+- ✅ **Documentation automation**: Sphinx + link checking
+- ✅ **Release automation**: commitizen + PyPI publishing ready
+
+---
+
+*Created 2025‑08‑03 by Iris. Updated 2025‑08‑04 with implementation progress.*

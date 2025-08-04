@@ -55,7 +55,6 @@ def install_project(session, mode: str = "minimal"):
 # -------- Sessions -------- #
 
 
-
 @nox.session(python=PYTHON_VERSIONS)
 @nox.parametrize("mode", INSTALL_MODES)
 def tests(session, mode):
@@ -92,6 +91,14 @@ def docs(session):
     install_project(session, "full")
     session.run("uv", "pip", "install", "-q", "-e", ".[docs]", external=True)
     session.run("sphinx-build", "-W", "docs/source", "docs/build")
+
+
+@nox.session(python=PYTHON_VERSIONS[0])
+def docs_linkcheck(session):
+    """Check Sphinx docs links."""
+    install_project(session, "full")
+    session.run("uv", "pip", "install", "-q", "-e", ".[docs]", external=True)
+    session.run("sphinx-build", "-b", "linkcheck", "docs/source", "docs/build/linkcheck")
 
 
 @nox.session(python=PYTHON_VERSIONS[0], name="pre-commit")

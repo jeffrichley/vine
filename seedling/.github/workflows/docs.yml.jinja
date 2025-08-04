@@ -28,25 +28,22 @@ jobs:
       # ─── 2️⃣ Install the same interpreter you test with ------------------------------
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"        # PYTHON_VERSIONS[0] in your noxfile
+          python-version: "{{ python_versions.split(',')[0].strip() }}"
           cache: "pip"
 
-      # ─── 3️⃣ Install uv + nox (same bootstrap used in ci_nox.yml) --------------------
+      # ─── 3️⃣ Install uv + nox --------------------------------------------------------
       - run: |
           python -m pip install --quiet uv
           uv pip install --system --quiet 'nox>=2024.4.15'
 
       # ─── 4️⃣ Build docs via the existing nox session ---------------------------------
       - name: Build Sphinx HTML
-        run: nox --sessions docs            # builds into docs/build/
+        run: nox --sessions docs
 
-      # ─── 5️⃣ Upload the artifact for GitHub Pages ------------------------------------
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs/build
-
-      # ─── 6️⃣ Deploy to GitHub Pages (main branch only) -------------------------------
+      # ─── 5️⃣ Deploy to GitHub Pages via peaceiris/actions-gh-pages ------------------
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+        uses: peaceiris/actions-gh-pages@v1
         if: github.ref == 'refs/heads/main'
+        with:
+          github_token: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+          publish_dir: ./docs/build

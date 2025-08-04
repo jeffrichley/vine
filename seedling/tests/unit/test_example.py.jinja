@@ -4,13 +4,13 @@ import pytest
 from {{ project_slug }} import main_function
 
 
-def test_main_function():
+def test_main_function() -> None:
     """Test the main function."""
     result = main_function("test input")
     assert result is not None
 
 
-def test_main_function_with_empty_input():
+def test_main_function_with_empty_input() -> None:
     """Test the main function with empty input."""
     result = main_function("")
-    assert result is not None 
+    assert result is not None

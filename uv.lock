@@ -2118,7 +2118,6 @@ dependencies = [
     { name = "pillow" },
     { name = "pydantic" },
     { name = "pyyaml" },
-    { name = "xenon" },
 ]
 
 [package.optional-dependencies]
@@ -2219,7 +2218,6 @@ requires-dist = [
     { name = "types-urllib3", marker = "extra == 'dev'", specifier = ">=1.26.25.14" },
     { name = "validate-pyproject", marker = "extra == 'dev'", specifier = ">=0.24.1" },
     { name = "vulture", marker = "extra == 'dev'", specifier = ">=2.14" },
-    { name = "xenon", specifier = ">=0.9.3" },
     { name = "xenon", marker = "extra == 'dev'", specifier = ">=0.9" },
 ]
 provides-extras = ["dev", "test", "docs", "typecheck", "security"]

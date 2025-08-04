@@ -20,4 +20,4 @@ Please include the following information in your report:
 - Potential impact
 - Suggested fix (if available)
 
-We appreciate your efforts to responsibly disclose your findings, and will make every effort to acknowledge your contributions. 
+We appreciate your efforts to responsibly disclose your findings, and will make every effort to acknowledge your contributions.

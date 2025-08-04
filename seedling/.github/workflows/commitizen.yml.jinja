@@ -1,0 +1,12 @@
+name: Commitizen bump
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  bump:
+    uses: commitizen-tools/commitizen-action@v2
+    with:
+      github_token: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+      push: true

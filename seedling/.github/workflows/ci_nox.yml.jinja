@@ -21,8 +21,6 @@ jobs:
       - name: Setup Python and Nox
         uses: wntrblm/nox@2025.05.01
         with:
-          # python-versions: {% raw %}${{ matrix.python-version }}{% endraw %}
-          # python-versions: "3.11, 3.12"
           python-versions: {% raw %}${{ matrix.python-version }}{% endraw %}
 
       - name: Install uv
@@ -32,17 +30,12 @@ jobs:
 
       - name: Run nox sessions
         run: |
-          # Run the test suite for every matrix cell
-          # nox -s tests -- --mode={% raw %}${{ matrix.mode }}{% endraw %}
-          # run exactly one parametrised variant, e.g. tests(mode='minimal')
-          # nox --sessions "tests(mode='{% raw %}${{ matrix.mode }}{% endraw %}')"
           nox --sessions "tests-{% raw %}${{ matrix.python-version }}{% endraw %}(mode='{% raw %}${{ matrix.mode }}{% endraw %}')"
-
 
       - name: Run quality gates
         if: {% raw %}${{ matrix.python-version == '3.11' && matrix.mode == 'full' }}{% endraw %}
         run: |
-          nox -s lint type_check docs complexity security pyproject
+          nox -s lint type_check docs docs_linkcheck complexity security pyproject
 
       - name: Upload coverage to Codecov
         if: {% raw %}${{ matrix.python-version == '3.11' && matrix.mode == 'full' }}{% endraw %}

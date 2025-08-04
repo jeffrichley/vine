@@ -5,15 +5,15 @@ build-backend = "setuptools.build_meta"
 
 
 [project]
-name = "{{ project_slug }}"
+name = "vine"
 dynamic = ["version", "readme"]
-description = "{{ project_description }}"
+description = "A Python library for video processing and AI-powered video editing"
 authors = [
-  {name = "{{ author_name }}", email = "{{ author_email }}"}
+  {name = "Jeff Richley", email = "jeff@example.com"}
 ]
-license = {text = "{{ license }}"}
+license = {text = "MIT"}
 requires-python = ">=3.11"
-keywords = ["{{ project_keywords }}"]
+keywords = ["video", "ai", "editing", "processing"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
@@ -34,19 +34,19 @@ dependencies = [
   "pydantic>=2.0.0",
   "pyyaml>=6.0.2",
   "pillow>=10.0.0",
-  "numpy>=1.24.0", 
+  "numpy>=1.24.0",
 ]
 
 [project.urls]
-Homepage = "https://github.com/{{ github_username }}/{{ project_slug }}"
-Documentation = "https://github.com/{{ github_username }}/{{ project_slug }}/tree/main/docs"
-Repository = "https://github.com/{{ github_username }}/{{ project_slug }}.git"
-"Bug Tracker" = "https://github.com/{{ github_username }}/{{ project_slug }}/issues"
-Changelog = "https://github.com/{{ github_username }}/{{ project_slug }}/blob/main/CHANGELOG.md"
-Source = "https://github.com/{{ github_username }}/{{ project_slug }}"
+Homepage = "https://github.com/jeffrichley/vine"
+Documentation = "https://github.com/jeffrichley/vine/tree/main/docs"
+Repository = "https://github.com/jeffrichley/vine.git"
+"Bug Tracker" = "https://github.com/jeffrichley/vine/issues"
+Changelog = "https://github.com/jeffrichley/vine/blob/main/CHANGELOG.md"
+Source = "https://github.com/jeffrichley/vine"
 
 [tool.setuptools.dynamic]
-version = {attr = "{{ project_slug }}._version.__version__"}
+version = {attr = "vine.__version__"}
 readme = {file = "README.md"}
 
 [project.optional-dependencies]

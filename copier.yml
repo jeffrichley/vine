@@ -91,7 +91,7 @@ enable_conda_fallback:
 # Post-generation tasks
 _tasks:
   - git init
+  - uv sync --all-extras
   - pre-commit install
-  - uv lock -p {{ python_versions.split(',')[0] }}
   - when: "{{ enable_conda_fallback }}"
     command: uv mamba init
